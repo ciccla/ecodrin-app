@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin – Ecodrin</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: Arial; margin: 0; background: #f4f6f8; }
+    header {
+      background: #007acc; color: white; padding: 15px 30px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    main {
+      max-width: 1100px; margin: 30px auto;
+      background: white; padding: 30px;
+      border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .hidden { display: none; }
+    .giorno {
+      margin-top: 20px; border: 1px solid #ddd;
+      border-radius: 6px; background: #f9f9f9;
+    }
+    .giorno h3 {
+      margin: 0; padding: 15px; background: #007acc;
+      color: white; cursor: pointer; font-size: 18px;
+      border-radius: 6px 6px 0 0; user-select: none;
+    }
+    .contenuto { padding: 15px; display: none; }
+    .prenotazione {
+      border-bottom: 1px solid #eee;
+      padding: 12px 0; position: relative;
+    }
+    .badge {
+      position: absolute; top: 10px; right: 10px;
+      background: red; color: white; font-size: 12px;
+      padding: 4px 6px; border-radius: 10px; display: none;
+    }
+    .chat {
+      background: #eef2f5; padding: 10px;
+      border-radius: 6px; margin-top: 10px;
+    }
+    .chat-messaggi {
+      max-height: 200px; overflow-y: auto;
+      background: white; padding: 10px;
+      border: 1px solid #ccc; border-radius: 4px;
+    }
+    .messaggio {
+      margin-bottom: 8px; padding: 6px 10px;
+      background: white; border-left: 4px solid #007acc;
+      border-radius: 4px;
+    }
+    .messaggio small {
+      display: block; font-size: 11px; color: #555;
+    }
+    .chat input {
+      width: 80%; padding: 8px;
+      border-radius: 4px; border: 1px solid #ccc;
+      margin-right: 5px;
+    }
+    .chat button {
+      padding: 8px 12px; background-color: #28a745;
+      color: white; border: none; border-radius: 4px;
+    }
+    button {
+      margin: 5px 5px 0 0; padding: 5px 12px;
+      border: none; background: #007acc;
+      color: white; border-radius: 4px; cursor: pointer;
+    }
+    button.rifiuta { background: #d9534f; }
+    .stato { font-weight: bold; }
+    canvas { max-width: 500px; margin-top: 30px; }
+    .top-bar {
+      display: flex; justify-content: space-between;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+
+<header class="hidden" id="adminHeader">
+  <h1>📊 Pannello Admin – Ecodrin</h1>
+  <div>
+    <select onchange="switchPage(this.value)">
+      <option value="registro">📋 Registro</option>
+      <option value="statistiche">📈 Statistiche</option>
+    </select>
+    <button onclick="logout()">🚪 Logout</button>
+  </div>
+</header>
+
+<main>
+  <!-- LOGIN -->
+  <div id="loginBox">
+    <h2>🔐 Login Admin</h2>
+    <input id="loginEmail" placeholder="Email">
+    <input id="loginPassword" type="password" placeholder="Password">
+    <button onclick="login()">Accedi</button>
+    <div id="loginErrore" style="color:red;"></div>
+  </div>
+
+  <!-- CONTENUTO ADMIN -->
+  <div id="contenutoAdmin" class="hidden">
+    <div id="paginaRegistro">
+      <h2>📋 Registro Prenotazioni</h2>
+      <div id="contenitoreGiorni"></div>
+    </div>
+
+    <div id="paginaStatistiche" class="hidden">
+      <div class="top-bar">
+        <h2>📈 Statistiche CER</h2>
+        <button type="button" onclick="esportaCSV()">📤 Esporta CSV</button>
+      </div>
+      <ul id="statistiche"></ul>
+      <canvas id="graficoCER"></canvas>
+    </div>
+  </div>
+</main>
+
+<script>
+let adminAutenticato = false;
+
+function login() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value.trim();
+
+  fetch('http://localhost:3000/api/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ ragioneSociale: email, password })
+  })
+  .then(res => res.ok ? res.json() : Promise.reject())
+  .then(json => {
+    if (json.tipo === 'admin') {
+      adminAutenticato = true;
+      document.getElementById('loginBox').classList.add('hidden');
+      document.getElementById('contenutoAdmin').classList.remove('hidden');
+      document.getElementById('adminHeader').classList.remove('hidden');
+      caricaPrenotazioni();
+      caricaStatistiche();
+    } else {
+      throw new Error();
+    }
+  })
+  .catch(() => {
+    document.getElementById('loginErrore').innerText = '❌ Credenziali errate';
+  });
+}
+
+document.getElementById('loginPassword').addEventListener('keydown', e => {
+  if (e.key === 'Enter') login();
+});
+
+function logout() {
+  adminAutenticato = false;
+  location.reload();
+}
+
+function switchPage(p) {
+  document.getElementById('paginaRegistro').classList.add('hidden');
+  document.getElementById('paginaStatistiche').classList.add('hidden');
+  document.getElementById(`pagina${p.charAt(0).toUpperCase() + p.slice(1)}`).classList.remove('hidden');
+}
+
+function toggleGiorno(el) {
+  const contenuto = el.nextElementSibling;
+  contenuto.style.display = contenuto.style.display === 'block' ? 'none' : 'block';
+}
+
+function formattaData(dataStr) {
+  const d = new Date(dataStr);
+  const giorni = ['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato'];
+  const mesi = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
+  return `${giorni[d.getDay()]} ${d.getDate()} ${mesi[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+async function caricaPrenotazioni() {
+  const res = await fetch('http://localhost:3000/api/prenotazioni');
+  const dati = await res.json();
+  const contenitore = document.getElementById('contenitoreGiorni');
+  contenitore.innerHTML = '';
+
+  const gruppi = {};
+  dati.forEach(p => {
+    if (p.data) {
+      if (!gruppi[p.data]) gruppi[p.data] = [];
+      gruppi[p.data].push(p);
+    }
+  });
+
+  const giorni = Object.keys(gruppi).sort((a,b)=>new Date(b)-new Date(a));
+  if (!giorni.length) {
+    contenitore.innerHTML = '<p style="color:gray;">Nessuna prenotazione disponibile.</p>';
+    return;
+  }
+
+  giorni.forEach(data => {
+    const giorno = document.createElement('div');
+    giorno.className = 'giorno';
+    giorno.innerHTML = `<h3 onclick="toggleGiorno(this)">${formattaData(data)} (${gruppi[data].length})</h3>`;
+    const contenuto = document.createElement('div');
+    contenuto.className = 'contenuto';
+
+    gruppi[data].forEach(p => {
+      const div = document.createElement('div');
+      div.className = 'prenotazione';
+      div.innerHTML = `
+        <span class="badge" id="badge-${p.id}">🛎️</span>
+        <div><b>Cliente:</b> ${p.ragioneSociale} (${p.codiceCliente})</div>
+        <div><b>CER:</b> ${p.codiceCER}</div>
+        <div><b>Quantità:</b> ${p.quantita} kg</div>
+        <div><b>Stato:</b> <span id="stato-${p.id}" class="stato">${p.stato}</span></div>
+        <div>
+          <button type="button" onclick="aggiornaStato(${p.id}, 'confermata')">✅ Conferma</button>
+          <button type="button" onclick="aggiornaStato(${p.id}, 'rifiutata')" class="rifiuta">❌ Rifiuta</button>
+        </div>
+        <div class="chat">
+          <b>Chat:</b>
+          <div class="chat-messaggi" id="chatMsg-${p.id}">Caricamento...</div>
+          <div style="margin-top:10px;">
+            <input id="inputMsg-${p.id}" placeholder="Scrivi un messaggio...">
+            <button onclick="inviaMessaggio(${p.id})">📨</button>
+          </div>
+        </div>`;
+      contenuto.appendChild(div);
+      caricaChat(p.id);
+
+      // ✅ ENTER per invio chat
+      setTimeout(() => {
+        const input = document.getElementById(`inputMsg-${p.id}`);
+        input?.addEventListener('keydown', e => {
+          if (e.key === 'Enter') inviaMessaggio(p.id);
+        });
+      }, 100);
+    });
+
+    giorno.appendChild(contenuto);
+    contenitore.appendChild(giorno);
+  });
+}
+
+async function aggiornaStato(id, stato) {
+  await fetch(`http://localhost:3000/api/prenotazioni/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ stato })
+  });
+  document.getElementById(`stato-${id}`).textContent = stato;
+}
+
+async function caricaChat(id) {
+  const res = await fetch(`http://localhost:3000/api/prenotazioni/${id}/chat`);
+  const chat = await res.json();
+  const div = document.getElementById(`chatMsg-${id}`);
+  div.innerHTML = chat.map(m => `
+    <div class="messaggio">
+      <b>${m.autore}</b>: ${m.testo}<br>
+      <small>${new Date(m.timestamp).toLocaleString()}</small>
+    </div>`).join('');
+  div.scrollTop = div.scrollHeight;
+}
+
+async function inviaMessaggio(id) {
+  const input = document.getElementById(`inputMsg-${id}`);
+  const testo = input.value.trim();
+  if (!testo) return;
+  await fetch(`http://localhost:3000/api/prenotazioni/${id}/chat`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ autore: 'admin', testo })
+  });
+  input.value = '';
+  caricaChat(id);
+}
+
+async function caricaStatistiche() {
+  const res = await fetch('http://localhost:3000/api/grafico/cer');
+  const dati = await res.json();
+  const labels = Object.keys(dati);
+  const valori = Object.values(dati);
+  const ul = document.getElementById('statistiche');
+  ul.innerHTML = labels.map((k, i) => `<li>${k}: ${valori[i]} kg</li>`).join('');
+  new Chart(document.getElementById('graficoCER'), {
+    type: 'pie',
+    data: {
+      labels,
+      datasets: [{
+        data: valori,
+        backgroundColor: ['#007acc','#28a745','#ffc107','#dc3545','#6610f2','#17a2b8']
+      }]
+    }
+  });
+}
+
+function esportaCSV() {
+  window.open('http://localhost:3000/api/prenotazioni/export', '_blank');
+}
+</script>
+</body>
+</html>

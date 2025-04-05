@@ -1,0 +1,82 @@
+[
+  {
+    "id": 1743816577097,
+    "ragioneSociale": "VERA ECOLOGIA SRL",
+    "codiceCliente": "005227",
+    "produttore": "quellagaydipaola s.r.l",
+    "codiceCER": "150202",
+    "pericolosita": "hp14",
+    "tipoImballo": "big bags",
+    "statoFisico": "solido non polverulento ",
+    "quantita": "50000",
+    "data": "2025-04-17",
+    "analisi": "1743816577090_127.5.pdf",
+    "stato": "confermata",
+    "chat": [
+      {
+        "autore": "VERA ECOLOGIA SRL",
+        "testo": "ciaoo",
+        "timestamp": 1743818007454
+      },
+      {
+        "autore": "admin",
+        "testo": "come stai ??",
+        "timestamp": 1743878950558
+      },
+      {
+        "autore": "VERA ECOLOGIA SRL",
+        "testo": "comm o cazz",
+        "timestamp": 1743879645408
+      }
+    ],
+    "email": "francescollauri363@gmail.com"
+  },
+  {
+    "id": 1743816898085,
+    "ragioneSociale": "VERA ECOLOGIA SRL",
+    "codiceCliente": "005227",
+    "produttore": "vera ecologia s.r.l",
+    "codiceCER": "150202",
+    "pericolosita": "hp14",
+    "tipoImballo": "libero ",
+    "statoFisico": "solido",
+    "quantita": "50000",
+    "data": "2025-04-15",
+    "analisi": "1743816898078_127.5.pdf",
+    "email": "francescollauri363@gmail.com",
+    "stato": "in attesa",
+    "chat": []
+  },
+  {
+    "id": 1743817260923,
+    "ragioneSociale": "VERA ECOLOGIA SRL",
+    "codiceCliente": "005227",
+    "produttore": "vera ecologia s.r.l",
+    "codiceCER": "150202",
+    "pericolosita": "hp14",
+    "tipoImballo": "big bags",
+    "statoFisico": "solido",
+    "quantita": "5000",
+    "data": "2025-04-15",
+    "analisi": "1743817260914_immatricolazione lauri francesco.pdf",
+    "email": "francescollauri363@gmail.com",
+    "stato": "in attesa",
+    "chat": []
+  },
+  {
+    "id": 1743817470560,
+    "ragioneSociale": "VERA ECOLOGIA SRL",
+    "codiceCliente": "005227",
+    "produttore": "vera ecologia s.r.l",
+    "codiceCER": "150202",
+    "pericolosita": "hp14",
+    "tipoImballo": "big bags",
+    "statoFisico": "solido",
+    "quantita": "5000",
+    "data": "2025-04-15",
+    "analisi": "1743817470555_immatricolazione lauri francesco.pdf",
+    "email": "francescollauri363@gmail.com",
+    "stato": "in attesa",
+    "chat": []
+  }
+]
