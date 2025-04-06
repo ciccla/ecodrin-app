@@ -16,10 +16,7 @@
       border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
     .hidden { display: none; }
-    .giorno {
-      margin-top: 20px; border: 1px solid #ddd;
-      border-radius: 6px; background: #f9f9f9;
-    }
+    .giorno { margin-top: 20px; border: 1px solid #ddd; border-radius: 6px; background: #f9f9f9; }
     .giorno h3 {
       margin: 0; padding: 15px; background: #007acc;
       color: white; cursor: pointer; font-size: 18px;
@@ -89,7 +86,6 @@
 </header>
 
 <main>
-  <!-- LOGIN -->
   <div id="loginBox">
     <h2>🔐 Login Admin</h2>
     <input id="loginEmail" placeholder="Email">
@@ -98,7 +94,6 @@
     <div id="loginErrore" style="color:red;"></div>
   </div>
 
-  <!-- CONTENUTO ADMIN -->
   <div id="contenutoAdmin" class="hidden">
     <div id="paginaRegistro">
       <h2>📋 Registro Prenotazioni</h2>
@@ -123,7 +118,7 @@ function login() {
   const email = document.getElementById('loginEmail').value.trim();
   const password = document.getElementById('loginPassword').value.trim();
 
-  fetch('http://localhost:3000/api/login', {
+  fetch('/api/login', { // 🔧 URL RELATIVO
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ ragioneSociale: email, password })
@@ -174,7 +169,7 @@ function formattaData(dataStr) {
 }
 
 async function caricaPrenotazioni() {
-  const res = await fetch('http://localhost:3000/api/prenotazioni');
+  const res = await fetch('/api/prenotazioni');
   const dati = await res.json();
   const contenitore = document.getElementById('contenitoreGiorni');
   contenitore.innerHTML = '';
@@ -224,7 +219,6 @@ async function caricaPrenotazioni() {
       contenuto.appendChild(div);
       caricaChat(p.id);
 
-      // ✅ ENTER per invio chat
       setTimeout(() => {
         const input = document.getElementById(`inputMsg-${p.id}`);
         input?.addEventListener('keydown', e => {
@@ -239,7 +233,7 @@ async function caricaPrenotazioni() {
 }
 
 async function aggiornaStato(id, stato) {
-  await fetch(`http://localhost:3000/api/prenotazioni/${id}`, {
+  await fetch(`/api/prenotazioni/${id}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ stato })
@@ -248,7 +242,7 @@ async function aggiornaStato(id, stato) {
 }
 
 async function caricaChat(id) {
-  const res = await fetch(`http://localhost:3000/api/prenotazioni/${id}/chat`);
+  const res = await fetch(`/api/prenotazioni/${id}/chat`);
   const chat = await res.json();
   const div = document.getElementById(`chatMsg-${id}`);
   div.innerHTML = chat.map(m => `
@@ -263,7 +257,7 @@ async function inviaMessaggio(id) {
   const input = document.getElementById(`inputMsg-${id}`);
   const testo = input.value.trim();
   if (!testo) return;
-  await fetch(`http://localhost:3000/api/prenotazioni/${id}/chat`, {
+  await fetch(`/api/prenotazioni/${id}/chat`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ autore: 'admin', testo })
@@ -273,7 +267,7 @@ async function inviaMessaggio(id) {
 }
 
 async function caricaStatistiche() {
-  const res = await fetch('http://localhost:3000/api/grafico/cer');
+  const res = await fetch('/api/grafico/cer');
   const dati = await res.json();
   const labels = Object.keys(dati);
   const valori = Object.values(dati);
@@ -292,8 +286,9 @@ async function caricaStatistiche() {
 }
 
 function esportaCSV() {
-  window.open('http://localhost:3000/api/prenotazioni/export', '_blank');
+  window.open('/api/prenotazioni/export', '_blank');
 }
 </script>
 </body>
 </html>
+
