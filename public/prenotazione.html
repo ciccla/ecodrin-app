@@ -1,34 +1,41 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <title>Area Cliente – Ecodrin</title>
+  <meta charset="UTF-8" />
+  <title>Area Clienti – Ecodrin</title>
   <style>
-    body { font-family: Arial; margin: 0; background: #f4f6f8; }
+    body { font-family: Arial; background: #f4f6f8; margin: 0; }
     main { max-width: 800px; margin: 30px auto; background: white; padding: 30px;
       border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-    h2 { margin-top: 0; }
+    h2, h3 { margin-top: 0; }
     input, select, textarea {
-      display: block; margin-bottom: 15px; padding: 8px;
-      width: 100%; border: 1px solid #ccc; border-radius: 4px;
+      width: 100%; padding: 8px; margin-bottom: 15px;
+      border: 1px solid #ccc; border-radius: 4px;
     }
     button {
-      background: #007acc; color: white; padding: 10px 15px;
-      border: none; border-radius: 4px; cursor: pointer;
+      padding: 10px 15px; border: none;
+      background: #007acc; color: white; border-radius: 4px; cursor: pointer;
     }
     .hidden { display: none; }
+    .top-nav {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 20px;
+    }
     .chat-box {
       border: 1px solid #ccc; padding: 10px; border-radius: 6px;
       max-height: 300px; overflow-y: auto; background: #f9f9f9; margin-bottom: 10px;
     }
-    .msg { background: #fff; padding: 8px; margin-bottom: 6px;
-      border-left: 4px solid #007acc; border-radius: 4px; }
-    .msg small { display: block; font-size: 11px; color: #555; }
+    .msg {
+      background: #fff; padding: 8px; margin-bottom: 6px;
+      border-left: 4px solid #007acc; border-radius: 4px;
+    }
+    .msg small { font-size: 11px; color: #555; display: block; }
   </style>
 </head>
 <body>
 
 <main>
+  <!-- Login -->
   <div id="authBox">
     <h2>Accesso Clienti</h2>
     <input id="loginEmail" placeholder="Ragione Sociale">
@@ -38,6 +45,7 @@
     <div id="loginErrore" style="color:red;"></div>
   </div>
 
+  <!-- Registrazione -->
   <div id="regBox" class="hidden">
     <h2>Registrazione</h2>
     <input id="regRagione" placeholder="Ragione Sociale">
@@ -48,30 +56,45 @@
     <div id="regErrore" style="color:red;"></div>
   </div>
 
+  <!-- Area cliente -->
   <div id="clienteBox" class="hidden">
-    <h2>Benvenuto, <span id="nomeCliente"></span></h2>
-
-    <h3>📦 Prenotazione Rifiuti</h3>
-    <form id="formPrenotazione">
-      <input name="produttore" placeholder="Produttore" required>
-      <input name="codiceCER" placeholder="Codice CER" required>
-      <input name="quantita" type="number" placeholder="Quantità (kg)" required>
-      <select name="pericolosita">
-        <option value="">Pericolosità</option>
-        <option value="HP1">HP1</option>
-        <option value="HP2">HP2</option>
+    <div class="top-nav">
+      <div>Benvenuto, <span id="nomeCliente"></span></div>
+      <select onchange="switchClientePage(this.value)">
+        <option value="prenota">📦 Prenota</option>
+        <option value="elenco">📋 Le tue prenotazioni</option>
+        <option value="logout">🚪 Logout</option>
       </select>
-      <input name="tipoImballo" placeholder="Tipo Imballo">
-      <input name="statoFisico" placeholder="Stato Fisico">
-      <input name="data" type="date" required>
-      <input name="analisi" type="file" />
-      <button type="submit">Invia Prenotazione</button>
-    </form>
+    </div>
 
-    <h3>💬 Le Tue Prenotazioni</h3>
-    <div id="prenotazioni"></div>
+    <!-- Form prenotazione -->
+    <div id="paginaPrenota">
+      <h3>📦 Prenotazione Rifiuti</h3>
+      <form id="formPrenotazione">
+        <input name="produttore" placeholder="Produttore" required>
+        <input name="codiceCER" placeholder="Codice CER" required>
+        <input name="quantita" type="number" placeholder="Quantità (kg)" required>
+        <select name="pericolosita">
+          <option value="">Pericolosità</option>
+          <option value="HP1">HP1</option>
+          <option value="HP2">HP2</option>
+        </select>
+        <input name="tipoImballo" placeholder="Tipo Imballo">
+        <input name="statoFisico" placeholder="Stato Fisico">
+        <input name="data" type="date" required>
+        <input name="analisi" type="file" />
+        <button type="submit">Invia Prenotazione</button>
+      </form>
+    </div>
+
+    <!-- Elenco prenotazioni -->
+    <div id="paginaElenco" class="hidden">
+      <h3>📋 Le Tue Prenotazioni</h3>
+      <div id="prenotazioni"></div>
+    </div>
   </div>
-</main><script>
+</main>
+<script>
 let cliente = null;
 
 function toggleRegistro() {
@@ -148,6 +171,7 @@ document.getElementById('formPrenotazione').addEventListener('submit', e => {
     alert('Prenotazione inviata');
     form.reset();
     caricaPrenotazioni();
+    switchClientePage('elenco');
   })
   .catch(() => alert('Errore nella prenotazione'));
 });
@@ -175,7 +199,11 @@ async function caricaPrenotazioni() {
     box.innerHTML = `
       <b>Data:</b> ${p.data}<br>
       <b>CER:</b> ${p.codiceCER} – <b>Quantità:</b> ${p.quantita} kg<br>
+      <b>Pericolosità:</b> ${p.pericolosita || 'N/D'}<br>
+      <b>Tipo Imballo:</b> ${p.tipoImballo || 'N/D'}<br>
+      <b>Stato Fisico:</b> ${p.statoFisico || 'N/D'}<br>
       <b>Stato:</b> ${p.stato}<br>
+      ${p.analisi ? `<b>Analisi:</b> <a href="/uploads/${p.analisi}" target="_blank">📎 Visualizza</a><br>` : ''}
       <div class="chat-box" id="chat-${p.id}">Caricamento messaggi...</div>
       <input id="msg-${p.id}" placeholder="Scrivi un messaggio..." />
       <button onclick="inviaMessaggio(${p.id})">📨</button>
@@ -217,7 +245,14 @@ async function inviaMessaggio(id) {
   input.value = '';
   caricaChat(id);
 }
+
+function switchClientePage(p) {
+  if (p === 'logout') return location.reload();
+  document.getElementById('paginaPrenota').classList.add('hidden');
+  document.getElementById('paginaElenco').classList.add('hidden');
+  if (p === 'prenota') document.getElementById('paginaPrenota').classList.remove('hidden');
+  if (p === 'elenco') document.getElementById('paginaElenco').classList.remove('hidden');
+}
 </script>
 </body>
 </html>
-
