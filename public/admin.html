@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Admin – Ecodrin</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
@@ -16,10 +16,7 @@
       border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
     .hidden { display: none; }
-    .giorno {
-      margin-top: 20px; border: 1px solid #ddd;
-      border-radius: 6px; background: #f9f9f9;
-    }
+    .giorno { margin-top: 20px; border: 1px solid #ddd; border-radius: 6px; background: #f9f9f9; }
     .giorno h3 {
       margin: 0; padding: 15px; background: #007acc;
       color: white; cursor: pointer; font-size: 18px;
@@ -115,7 +112,7 @@
     </div>
   </div>
 </main>
-  <script>
+<script>
 let adminAutenticato = false;
 
 function login() {
@@ -205,8 +202,14 @@ async function caricaPrenotazioni() {
       div.innerHTML = `
         <span class="badge" id="badge-${p.id}">🛎️</span>
         <div><b>Cliente:</b> ${p.ragioneSociale} (${p.codiceCliente})</div>
-        <div><b>CER:</b> ${p.codiceCER}</div>
+        <div><b>Produttore:</b> ${p.produttore}</div>
+        <div><b>Codice CER:</b> ${p.codiceCER}</div>
         <div><b>Quantità:</b> ${p.quantita} kg</div>
+        <div><b>Pericolosità:</b> ${p.pericolosita || 'N/D'}</div>
+        <div><b>Tipo Imballo:</b> ${p.tipoImballo || 'N/D'}</div>
+        <div><b>Stato Fisico:</b> ${p.statoFisico || 'N/D'}</div>
+        <div><b>Data:</b> ${p.data}</div>
+        ${p.analisi ? `<div><b>Analisi:</b> <a href="/uploads/${p.analisi}" target="_blank">📎 Visualizza</a></div>` : ''}
         <div><b>Stato:</b> <span id="stato-${p.id}" class="stato">${p.stato}</span></div>
         <div>
           <button type="button" onclick="aggiornaStato(${p.id}, 'confermata')">✅ Conferma</button>
@@ -295,4 +298,3 @@ function esportaCSV() {
 </script>
 </body>
 </html>
-
