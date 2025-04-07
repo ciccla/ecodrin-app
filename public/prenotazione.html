@@ -74,13 +74,38 @@
         <input name="produttore" placeholder="Produttore" required>
         <input name="codiceCER" placeholder="Codice CER" required>
         <input name="quantita" type="number" placeholder="Quantità (kg)" required>
+
         <select name="pericolosita">
           <option value="">Pericolosità</option>
-          <option value="HP1">HP1</option>
-          <option value="HP2">HP2</option>
+          <option value="HP1">HP1 – Esplosivo</option>
+          <option value="HP2">HP2 – Comburente</option>
+          <option value="HP3">HP3 – Infiammabile</option>
+          <option value="HP4">HP4 – Irritante</option>
+          <option value="HP5">HP5 – Nocivo</option>
+          <option value="HP6">HP6 – Tossico</option>
+          <option value="HP7">HP7 – Cancerogeno</option>
+          <option value="HP8">HP8 – Corrosivo</option>
+          <option value="HP9">HP9 – Infettivo</option>
+          <option value="HP10">HP10 – Teratogeno</option>
+          <option value="HP11">HP11 – Mutageno</option>
+          <option value="HP12">HP12 – Rilascia gas tossici</option>
+          <option value="HP13">HP13 – Sensibilizzante</option>
+          <option value="HP14">HP14 – Ecotossico</option>
+          <option value="HP15">HP15 – Reattivo</option>
         </select>
+
+        <select name="statoFisico" required>
+          <option value="">Stato fisico</option>
+          <option value="Solido">Solido</option>
+          <option value="Solido non polverulento">Solido non polverulento</option>
+          <option value="Polverulento">Polverulento</option>
+          <option value="Fangoso">Fangoso</option>
+          <option value="Liquido">Liquido</option>
+          <option value="Oleoso">Oleoso</option>
+          <option value="Pastoso">Pastoso</option>
+        </select>
+
         <input name="tipoImballo" placeholder="Tipo Imballo">
-        <input name="statoFisico" placeholder="Stato Fisico">
         <input name="data" type="date" required>
         <input name="analisi" type="file" />
         <button type="submit">Invia Prenotazione</button>
@@ -94,7 +119,7 @@
     </div>
   </div>
 </main>
-<script>
+  <script>
 let cliente = null;
 
 function toggleRegistro() {
@@ -200,8 +225,8 @@ async function caricaPrenotazioni() {
       <b>Data:</b> ${p.data}<br>
       <b>CER:</b> ${p.codiceCER} – <b>Quantità:</b> ${p.quantita} kg<br>
       <b>Pericolosità:</b> ${p.pericolosita || 'N/D'}<br>
-      <b>Tipo Imballo:</b> ${p.tipoImballo || 'N/D'}<br>
       <b>Stato Fisico:</b> ${p.statoFisico || 'N/D'}<br>
+      <b>Tipo Imballo:</b> ${p.tipoImballo || 'N/D'}<br>
       <b>Stato:</b> ${p.stato}<br>
       ${p.analisi ? `<b>Analisi:</b> <a href="/uploads/${p.analisi}" target="_blank">📎 Visualizza</a><br>` : ''}
       <div class="chat-box" id="chat-${p.id}">Caricamento messaggi...</div>
@@ -256,3 +281,4 @@ function switchClientePage(p) {
 </script>
 </body>
 </html>
+
