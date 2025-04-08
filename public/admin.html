@@ -5,75 +5,122 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Area Admin – Ecodrin</title>
   <link rel="stylesheet" href="style-ecodrin.css" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    input, select {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 10px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      background: #f4f6f8;
+      color: #333;
     }
-    .chat input {
-      width: calc(100% - 100px);
+    header {
+      background-color: #004c45;
+      color: white;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
     }
-    .chat button {
-      width: 80px;
+    header img {
+      height: 50px;
     }
-    .giorno h3 {
+    nav {
+      margin-top: 10px;
+    }
+    nav button {
+      margin: 0 5px;
+      background: #00785c;
+      border: none;
+      padding: 10px 15px;
+      color: white;
+      font-weight: bold;
+      border-radius: 4px;
       cursor: pointer;
     }
+    nav button:hover {
+      background-color: #009070;
+    }
+    main {
+      max-width: 1100px;
+      margin: 30px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      margin-top: 0;
+    }
+    .hidden {
+      display: none;
+    }
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
     @media (max-width: 600px) {
-      .chat input, .chat button {
+      nav button {
+        display: block;
         width: 100%;
-        margin-top: 5px;
+        margin-bottom: 10px;
+      }
+      .top {
+        flex-direction: column;
+        align-items: flex-start;
       }
     }
   </style>
 </head>
 <body>
 
-<header class="header">
-  <a href="index.html">
-    <img src="logo-ecodrin.png" alt="Logo Ecodrin" class="logo" />
-  </a>
-  <h1>Area Admin</h1>
+<header>
+  <div style="display:flex; align-items:center; gap:15px;">
+    <a href="index.html">
+      <img src="logo-ecodrin.png" alt="Logo Ecodrin" />
+    </a>
+    <h1 style="margin: 0;">Area Amministrativa</h1>
+  </div>
+  <nav>
+    <button onclick="switchPage('registro')">📋 Registro</button>
+    <button onclick="switchPage('statistiche')">📈 Statistiche</button>
+    <button onclick="logout()">🚪 Logout</button>
+  </nav>
 </header>
 
-<main class="main">
+<main>
   <!-- LOGIN -->
   <div id="loginBox">
     <h2>Accesso Amministratore</h2>
-    <input id="loginEmail" placeholder="Email">
-    <input id="loginPassword" type="password" placeholder="Password">
+    <input id="loginEmail" placeholder="Email" />
+    <input id="loginPassword" type="password" placeholder="Password" />
     <button onclick="login()">Accedi</button>
     <div id="loginErrore" style="color:red;"></div>
   </div>
 
-  <!-- AREA ADMIN -->
+  <!-- CONTENUTO ADMIN -->
   <div id="contenutoAdmin" class="hidden">
-    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
-      <h2>Registro Prenotazioni</h2>
-      <div>
-        <select onchange="switchPage(this.value)">
-          <option value="registro">📋 Registro</option>
-          <option value="statistiche">📈 Statistiche</option>
-        </select>
-        <button onclick="logout()">🚪 Logout</button>
+    <!-- REGISTRO -->
+    <section id="paginaRegistro">
+      <div class="top">
+        <h2>📋 Registro Prenotazioni</h2>
+        <button onclick="caricaPrenotazioni()">🔄 Aggiorna</button>
       </div>
-    </div>
-
-    <div id="paginaRegistro">
       <div id="contenitoreGiorni"></div>
-    </div>
+    </section>
 
-    <div id="paginaStatistiche" class="hidden">
-      <h3>📈 Statistiche CER</h3>
-      <button onclick="esportaCSV()">📤 Esporta CSV</button>
+    <!-- STATISTICHE -->
+    <section id="paginaStatistiche" class="hidden">
+      <div class="top">
+        <h2>📈 Statistiche CER</h2>
+        <button onclick="esportaCSV()">📤 Esporta CSV</button>
+      </div>
       <ul id="statistiche"></ul>
       <canvas id="graficoCER"></canvas>
-    </div>
-  </div><script>
+    </section>
+  </div>
+<script>
 let adminAutenticato = false;
 const chatTimers = {};
 const chatLastMessage = {};
@@ -111,15 +158,10 @@ function logout() {
   location.reload();
 }
 
-function switchPage(p) {
+function switchPage(page) {
   document.getElementById('paginaRegistro').classList.add('hidden');
   document.getElementById('paginaStatistiche').classList.add('hidden');
-  document.getElementById(`pagina${p.charAt(0).toUpperCase() + p.slice(1)}`).classList.remove('hidden');
-}
-
-function toggleGiorno(el) {
-  const contenuto = el.nextElementSibling;
-  contenuto.style.display = contenuto.style.display === 'block' ? 'none' : 'block';
+  document.getElementById(`pagina${page.charAt(0).toUpperCase() + page.slice(1)}`).classList.remove('hidden');
 }
 
 function formattaData(dataStr) {
@@ -144,40 +186,39 @@ async function caricaPrenotazioni() {
   });
 
   const giorni = Object.keys(gruppi).sort((a,b)=>new Date(b)-new Date(a));
-  if (!giorni.length) return contenitore.innerHTML = '<p>Nessuna prenotazione.</p>';
+  if (!giorni.length) return contenitore.innerHTML = '<p>Nessuna prenotazione disponibile.</p>';
 
   giorni.forEach(data => {
     const giorno = document.createElement('div');
-    giorno.className = 'giorno';
-    giorno.innerHTML = `<h3 onclick="toggleGiorno(this)">${formattaData(data)} (${gruppi[data].length})</h3>`;
+    giorno.innerHTML = `<h3>${formattaData(data)} (${gruppi[data].length})</h3>`;
     const contenuto = document.createElement('div');
-    contenuto.className = 'contenuto';
-
     gruppi[data].forEach(p => {
       const div = document.createElement('div');
-      div.className = 'prenotazione';
+      div.style.border = '1px solid #ccc';
+      div.style.padding = '15px';
+      div.style.marginBottom = '15px';
+      div.style.borderRadius = '6px';
       div.innerHTML = `
-        <div><b>Cliente:</b> ${p.ragioneSociale}</div>
-        <div><b>CER:</b> ${p.codiceCER} | <b>Quantità:</b> ${p.quantita} kg</div>
-        <div><b>Pericolosità:</b> ${p.pericolosita || 'N/D'} | <b>Stato Fisico:</b> ${p.statoFisico || 'N/D'}</div>
-        <div><b>Data:</b> ${p.data}</div>
-        ${p.analisi ? `<div><b>Analisi:</b> <a href="/uploads/${p.analisi}" target="_blank">Visualizza</a></div>` : ''}
-        <div><b>Stato:</b> <span id="stato-${p.id}">${p.stato}</span></div>
+        <b>Cliente:</b> ${p.ragioneSociale} (${p.codiceCliente})<br>
+        <b>CER:</b> ${p.codiceCER} | <b>Quantità:</b> ${p.quantita} kg<br>
+        <b>Data:</b> ${p.data} | <b>Pericolosità:</b> ${p.pericolosita || 'N/D'}<br>
+        <b>Imballo:</b> ${p.tipoImballo || 'N/D'} | <b>Stato Fisico:</b> ${p.statoFisico || 'N/D'}<br>
+        ${p.analisi ? `<b>Analisi:</b> <a href="/uploads/${p.analisi}" target="_blank">📎 Visualizza</a><br>` : ''}
+        <b>Stato:</b> <span id="stato-${p.id}">${p.stato}</span><br>
         <button onclick="aggiornaStato(${p.id}, 'confermata')">✅ Conferma</button>
         <button onclick="aggiornaStato(${p.id}, 'rifiutata')">❌ Rifiuta</button>
-        <div class="chat">
+        <div class="chat" style="margin-top:15px;">
           <b>Chat:</b>
-          <div class="chat-messaggi" id="chatMsg-${p.id}">Caricamento...</div>
-          <input id="inputMsg-${p.id}" placeholder="Scrivi un messaggio...">
+          <div class="chat-messaggi" id="chatMsg-${p.id}" style="border:1px solid #ccc; padding:10px; max-height:150px; overflow:auto; background:#f9f9f9; margin-bottom:10px;">Caricamento...</div>
+          <input id="inputMsg-${p.id}" placeholder="Scrivi un messaggio..." />
           <button onclick="inviaMessaggio(${p.id})">📨</button>
         </div>
       `;
       contenuto.appendChild(div);
       caricaChat(p.id);
     });
-
-    giorno.appendChild(contenuto);
     contenitore.appendChild(giorno);
+    contenitore.appendChild(contenuto);
   });
 }
 
@@ -206,13 +247,13 @@ async function caricaChat(id) {
     if (Notification.permission === "granted") {
       new Notification("📬 Nuovo messaggio da " + lastMsg.autore, { body: lastMsg.testo });
     }
-    try { new Audio("/sounds/notify.mp3").play(); } catch(e){}
+    try { new Audio("/sounds/notify.mp3").play(); } catch(e) {}
   }
 
   chatLastMessage[id] = lastMsg;
 
   box.innerHTML = chat.map(m => `
-    <div class="messaggio"><b>${m.autore}</b>: ${m.testo}<br>
+    <div><b>${m.autore}</b>: ${m.testo}<br>
     <small>${new Date(m.timestamp).toLocaleString()}</small></div>
   `).join('');
   box.scrollTop = box.scrollHeight;
