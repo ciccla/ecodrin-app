@@ -298,8 +298,9 @@ async function caricaPrenotazioni() {
         <div class="chat" style="margin-top:15px;">
           <b>Chat:</b>
           <div class="chat-messaggi" id="chatMsg-${p.id}">Caricamento...</div>
-          <input id="inputMsg-${p.id}" placeholder="Scrivi un messaggio..." onkeydown="if(event.key==='Enter'){inviaMessaggio(${p.id})}" />
-          <button onclick="inviaMessaggio(${p.id})" class="btn-green">📨 Invia</button>
+          <input id="inputMsg-${p.id}" placeholder="Scrivi un messaggio..." 
+            onkeydown="if(event.key==='Enter'){inviaMessaggio(${p.id})}" />
+          <button onclick="inviaMessaggio(${p.id})">📨 Invia</button>
         </div>
       `;
       contenuto.appendChild(div);
@@ -415,4 +416,3 @@ async function caricaStatistiche() {
 </body>
 </html>
 
- 
