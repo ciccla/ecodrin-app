@@ -140,14 +140,16 @@
 </header>
 
 <main>
-  <!-- LOGIN -->
-  <div id="loginBox">
-    <h2>🔐 Accesso Clienti</h2>
-    <input id="loginEmail" placeholder="Ragione Sociale" />
-    <input id="loginPassword" type="password" placeholder="Password" />
-    <button onclick="login()">Accedi</button>
-    <div id="loginErrore" style="color:red;"></div>
-  </div>
+<!-- LOGIN CLIENTE -->
+<div id="loginBox">
+  <h2>🔐 Accesso Clienti</h2>
+  <input id="loginEmail" placeholder="Ragione Sociale"
+    onkeydown="if(event.key==='Enter') login()" />
+  <input id="loginPassword" type="password" placeholder="Password"
+    onkeydown="if(event.key==='Enter') login()" />
+  <button onclick="login()">Accedi</button>
+  <div id="loginErrore" style="color:red;"></div>
+</div>
 
   <!-- CONTENUTO AREA CLIENTI -->
   <div id="contenutoCliente" class="hidden">
