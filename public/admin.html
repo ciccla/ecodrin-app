@@ -344,6 +344,23 @@ async function caricaChat(id) {
   if (!box) return;
 
   const lastMsg = chat[chat.length - 1];
+  const notificaEl = document.getElementById(`notificaChat-${id}`);
+const lastKnown = chatLastMessage[id]?.timestamp;
+const isAdmin = typeof utente === 'undefined';
+const autoreCorrente = isAdmin ? 'impianto' : utente.ragioneSociale;
+
+if (
+  lastMsg &&
+  (!lastKnown || lastMsg.timestamp > lastKnown) &&
+  lastMsg.autore !== autoreCorrente
+) {
+  if (notificaEl) notificaEl.classList.remove('hidden');
+  if (Notification.permission === "granted") {
+    new Notification("📬 Nuovo messaggio", { body: lastMsg.testo });
+  }
+  try { new Audio("/sounds/notify.mp3").play(); } catch (e) {}
+}
+
   const lastKnown = chatLastMessage[id]?.timestamp;
   if (
     lastMsg &&
