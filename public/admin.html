@@ -196,7 +196,7 @@
   <!-- parte 2-->
 
 
-  <script>
+ <script>
 let adminAutenticato = false;
 const chatTimers = {};
 const chatLastMessage = {};
@@ -261,15 +261,20 @@ async function caricaPrenotazioni() {
   giorni.forEach(data => {
     const wrapper = document.createElement('div');
 
-    const toggle = document.createElement('div');
-    toggle.className = 'giorno-blocco';
-    toggle.textContent = `📅 ${formattaData(data)} (${gruppi[data].length})`;
-    toggle.onclick = () => wrapper.querySelector('.prenotazioni-giorno').classList.toggle('hidden');
-
-    const contenuto = document.createElement('div');
-    contenuto.className = 'prenotazioni-giorno hidden';
-
     gruppi[data].forEach(p => {
+      const toggle = document.createElement('div');
+      toggle.className = 'giorno-blocco';
+      toggle.textContent = `📅 ${formattaData(p.data)} (${gruppi[data].length})`;
+      toggle.onclick = () => {
+        const box = wrapper.querySelector('.prenotazioni-giorno');
+        box.classList.toggle('hidden');
+        const notifica = document.getElementById(`notificaChat-${p.id}`);
+        if (notifica) notifica.classList.add('hidden');
+      };
+
+      const contenuto = document.createElement('div');
+      contenuto.className = 'prenotazioni-giorno hidden';
+
       const div = document.createElement('div');
       div.className = 'prenotazione';
       div.innerHTML = `
@@ -285,21 +290,19 @@ async function caricaPrenotazioni() {
           <option value="rifiutata" ${p.stato === 'rifiutata' ? 'selected' : ''}>❌ Rifiutata</option>
         </select>
 
-        <div class="chat" style="margin-top:15px;">
-         <b>Chat:</b> <span id="notificaChat-${p.id}" class="chat-notifica hidden">🔴 Nuovo</span>
+        <div class="chat">
+          <b>Chat:</b> <span id="notificaChat-${p.id}" class="chat-notifica hidden">🔴 Nuovo</span>
           <div class="chat-messaggi" id="chatMsg-${p.id}">Caricamento...</div>
-          <input id="inputMsg-${p.id}" placeholder="Scrivi un messaggio..." 
-            onkeydown="if(event.key==='Enter'){inviaMessaggio(${p.id})}" />
-          <button onclick="inviaMessaggio(${p.id})">📨 Invia</button>
+          <input id="inputMsg-${p.id}" placeholder="Scrivi un messaggio..." onkeydown="if(event.key==='Enter'){inviaMessaggio(${p.id})}" />
+          <button class="btn-green" onclick="inviaMessaggio(${p.id})">📨 Invia</button>
         </div>
       `;
       contenuto.appendChild(div);
+      wrapper.appendChild(toggle);
+      wrapper.appendChild(contenuto);
+      contenitore.appendChild(wrapper);
       caricaChat(p.id);
     });
-
-    wrapper.appendChild(toggle);
-    wrapper.appendChild(contenuto);
-    contenitore.appendChild(wrapper);
   });
 }
 
@@ -315,36 +318,22 @@ async function caricaChat(id) {
   const res = await fetch(`/api/prenotazioni/${id}/chat`);
   const chat = await res.json();
   const box = document.getElementById(`chatMsg-${id}`);
+  const notificaEl = document.getElementById(`notificaChat-${id}`);
   if (!box) return;
 
   const lastMsg = chat[chat.length - 1];
-  const notificaEl = document.getElementById(`notificaChat-${id}`);
-const lastKnown = chatLastMessage[id]?.timestamp;
-const isAdmin = typeof utente === 'undefined';
-const autoreCorrente = isAdmin ? 'impianto' : utente.ragioneSociale;
-
-if (
-  lastMsg &&
-  (!lastKnown || lastMsg.timestamp > lastKnown) &&
-  lastMsg.autore !== autoreCorrente
-) {
-  if (notificaEl) notificaEl.classList.remove('hidden');
-  if (Notification.permission === "granted") {
-    new Notification("📬 Nuovo messaggio", { body: lastMsg.testo });
-  }
-  try { new Audio("/sounds/notify.mp3").play(); } catch (e) {}
-}
-
   const lastKnown = chatLastMessage[id]?.timestamp;
+
   if (
     lastMsg &&
     (!lastKnown || lastMsg.timestamp > lastKnown) &&
     lastMsg.autore !== 'impianto'
   ) {
+    if (notificaEl) notificaEl.classList.remove('hidden');
     if (Notification.permission === "granted") {
-      new Notification("📬 Nuovo messaggio da cliente", { body: lastMsg.testo });
+      new Notification("📬 Nuovo messaggio", { body: lastMsg.testo });
     }
-    try { new Audio("/sounds/notify.mp3").play(); } catch(e) {}
+    try { new Audio("/sounds/notify.mp3").play(); } catch (e) {}
   }
 
   chatLastMessage[id] = lastMsg;
@@ -422,4 +411,3 @@ async function caricaStatistiche() {
 </script>
 </body>
 </html>
-
