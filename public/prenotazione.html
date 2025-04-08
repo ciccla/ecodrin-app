@@ -3,14 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin – Eco.Drin</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <title>Prenotazione Rifiuti – Eco.Drin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
   <style>
     body {
       font-family: 'Poppins', sans-serif;
       margin: 0;
-      background: #f1f4f6;
+      background-color: #f1f4f6;
       color: #333;
     }
 
@@ -18,240 +17,140 @@
       background-color: #004c45;
       color: white;
       padding: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
+      text-align: center;
     }
 
     header img {
-      height: 50px;
-    }
-
-    .menu-dropdown {
-      position: relative;
-    }
-
-    .menu-dropdown button {
-      background: #00785c;
-      color: white;
-      border: none;
-      padding: 10px 15px;
-      font-weight: bold;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    .menu-dropdown-content {
-      display: none;
-      position: absolute;
-      right: 0;
-      top: 100%;
-      background-color: white;
-      min-width: 160px;
-      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-      z-index: 1;
-    }
-
-    .menu-dropdown-content a {
-      color: #004c45;
-      padding: 10px 15px;
-      text-decoration: none;
-      display: block;
-    }
-
-    .menu-dropdown-content a:hover {
-      background-color: #f1f1f1;
-    }
-
-    .menu-dropdown.hidden {
-      display: none;
-    }
-
-    .menu-dropdown:hover .menu-dropdown-content {
-      display: block;
+      height: 60px;
+      margin-bottom: 10px;
     }
 
     main {
-      max-width: 1100px;
-      margin: 30px auto;
+      max-width: 700px;
       background: white;
+      margin: 40px auto;
       padding: 30px;
       border-radius: 10px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.05);
     }
 
     h2 {
-      margin-top: 0;
       color: #004c45;
+      margin-top: 0;
     }
 
-    h3 {
-      margin-top: 30px;
-      color: #00785c;
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: 600;
     }
 
-    .hidden {
-      display: none;
-    }
-
-    .prenotazione {
-      background: #fff;
-      border: 1px solid #ccc;
-      padding: 20px;
-      margin: 20px 0;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-    }
-
-    .prenotazione b {
-      color: #00785c;
-    }
-
-    .top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    button, select, input {
-      font-family: 'Poppins', sans-serif;
-    }
-
-    select, input {
-      padding: 8px 10px;
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
       margin-top: 5px;
-      margin-bottom: 10px;
-      border-radius: 4px;
       border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
     }
 
     button {
-      padding: 8px 12px;
-      border-radius: 5px;
+      margin-top: 20px;
+      background-color: #28a745;
+      color: white;
       border: none;
+      padding: 12px 20px;
+      font-size: 16px;
+      border-radius: 6px;
       cursor: pointer;
     }
 
     button:hover {
-      opacity: 0.9;
+      background-color: #218838;
     }
 
-    .btn-green {
-      background-color: #28a745;
-      color: white;
+    .success, .error {
+      margin-top: 15px;
+      font-weight: bold;
     }
 
-    .btn-red {
-      background-color: #dc3545;
-      color: white;
+    .success {
+      color: #28a745;
     }
 
-    .chat-messaggi {
-      background: #f8f9fa;
-      padding: 10px;
-      border: 1px solid #ccc;
-      max-height: 150px;
-      overflow-y: auto;
-      border-radius: 6px;
-      margin-bottom: 10px;
-    }
-
-    .msg {
-      background: #e1f5ec;
-      margin-bottom: 5px;
-      padding: 8px 10px;
-      border-radius: 6px;
-    }
-
-    .msg small {
-      display: block;
-      font-size: 11px;
-      color: #555;
+    .error {
+      color: #dc3545;
     }
 
     footer {
       text-align: center;
-      font-size: 14px;
       padding: 20px;
       color: #777;
-      margin-top: 40px;
-    }
-
-    @media (max-width: 600px) {
-      .top {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .menu-dropdown {
-        width: 100%;
-      }
-
-      .menu-dropdown-content {
-        position: static;
-      }
+      font-size: 14px;
+      margin-top: 50px;
     }
   </style>
 </head>
-
 <body>
+
 <header>
-  <div style="display:flex; align-items:center; gap:15px;">
-    <a href="index.html"><img src="eco.drin-_srl.png" alt="Logo Ecodrin" /></a>
-    <h1 style="margin:0;">Area Amministrativa</h1>
-  </div>
-  <div class="menu-dropdown hidden" id="menuAdmin">
-    <button>📂 Menu</button>
-    <div class="menu-dropdown-content">
-      <a href="#" onclick="switchPage('registro')">📋 Registro</a>
-      <a href="#" onclick="switchPage('statistiche')">📈 Statistiche</a>
-      <a href="#" onclick="logout()">🚪 Logout</a>
-    </div>
-  </div>
+  <img src="eco.drin-_srl.png" alt="Logo Eco.Drin" />
+  <h1>Prenotazione Ritiro Rifiuti</h1>
 </header>
 
 <main>
-  <!-- LOGIN -->
-  <div id="loginBox">
-    <h2>🔐 Accesso Amministratore</h2>
-    <input id="loginEmail" placeholder="Email" />
-    <input id="loginPassword" type="password" placeholder="Password" />
-    <button class="btn-green" onclick="login()">Accedi</button>
-    <div id="loginErrore" style="color:red;"></div>
-  </div>
+  <h2>📦 Compila il modulo</h2>
+  <form id="formPrenotazione" enctype="multipart/form-data">
+    <label>Ragione Sociale</label>
+    <input name="ragioneSociale" required />
 
-  <!-- CONTENUTO ADMIN -->
-  <div id="contenutoAdmin" class="hidden">
+    <label>Codice Cliente</label>
+    <input name="codiceCliente" required />
 
-    <!-- REGISTRO -->
-    <section id="paginaRegistro">
-      <div class="top">
-        <div>
-          <h2>📋 Registro Prenotazioni</h2>
-          <p style="margin:0; color:gray;">Gestisci le richieste ricevute</p>
-        </div>
-        <button onclick="caricaPrenotazioni()">🔄 Aggiorna</button>
-      </div>
-      <div id="contenitoreGiorni"></div>
-    </section>
+    <label>Produttore</label>
+    <input name="produttore" required />
 
-    <!-- STATISTICHE -->
-    <section id="paginaStatistiche" class="hidden">
-      <div class="top">
-        <div>
-          <h2>📈 Statistiche</h2>
-          <p style="margin:0; color:gray;">Andamento e CER gestiti</p>
-        </div>
-        <button onclick="esportaCSV()">📤 Esporta CSV</button>
-      </div>
-      <div id="statTotali" style="margin-top:20px;"></div>
-      <ul id="statistiche" style="margin-top:20px;"></ul>
-      <canvas id="graficoCER" style="max-width: 600px; margin: 30px auto;"></canvas>
-    </section>
+    <label>Codice CER</label>
+    <input name="codiceCER" required />
 
-  </div>
+    <label>Pericolosità (HP)</label>
+    <select name="pericolosita">
+      <option value="">Nessuna</option>
+      ${Array.from({ length: 15 }, (_, i) => `<option>HP${i + 1}</option>`).join("")}
+    </select>
+
+    <label>Tipo Imballo</label>
+    <input name="tipoImballo" required />
+
+    <label>Stato Fisico</label>
+    <select name="statoFisico" required>
+      <option>Solido</option>
+      <option>Liquido</option>
+      <option>Fangoso</option>
+      <option>Polverulento</option>
+      <option>Pasta</option>
+      <option>Solido impregnato</option>
+      <option>Gassoso</option>
+      <option>Aerosol</option>
+      <option>Miscela</option>
+      <option>Emulsione</option>
+    </select>
+
+    <label>Quantità (kg)</label>
+    <input name="quantita" type="number" required />
+
+    <label>Data Ritiro</label>
+    <input name="data" type="date" required />
+
+    <label>Allega Analisi (PDF)</label>
+    <input name="analisi" type="file" accept=".pdf" />
+
+    <label>Email per conferma</label>
+    <input name="email" type="email" required />
+
+    <button type="submit">📨 Invia Prenotazione</button>
+    <div id="messaggio"></div>
+  </form>
 </main>
 
 <footer>
@@ -260,53 +159,169 @@
   ✉️ <a href="mailto:info@ecodrinsrl.it">info@ecodrinsrl.it</a> / <a href="mailto:impianto@ecodrinsrl.it">impianto@ecodrinsrl.it</a><br />
   ©2025 Eco.Drin s.r.l. – P.I: 03378791218
 </footer>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const form = document.getElementById("formPrenotazione");
-  const messaggio = document.getElementById("messaggio");
 
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    messaggio.className = "";
-    messaggio.textContent = "⏳ Invio in corso...";
 
-    // Validazione email base
-    const email = form.email.value.trim();
-    if (!email.includes("@")) {
-      messaggio.textContent = "❌ Inserisci un'email valida.";
-      messaggio.className = "error";
-      return;
+
+
+
+  <!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prenotazione Rifiuti – Eco.Drin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      background-color: #f1f4f6;
+      color: #333;
     }
 
-    // Validazione file PDF
-    const fileInput = form.analisi;
-    const file = fileInput.files[0];
-    if (file && file.type !== "application/pdf") {
-      messaggio.textContent = "❌ Il file deve essere in formato PDF.";
-      messaggio.className = "error";
-      return;
+    header {
+      background-color: #004c45;
+      color: white;
+      padding: 20px;
+      text-align: center;
     }
 
-    // Invia i dati
-    const formData = new FormData(form);
-    try {
-      const res = await fetch("/api/prenotazioni", {
-        method: "POST",
-        body: formData
-      });
-
-      if (!res.ok) throw new Error();
-
-      messaggio.textContent = "✅ Prenotazione inviata con successo!";
-      messaggio.className = "success";
-      form.reset();
-    } catch (err) {
-      console.error(err);
-      messaggio.textContent = "❌ Errore durante l'invio. Riprova.";
-      messaggio.className = "error";
+    header img {
+      height: 60px;
+      margin-bottom: 10px;
     }
-  });
-});
-</script>
-</body>
-</html>
+
+    main {
+      max-width: 700px;
+      background: white;
+      margin: 40px auto;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+
+    h2 {
+      color: #004c45;
+      margin-top: 0;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: 600;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+
+    button {
+      margin-top: 20px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #218838;
+    }
+
+    .success, .error {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    .success {
+      color: #28a745;
+    }
+
+    .error {
+      color: #dc3545;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      color: #777;
+      font-size: 14px;
+      margin-top: 50px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <img src="eco.drin-_srl.png" alt="Logo Eco.Drin" />
+  <h1>Prenotazione Ritiro Rifiuti</h1>
+</header>
+
+<main>
+  <h2>📦 Compila il modulo</h2>
+  <form id="formPrenotazione" enctype="multipart/form-data">
+    <label>Ragione Sociale</label>
+    <input name="ragioneSociale" required />
+
+    <label>Codice Cliente</label>
+    <input name="codiceCliente" required />
+
+    <label>Produttore</label>
+    <input name="produttore" required />
+
+    <label>Codice CER</label>
+    <input name="codiceCER" required />
+
+    <label>Pericolosità (HP)</label>
+    <select name="pericolosita">
+      <option value="">Nessuna</option>
+      ${Array.from({ length: 15 }, (_, i) => `<option>HP${i + 1}</option>`).join("")}
+    </select>
+
+    <label>Tipo Imballo</label>
+    <input name="tipoImballo" required />
+
+    <label>Stato Fisico</label>
+    <select name="statoFisico" required>
+      <option>Solido</option>
+      <option>Liquido</option>
+      <option>Fangoso</option>
+      <option>Polverulento</option>
+      <option>Pasta</option>
+      <option>Solido impregnato</option>
+      <option>Gassoso</option>
+      <option>Aerosol</option>
+      <option>Miscela</option>
+      <option>Emulsione</option>
+    </select>
+
+    <label>Quantità (kg)</label>
+    <input name="quantita" type="number" required />
+
+    <label>Data Ritiro</label>
+    <input name="data" type="date" required />
+
+    <label>Allega Analisi (PDF)</label>
+    <input name="analisi" type="file" accept=".pdf" />
+
+    <label>Email per conferma</label>
+    <input name="email" type="email" required />
+
+    <button type="submit">📨 Invia Prenotazione</button>
+    <div id="messaggio"></div>
+  </form>
+</main>
+
+<footer>
+  📍 Via delle Industrie – Zona Asi - 80011 Acerra (NA)<br />
+  📞 081.8857480 / 081.5207650<br />
+  ✉️ <a href="mailto:info@ecodrinsrl.it">info@ecodrinsrl.it</a> / <a href="mailto:impianto@ecodrinsrl.it">impianto@ecodrinsrl.it</a><br />
+  ©2025 Eco.Drin s.r.l. – P.I: 03378791218
+</footer>
