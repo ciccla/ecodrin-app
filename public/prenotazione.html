@@ -26,6 +26,16 @@
       height: 50px;
     }
 
+    #logoutBtn {
+      background: #ff4d4d;
+      color: white;
+      padding: 8px 14px;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
     main {
       max-width: 1000px;
       margin: 30px auto;
@@ -48,13 +58,17 @@
       margin-bottom: 30px;
     }
 
-    input, select {
+    input, select, textarea {
       width: 100%;
       padding: 10px;
       margin-top: 5px;
       border-radius: 6px;
       border: 1px solid #ccc;
       box-sizing: border-box;
+    }
+
+    select[multiple] {
+      height: auto;
     }
 
     button {
@@ -76,6 +90,7 @@
       margin-bottom: 20px;
       display: flex;
       gap: 10px;
+      flex-wrap: wrap;
     }
 
     .navCliente button {
@@ -163,6 +178,7 @@
     <img src="eco.drin-_srl.png" alt="Logo Ecodrin" />
     <h1 style="margin:0;">Area Clienti</h1>
   </div>
+  <button id="logoutBtn" class="hidden" onclick="logout()">Logout</button>
 </header>
 
 <main>
@@ -182,49 +198,45 @@
     <div class="navCliente">
       <button id="btnNuova" class="active" onclick="mostraSezione('formPrenotazione')">➕ Nuova Prenotazione</button>
       <button id="btnStorico" onclick="mostraSezione('archivioPrenotazioni')">📁 Le tue Prenotazioni</button>
+      <button id="btnProfilo" onclick="mostraSezione('profiloCliente')">👤 Profilo</button>
     </div>
 
+    <!-- FORM PRENOTAZIONE -->
     <section id="formPrenotazione" class="section">
       <h2>➕ Nuova Prenotazione</h2>
       <form id="form">
+        <label>Produttore</label>
+        <input name="produttore" required />
+
         <label>Codice CER</label>
         <input name="codiceCER" required />
 
         <label>Pericolosità (HP)</label>
-        <select name="pericolosita">
-          <option value="">Nessuna</option>
-          <option>HP1</option>
-          <option>HP2</option>
-          <option>HP3</option>
-          <option>HP4</option>
-          <option>HP5</option>
-          <option>HP6</option>
-          <option>HP7</option>
-          <option>HP8</option>
-          <option>HP9</option>
-          <option>HP10</option>
-          <option>HP11</option>
-          <option>HP12</option>
-          <option>HP13</option>
-          <option>HP14</option>
-          <option>HP15</option>
+        <select name="pericolosita" multiple>
+          <option>HP1</option><option>HP2</option><option>HP3</option><option>HP4</option><option>HP5</option>
+          <option>HP6</option><option>HP7</option><option>HP8</option><option>HP9</option><option>HP10</option>
+          <option>HP11</option><option>HP12</option><option>HP13</option><option>HP14</option><option>HP15</option>
         </select>
+        <small>Premi CTRL o ⌘ per selezionare più valori</small>
 
         <label>Tipo Imballo</label>
-        <input name="tipoImballo" required />
+        <select name="tipoImballo" required>
+          <option>sfuso</option>
+          <option>big bags</option>
+          <option>pallet</option>
+          <option>cisterna 5mc</option>
+          <option>cisterna 15mc</option>
+          <option>cisterna 30mc</option>
+          <option>altro</option>
+        </select>
 
         <label>Stato Fisico</label>
         <select name="statoFisico" required>
-          <option>Solido</option>
-          <option>Liquido</option>
-          <option>Fangoso</option>
-          <option>Polverulento</option>
-          <option>Pasta</option>
-          <option>Solido impregnato</option>
-          <option>Gassoso</option>
-          <option>Aerosol</option>
-          <option>Miscela</option>
-          <option>Emulsione</option>
+          <option>SP (polverulento)</option>
+          <option>S (solido)</option>
+          <option>VS (vischioso/sciropposo)</option>
+          <option>Fp (fangoso)</option>
+          <option>L (liquido)</option>
         </select>
 
         <label>Quantità (kg)</label>
@@ -241,9 +253,31 @@
       </form>
     </section>
 
+    <!-- ARCHIVIO -->
     <section id="archivioPrenotazioni" class="section hidden">
       <h2>📁 Le Tue Prenotazioni</h2>
       <div id="contenitorePrenotazioni"></div>
+    </section>
+
+    <!-- PROFILO -->
+    <section id="profiloCliente" class="section hidden">
+      <h2>👤 Profilo Cliente</h2>
+      <form id="formProfilo">
+        <label>Email</label>
+        <input name="email" type="email" placeholder="esempio@email.it" />
+
+        <label>Telefono</label>
+        <input name="telefono" type="text" />
+
+        <label>Nuova Password</label>
+        <input name="nuovaPassword" type="password" />
+
+        <label>Autorizzazioni (PDF opzionale)</label>
+        <input name="autorizzazioni" type="file" accept=".pdf" />
+
+        <button type="submit">💾 Salva Profilo</button>
+        <div id="profiloMsg" style="margin-top: 10px;"></div>
+      </form>
     </section>
   </div>
 </main>
@@ -267,43 +301,25 @@ const chatLastMessage = {};
 if ("Notification" in window) Notification.requestPermission();
 
 function mostraSezione(id) {
-  document.getElementById("formPrenotazione").classList.add("hidden");
-  document.getElementById("archivioPrenotazioni").classList.add("hidden");
+  ["formPrenotazione", "archivioPrenotazioni", "profiloCliente"].forEach(s => {
+    document.getElementById(s).classList.add("hidden");
+  });
   document.getElementById(id).classList.remove("hidden");
 
-  document.getElementById("btnNuova").classList.remove("active");
-  document.getElementById("btnStorico").classList.remove("active");
-
-  if (id === "formPrenotazione") {
-    document.getElementById("btnNuova").classList.add("active");
-  } else {
-    document.getElementById("btnStorico").classList.add("active");
-  }
+  ["btnNuova", "btnStorico", "btnProfilo"].forEach(b => {
+    document.getElementById(b).classList.remove("active");
+  });
+  const btnId = id === "formPrenotazione" ? "btnNuova" :
+                id === "archivioPrenotazioni" ? "btnStorico" : "btnProfilo";
+  document.getElementById(btnId).classList.add("active");
 }
 
-document.getElementById("form").addEventListener("submit", async e => {
-  e.preventDefault();
-  const form = e.target;
-  const formData = new FormData(form);
-
-  formData.append("ragioneSociale", utente.ragioneSociale);
-  formData.append("codiceCliente", utente.codiceCliente);
-  formData.append("produttore", utente.ragioneSociale);
-  formData.append("email", utente.email);
-
-  document.getElementById("msgRisultato").textContent = "⏳ Invio in corso...";
-
-  try {
-    const res = await fetch("/api/prenotazioni", { method: "POST", body: formData });
-    if (!res.ok) throw new Error();
-    form.reset();
-    document.getElementById("msgRisultato").textContent = "✅ Prenotazione inviata!";
-    caricaPrenotazioni();
-    mostraSezione('archivioPrenotazioni');
-  } catch (err) {
-    document.getElementById("msgRisultato").textContent = "❌ Errore durante l'invio.";
-  }
-});
+function logout() {
+  utente = null;
+  document.getElementById("contenutoCliente").classList.add("hidden");
+  document.getElementById("logoutBtn").classList.add("hidden");
+  document.getElementById("loginBox").classList.remove("hidden");
+}
 
 function login() {
   const ragioneSociale = document.getElementById("loginEmail").value.trim();
@@ -320,11 +336,56 @@ function login() {
       utente = json.utente;
       document.getElementById("loginBox").classList.add("hidden");
       document.getElementById("contenutoCliente").classList.remove("hidden");
+      document.getElementById("logoutBtn").classList.remove("hidden");
       caricaPrenotazioni();
     } else throw new Error();
   })
   .catch(() => document.getElementById("loginErrore").innerText = "❌ Login fallito.");
 }
+
+document.getElementById("form").addEventListener("submit", async e => {
+  e.preventDefault();
+  const form = e.target;
+  const formData = new FormData(form);
+
+  formData.append("ragioneSociale", utente.ragioneSociale);
+  formData.append("codiceCliente", utente.codiceCliente);
+  formData.append("email", utente.email);
+
+  const hp = Array.from(form.elements["pericolosita"].selectedOptions).map(o => o.value);
+  formData.set("pericolosita", hp.join(", "));
+
+  document.getElementById("msgRisultato").textContent = "⏳ Invio in corso...";
+
+  try {
+    const res = await fetch("/api/prenotazioni", { method: "POST", body: formData });
+    if (!res.ok) throw new Error();
+    form.reset();
+    document.getElementById("msgRisultato").textContent = "✅ Prenotazione inviata!";
+    caricaPrenotazioni();
+    mostraSezione("archivioPrenotazioni");
+  } catch (err) {
+    document.getElementById("msgRisultato").textContent = "❌ Errore durante l'invio.";
+  }
+});
+
+document.getElementById("formProfilo").addEventListener("submit", async e => {
+  e.preventDefault();
+  const form = e.target;
+  const formData = new FormData(form);
+  formData.append("codiceCliente", utente.codiceCliente);
+
+  try {
+    const res = await fetch("/api/cliente/profilo", {
+      method: "POST",
+      body: formData
+    });
+    if (!res.ok) throw new Error();
+    document.getElementById("profiloMsg").textContent = "✅ Profilo aggiornato!";
+  } catch {
+    document.getElementById("profiloMsg").textContent = "❌ Errore salvataggio.";
+  }
+});
 
 async function caricaPrenotazioni() {
   const res = await fetch(`/api/prenotazioni/utente/${utente.codiceCliente}`);
@@ -352,7 +413,6 @@ async function caricaPrenotazioni() {
     toggle.onclick = () => {
       const box = wrapper.querySelector(".prenotazioni-giorno");
       box.classList.toggle("hidden");
-
       gruppi[data].forEach(p => {
         const notifica = document.getElementById(`notificaChat-${p.id}`);
         if (notifica) notifica.classList.add('hidden');
