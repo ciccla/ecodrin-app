@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Area Clienti – Eco.Drin</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <style>
@@ -18,8 +18,8 @@
       color: white;
       padding: 20px;
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
     }
 
     header img {
@@ -37,6 +37,7 @@
 
     h2 {
       color: #004c45;
+      margin-top: 0;
     }
 
     .hidden {
@@ -44,13 +45,7 @@
     }
 
     .section {
-      margin-bottom: 40px;
-    }
-
-    label {
-      display: block;
-      margin-top: 15px;
-      font-weight: 600;
+      margin-bottom: 30px;
     }
 
     input, select {
@@ -75,6 +70,24 @@
 
     button:hover {
       background-color: #009072;
+    }
+
+    .navCliente {
+      margin-bottom: 20px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .navCliente button {
+      background: #004c45;
+      border-radius: 6px;
+      padding: 10px 16px;
+      color: white;
+      font-weight: bold;
+    }
+
+    .navCliente button.active {
+      background: #009072;
     }
 
     .giorno-blocco {
@@ -166,8 +179,13 @@
 
   <!-- AREA CLIENTE -->
   <div id="contenutoCliente" class="hidden">
+    <div class="navCliente">
+      <button id="btnNuova" class="active" onclick="mostraSezione('formPrenotazione')">➕ Nuova Prenotazione</button>
+      <button id="btnStorico" onclick="mostraSezione('archivioPrenotazioni')">📁 Le tue Prenotazioni</button>
+    </div>
+
     <section id="formPrenotazione" class="section">
-      <h2>📦 Nuova Prenotazione</h2>
+      <h2>➕ Nuova Prenotazione</h2>
       <form id="form">
         <label>Codice CER</label>
         <input name="codiceCER" required />
@@ -175,7 +193,21 @@
         <label>Pericolosità (HP)</label>
         <select name="pericolosita">
           <option value="">Nessuna</option>
-          ${Array.from({ length: 15 }, (_, i) => `<option>HP${i + 1}</option>`).join("")}
+          <option>HP1</option>
+          <option>HP2</option>
+          <option>HP3</option>
+          <option>HP4</option>
+          <option>HP5</option>
+          <option>HP6</option>
+          <option>HP7</option>
+          <option>HP8</option>
+          <option>HP9</option>
+          <option>HP10</option>
+          <option>HP11</option>
+          <option>HP12</option>
+          <option>HP13</option>
+          <option>HP14</option>
+          <option>HP15</option>
         </select>
 
         <label>Tipo Imballo</label>
@@ -205,11 +237,11 @@
         <input name="analisi" type="file" accept=".pdf" />
 
         <button type="submit">📨 Invia Prenotazione</button>
-        <div id="msgRisultato"></div>
+        <div id="msgRisultato" style="margin-top: 10px;"></div>
       </form>
     </section>
 
-    <section id="archivioPrenotazioni" class="section">
+    <section id="archivioPrenotazioni" class="section hidden">
       <h2>📁 Le Tue Prenotazioni</h2>
       <div id="contenitorePrenotazioni"></div>
     </section>
@@ -223,7 +255,7 @@
   ©2025 Eco.Drin s.r.l. – P.I: 03378791218
 </footer>
 
-
+  
  <!-- parte 2 -->
 
 
@@ -233,6 +265,21 @@ const chatTimers = {};
 const chatLastMessage = {};
 
 if ("Notification" in window) Notification.requestPermission();
+
+function mostraSezione(id) {
+  document.getElementById("formPrenotazione").classList.add("hidden");
+  document.getElementById("archivioPrenotazioni").classList.add("hidden");
+  document.getElementById(id).classList.remove("hidden");
+
+  document.getElementById("btnNuova").classList.remove("active");
+  document.getElementById("btnStorico").classList.remove("active");
+
+  if (id === "formPrenotazione") {
+    document.getElementById("btnNuova").classList.add("active");
+  } else {
+    document.getElementById("btnStorico").classList.add("active");
+  }
+}
 
 document.getElementById("form").addEventListener("submit", async e => {
   e.preventDefault();
@@ -252,6 +299,7 @@ document.getElementById("form").addEventListener("submit", async e => {
     form.reset();
     document.getElementById("msgRisultato").textContent = "✅ Prenotazione inviata!";
     caricaPrenotazioni();
+    mostraSezione('archivioPrenotazioni');
   } catch (err) {
     document.getElementById("msgRisultato").textContent = "❌ Errore durante l'invio.";
   }
@@ -304,6 +352,7 @@ async function caricaPrenotazioni() {
     toggle.onclick = () => {
       const box = wrapper.querySelector(".prenotazioni-giorno");
       box.classList.toggle("hidden");
+
       gruppi[data].forEach(p => {
         const notifica = document.getElementById(`notificaChat-${p.id}`);
         if (notifica) notifica.classList.add('hidden');
