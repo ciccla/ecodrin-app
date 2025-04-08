@@ -3,46 +3,87 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ecodrin - Area Riservata</title>
+  <title>Ecodrin – Accesso Area Riservata</title>
   <link rel="stylesheet" href="style-ecodrin.css" />
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      background: #f4f6f8;
+      color: #333;
+    }
+    header {
+      background-color: #004c45;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+    header img {
+      max-height: 80px;
+      margin-bottom: 10px;
+    }
+    main {
+      max-width: 700px;
+      margin: 40px auto;
+      background: white;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .btn {
+      display: inline-block;
+      margin: 15px 10px;
+      padding: 12px 25px;
+      background-color: #00785c;
+      color: white;
+      font-size: 16px;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: bold;
+    }
+    .btn:hover {
+      background-color: #009072;
+    }
+    footer {
+      text-align: center;
+      font-size: 14px;
+      padding: 20px;
+      color: #777;
+    }
+    @media (max-width: 600px) {
+      .btn {
+        display: block;
+        width: 100%;
+      }
+    }
+  </style>
 </head>
 <body>
-  <header class="header">
-    <img src="logo-ecodrin.png" alt="Ecodrin Logo" class="logo">
-    <h1>Ecodrin Srl</h1>
-    <p>Gestione prenotazioni e rifiuti speciali</p>
-  </header>
 
-  <main class="main">
-    <section class="intro">
-      <h2>Benvenuto nell'Area Riservata</h2>
-      <p>Accedi come cliente o come amministratore per gestire le tue attività.</p>
+<header>
+  <img src="logo-ecodrin.png" alt="Logo Ecodrin" />
+  <h1>Ecodrin S.r.l.</h1>
+  <p>Accesso Area Riservata</p>
+</header>
 
-      <div class="buttons">
-        <a href="prenotazione.html" class="btn">Accedi come Cliente</a>
-        <a href="admin.html" class="btn btn-alt">Accedi come Admin</a>
-      </div>
-    </section>
+<main>
+  <h2>Benvenuto</h2>
+  <p>Accedi alla tua area personale come cliente o amministratore per gestire le prenotazioni rifiuti.</p>
+  <a href="prenotazione.html" class="btn">👤 Accesso Cliente</a>
+  <a href="admin.html" class="btn">🛠️ Accesso Admin</a>
 
-    <section class="contatti">
-      <h3>Contatti</h3>
-      <p><strong>Sede:</strong> Via della Tecnica, 15 – 36075 Montecchio Maggiore (VI)</p>
-      <p><strong>Telefono:</strong> 0444 499566</p>
-      <p><strong>Email:</strong> info@ecodrinsrl.it</p>
-    </section>
-  </main>
+  <hr style="margin: 30px 0;">
 
-  <footer class="footer">
-    &copy; 2024 Ecodrin Srl - Tutti i diritti riservati
-  </footer>
-</body>
-</html>  <footer class="footer">
-    <p>&copy; 2024 Ecodrin S.r.l. – Tutti i diritti riservati</p>
-    <p>
-      Via della Tecnica, 15 – 36075 Montecchio Maggiore (VI)<br>
-      📞 <a href="tel:+390444499566">0444 499566</a> |
-      📧 <a href="mailto:info@ecodrinsrl.it">info@ecodrinsrl.it</a>
-    </p>
-  </footer>
+  <h3>Contatti</h3>
+  <p><strong>📍 Sede:</strong> Via della Tecnica, 15 – 36075 Montecchio Maggiore (VI)</p>
+  <p><strong>📞 Telefono:</strong> <a href="tel:+390444499566">0444 499566</a></p>
+  <p><strong>📧 Email:</strong> <a href="mailto:info@ecodrinsrl.it">info@ecodrinsrl.it</a></p>
+</main>
+
+<footer>
+  &copy; 2024 Ecodrin S.r.l. – Tutti i diritti riservati
+</footer>
+
 </body>
 </html>
