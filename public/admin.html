@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Area Admin – Ecodrin</title>
+  <title>Area Admin – Eco.Drin</title>
   <link rel="stylesheet" href="style-ecodrin.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -17,29 +18,48 @@
       color: white;
       padding: 10px 20px;
       display: flex;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
       flex-wrap: wrap;
     }
     header img {
       height: 50px;
     }
-    nav {
-      margin-top: 10px;
+    .menu-dropdown {
+      position: relative;
     }
-    nav button {
-      margin: 0 5px;
+    .menu-dropdown button {
       background: #00785c;
+      color: white;
       border: none;
       padding: 10px 15px;
-      color: white;
       font-weight: bold;
       border-radius: 4px;
       cursor: pointer;
     }
-    nav button:hover {
-      background-color: #009070;
+    .menu-dropdown-content {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 100%;
+      background-color: white;
+      min-width: 160px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+      z-index: 1;
     }
+    .menu-dropdown-content a {
+      color: #004c45;
+      padding: 10px 15px;
+      text-decoration: none;
+      display: block;
+    }
+    .menu-dropdown-content a:hover {
+      background-color: #f1f1f1;
+    }
+    .menu-dropdown:hover .menu-dropdown-content {
+      display: block;
+    }
+
     main {
       max-width: 1100px;
       margin: 30px auto;
@@ -48,23 +68,33 @@
       border-radius: 10px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
+
     h2 {
       margin-top: 0;
     }
+
     .hidden {
       display: none;
     }
+
     .top {
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
     }
+
+    footer {
+      text-align: center;
+      font-size: 14px;
+      padding: 20px;
+      color: #777;
+      margin-top: 40px;
+    }
+
     @media (max-width: 600px) {
-      nav button {
-        display: block;
+      .menu-dropdown button {
         width: 100%;
-        margin-bottom: 10px;
       }
       .top {
         flex-direction: column;
@@ -78,15 +108,18 @@
 <header>
   <div style="display:flex; align-items:center; gap:15px;">
     <a href="index.html">
-      <img src="logo-ecodrin.png" alt="Logo Ecodrin" />
+      <img src="eco.drin-_srl.png" alt="Logo Ecodrin" />
     </a>
     <h1 style="margin: 0;">Area Amministrativa</h1>
   </div>
-  <nav>
-    <button onclick="switchPage('registro')">📋 Registro</button>
-    <button onclick="switchPage('statistiche')">📈 Statistiche</button>
-    <button onclick="logout()">🚪 Logout</button>
-  </nav>
+  <div class="menu-dropdown">
+    <button>📂 Menu</button>
+    <div class="menu-dropdown-content">
+      <a href="#" onclick="switchPage('registro')">📋 Registro</a>
+      <a href="#" onclick="switchPage('statistiche')">📈 Statistiche</a>
+      <a href="#" onclick="logout()">🚪 Logout</a>
+    </div>
+  </div>
 </header>
 
 <main>
@@ -99,7 +132,7 @@
     <div id="loginErrore" style="color:red;"></div>
   </div>
 
-  <!-- CONTENUTO ADMIN -->
+  <!-- AREA ADMIN -->
   <div id="contenutoAdmin" class="hidden">
     <!-- REGISTRO -->
     <section id="paginaRegistro">
@@ -116,10 +149,19 @@
         <h2>📈 Statistiche CER</h2>
         <button onclick="esportaCSV()">📤 Esporta CSV</button>
       </div>
+      <div id="statTotali"></div>
       <ul id="statistiche"></ul>
-      <canvas id="graficoCER"></canvas>
+      <canvas id="graficoCER" style="max-width: 600px; margin: 30px auto;"></canvas>
     </section>
   </div>
+</main>
+
+<footer>
+  📍 Via delle Industrie – Zona Asi - 80011 Acerra (NA) <br />
+  📞 081.8857480 / 081.5207650 <br />
+  ✉️ <a href="mailto:info@ecodrinsrl.it">info@ecodrinsrl.it</a> / <a href="mailto:impianto@ecodrinsrl.it">impianto@ecodrinsrl.it</a> <br />
+  ©2025 Eco.Drin s.r.l. – P.I: 03378791218
+</footer>
 <script>
 let adminAutenticato = false;
 const chatTimers = {};
@@ -166,9 +208,7 @@ function switchPage(page) {
 
 function formattaData(dataStr) {
   const d = new Date(dataStr);
-  const giorni = ['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato'];
-  const mesi = ['Gen','Feb','Mar','Apr','Mag','Giu','Lug','Ago','Set','Ott','Nov','Dic'];
-  return `${giorni[d.getDay()]} ${d.getDate()} ${mesi[d.getMonth()]} ${d.getFullYear()}`;
+  return `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()}`;
 }
 
 async function caricaPrenotazioni() {
@@ -192,6 +232,7 @@ async function caricaPrenotazioni() {
     const giorno = document.createElement('div');
     giorno.innerHTML = `<h3>${formattaData(data)} (${gruppi[data].length})</h3>`;
     const contenuto = document.createElement('div');
+
     gruppi[data].forEach(p => {
       const div = document.createElement('div');
       div.style.border = '1px solid #ccc';
@@ -204,19 +245,23 @@ async function caricaPrenotazioni() {
         <b>Data:</b> ${p.data} | <b>Pericolosità:</b> ${p.pericolosita || 'N/D'}<br>
         <b>Imballo:</b> ${p.tipoImballo || 'N/D'} | <b>Stato Fisico:</b> ${p.statoFisico || 'N/D'}<br>
         ${p.analisi ? `<b>Analisi:</b> <a href="/uploads/${p.analisi}" target="_blank">📎 Visualizza</a><br>` : ''}
-        <b>Stato:</b> <span id="stato-${p.id}">${p.stato}</span><br>
-        <button onclick="aggiornaStato(${p.id}, 'confermata')">✅ Conferma</button>
-        <button onclick="aggiornaStato(${p.id}, 'rifiutata')">❌ Rifiuta</button>
+        <b>Stato:</b>
+        <select onchange="aggiornaStato(${p.id}, this.value)">
+          <option value="in attesa" ${p.stato === 'in attesa' ? 'selected' : ''}>🕐 In attesa</option>
+          <option value="confermata" ${p.stato === 'confermata' ? 'selected' : ''}>✅ Confermata</option>
+          <option value="rifiutata" ${p.stato === 'rifiutata' ? 'selected' : ''}>❌ Rifiutata</option>
+        </select>
         <div class="chat" style="margin-top:15px;">
           <b>Chat:</b>
           <div class="chat-messaggi" id="chatMsg-${p.id}" style="border:1px solid #ccc; padding:10px; max-height:150px; overflow:auto; background:#f9f9f9; margin-bottom:10px;">Caricamento...</div>
           <input id="inputMsg-${p.id}" placeholder="Scrivi un messaggio..." />
-          <button onclick="inviaMessaggio(${p.id})">📨</button>
+          <button onclick="inviaMessaggio(${p.id})" style="background:#00785c; color:white; border:none; padding:6px 12px; border-radius:4px;">📨 Invia</button>
         </div>
       `;
       contenuto.appendChild(div);
       caricaChat(p.id);
     });
+
     contenitore.appendChild(giorno);
     contenitore.appendChild(contenuto);
   });
@@ -228,7 +273,6 @@ async function aggiornaStato(id, stato) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ stato })
   });
-  document.getElementById(`stato-${id}`).textContent = stato;
 }
 
 async function caricaChat(id) {
@@ -277,19 +321,41 @@ async function inviaMessaggio(id) {
 }
 
 async function caricaStatistiche() {
-  const res = await fetch('/api/grafico/cer');
+  const res = await fetch('/api/prenotazioni');
   const dati = await res.json();
-  const labels = Object.keys(dati);
-  const valori = Object.values(dati);
-  const ul = document.getElementById('statistiche');
-  ul.innerHTML = labels.map((k, i) => `<li>${k}: ${valori[i]} kg</li>`).join('');
+
+  // Dati statistici
+  const total = dati.length;
+  const totaleKg = dati.reduce((sum, p) => sum + Number(p.quantita || 0), 0);
+  const stati = { "in attesa": 0, "confermata": 0, "rifiutata": 0 };
+
+  dati.forEach(p => {
+    if (stati[p.stato] !== undefined) stati[p.stato]++;
+  });
+
+  document.getElementById('statTotali').innerHTML = `
+    <p><b>Totale prenotazioni:</b> ${total}</p>
+    <p><b>Quantità totale:</b> ${totaleKg} kg</p>
+    <p><b>In attesa:</b> ${stati['in attesa']} | <b>Confermate:</b> ${stati['confermata']} | <b>Rifiutate:</b> ${stati['rifiutata']}</p>
+  `;
+
+  const statsCER = {};
+  dati.forEach(p => {
+    if (!statsCER[p.codiceCER]) statsCER[p.codiceCER] = 0;
+    statsCER[p.codiceCER] += Number(p.quantita);
+  });
+
+  const labels = Object.keys(statsCER);
+  const valori = Object.values(statsCER);
+
+  document.getElementById('statistiche').innerHTML = labels.map((k, i) => `<li>${k}: ${valori[i]} kg</li>`).join('');
   new Chart(document.getElementById('graficoCER'), {
     type: 'pie',
     data: {
       labels,
       datasets: [{
         data: valori,
-        backgroundColor: ['#007acc','#28a745','#ffc107','#dc3545','#6610f2','#17a2b8']
+        backgroundColor: ['#00785c','#ffc107','#dc3545','#6610f2','#17a2b8','#28a745','#6f42c1']
       }]
     }
   });
@@ -301,4 +367,3 @@ function esportaCSV() {
 </script>
 </body>
 </html>
-
