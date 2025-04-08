@@ -1,238 +1,217 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Admin – Eco.Drin</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <title>Admin – Ecodrin</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    body {
-      font-family: 'Poppins', sans-serif;
-      margin: 0;
-      background: #f4f6f8;
-      color: #333;
-    }
-
+    body { font-family: Arial; margin: 0; background: #f4f6f8; }
     header {
-      background-color: #004c45;
-      color: white;
-      padding: 20px;
-      display: flex;
-      align-items: center;
-      gap: 15px;
+      background: #007acc; color: white; padding: 15px 30px;
+      display: flex; justify-content: space-between; align-items: center;
     }
-
-    header img {
-      height: 50px;
-    }
-
     main {
-      max-width: 1100px;
-      margin: 30px auto;
-      padding: 30px;
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      max-width: 1100px; margin: 30px auto;
+      background: white; padding: 30px;
+      border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
-
-    h2 {
-      color: #004c45;
-      margin-top: 0;
+    .hidden { display: none; }
+    .giorno {
+      margin-top: 20px; border: 1px solid #ddd;
+      border-radius: 6px; background: #f9f9f9;
     }
-
-    .hidden {
-      display: none !important;
+    .giorno h3 {
+      margin: 0; padding: 15px; background: #007acc;
+      color: white; cursor: pointer; font-size: 18px;
+      border-radius: 6px 6px 0 0; user-select: none;
     }
-
-    .btn-green {
-      background: #28a745;
-      color: white;
-      padding: 8px 16px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      margin-left: 5px;
-    }
-
-    .btn-green:hover {
-      background: #218838;
-    }
-
-    .giorno-blocco {
-      background: #eafaf5;
-      padding: 10px 15px;
-      border-radius: 8px;
-      margin-top: 20px;
-      cursor: pointer;
-      font-weight: bold;
-      border: 1px solid #b3e5c5;
-    }
-
+    .contenuto { padding: 15px; display: none; }
     .prenotazione {
-      background: #f8f9fa;
-      border: 1px solid #ccc;
-      padding: 15px;
-      margin-top: 10px;
-      border-radius: 6px;
+      border-bottom: 1px solid #eee;
+      padding: 12px 0; position: relative;
     }
-
-    select, input {
-      padding: 6px;
-      margin-top: 5px;
-      width: 100%;
-      max-width: 300px;
-      border-radius: 4px;
-      border: 1px solid #ccc;
+    .badge {
+      position: absolute; top: 10px; right: 10px;
+      background: red; color: white; font-size: 12px;
+      padding: 4px 6px; border-radius: 10px; display: none;
     }
-
+    .chat {
+      background: #eef2f5; padding: 10px;
+      border-radius: 6px; margin-top: 10px;
+    }
     .chat-messaggi {
-      background: #e9fdf4;
-      padding: 12px;
-      border: 1px solid #b0eacd;
-      border-radius: 8px;
-      box-shadow: inset 0 0 6px rgba(0, 120, 92, 0.15);
-      max-height: 180px;
-      overflow-y: auto;
-      margin: 10px 0;
+      max-height: 200px; overflow-y: auto;
+      background: white; padding: 10px;
+      border: 1px solid #ccc; border-radius: 4px;
     }
-
-    .msg {
-      background: #c8f7e3;
-      border: 1px solid #a2e7cd;
-      padding: 10px 14px;
-      border-radius: 8px;
-      margin-bottom: 8px;
-      font-size: 14px;
-      box-shadow: 0 2px 4px rgba(0, 120, 92, 0.08);
+    .messaggio {
+      margin-bottom: 8px; padding: 6px 10px;
+      background: white; border-left: 4px solid #007acc;
+      border-radius: 4px;
     }
-
-    .msg small {
-      display: block;
-      font-size: 11px;
-      color: #555;
-      margin-top: 6px;
+    .messaggio small {
+      display: block; font-size: 11px; color: #555;
     }
-
-    .card {
-      background: #eafaf5;
-      padding: 20px;
-      border-radius: 10px;
-      display: inline-block;
-      margin: 10px;
-      text-align: center;
+    .chat input {
+      width: 80%; padding: 8px;
+      border-radius: 4px; border: 1px solid #ccc;
+      margin-right: 5px;
     }
-
-    .chat-notifica {
-      display: inline-block;
-      background: #dc3545;
-      color: white;
-      font-size: 12px;
-      padding: 2px 8px;
-      border-radius: 12px;
-      margin-left: 8px;
-      vertical-align: middle;
+    .chat button {
+      padding: 8px 12px; background-color: #28a745;
+      color: white; border: none; border-radius: 4px;
     }
-
-    .hidden {
-      display: none !important;
+    button {
+      margin: 5px 5px 0 0; padding: 5px 12px;
+      border: none; background: #007acc;
+      color: white; border-radius: 4px; cursor: pointer;
     }
-
-    footer {
-      text-align: center;
-      font-size: 14px;
-      color: #777;
-      margin-top: 50px;
+    button.rifiuta { background: #d9534f; }
+    .stato { font-weight: bold; }
+    canvas { max-width: 500px; margin-top: 30px; }
+    .top-bar {
+      display: flex; justify-content: space-between;
+      align-items: center;
     }
   </style>
 </head>
 <body>
-<header>
-  <img src="eco.drin-_srl.png" alt="Logo" />
-  <h1>Area Amministratore</h1>
+
+<header class="hidden" id="adminHeader">
+  <h1>📊 Pannello Admin – Ecodrin</h1>
+  <div>
+    <select onchange="switchPage(this.value)">
+      <option value="registro">📋 Registro</option>
+      <option value="statistiche">📈 Statistiche</option>
+    </select>
+    <button onclick="logout()">🚪 Logout</button>
+  </div>
 </header>
 
 <main>
+  <!-- LOGIN -->
   <div id="loginBox">
     <h2>🔐 Login Admin</h2>
-    <input id="loginEmail" placeholder="Email"
-      onkeydown="if(event.key==='Enter') login()" />
-    <input id="loginPassword" type="password" placeholder="Password"
-      onkeydown="if(event.key==='Enter') login()" />
-    <button class="btn-green" onclick="login()">Accedi</button>
-    <div id="loginErrore" style="color:red; margin-top:10px;"></div>
+    <input id="loginEmail" placeholder="Email" onkeydown="if(event.key==='Enter') login()">
+    <input id="loginPassword" type="password" placeholder="Password" onkeydown="if(event.key==='Enter') login()">
+    <button onclick="login()">Accedi</button>
+    <div id="loginErrore" style="color:red;"></div>
   </div>
 
+  <!-- CONTENUTO ADMIN -->
   <div id="contenutoAdmin" class="hidden">
-    <div id="menuAdmin" style="margin-bottom:20px;">
-      <button class="btn-green" onclick="switchPage('registro')">📦 Prenotazioni</button>
-      <button class="btn-green" onclick="switchPage('statistiche')">📊 Statistiche</button>
-      <button class="btn-green" onclick="logout()">🚪 Logout</button>
+    <div id="paginaRegistro">
+      <h2>📋 Registro Prenotazioni</h2>
+      <div id="contenitoreGiorni"></div>
     </div>
 
-    <section id="paginaRegistro">
-      <h2>📁 Registro Prenotazioni</h2>
-      <div id="contenitoreGiorni"></div>
-    </section>
-
-    <section id="paginaStatistiche" class="hidden">
-      <h2>📊 Statistiche</h2>
-      <div id="statCards"></div>
-      <canvas id="graficoCER" style="max-width:600px; margin-top:30px;"></canvas>
+    <div id="paginaStatistiche" class="hidden">
+      <div class="top-bar">
+        <h2>📈 Statistiche CER</h2>
+        <button type="button" onclick="esportaCSV()">📤 Esporta CSV</button>
+      </div>
       <ul id="statistiche"></ul>
-    </section>
+      <canvas id="graficoCER"></canvas>
+    </div>
   </div>
 </main>
 
-<footer>
-  📍 Via delle Industrie – Zona Asi - 80011 Acerra (NA) |
-  📞 081.8857480 / 081.5207650 |
-  ✉️ info@ecodrinsrl.it / impianto@ecodrinsrl.it
-  <br>©2025 Eco.Drin s.r.l. – P.I: 03378791218
-</footer>
 
 
 
   <!-- parte 2-->
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-let chatTimers = {};
-let chatLastMessage = {};
+  <script>
+let prenotazioni = [];
 
-function switchPage(pagina) {
-  ["paginaRegistro", "paginaTrasporti", "paginaStatistiche"].forEach(id =>
-    document.getElementById(id).classList.add("hidden")
-  );
-  document.getElementById("pagina" + capitalize(pagina)).classList.remove("hidden");
+function login() {
+  const email = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPassword").value.trim();
+  fetch("/api/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ragioneSociale: email, password })
+  })
+  .then(res => res.json())
+  .then(json => {
+    if (json.tipo === "admin") {
+      document.getElementById("loginBox").classList.add("hidden");
+      document.getElementById("contenutoAdmin").classList.remove("hidden");
+      document.getElementById("adminHeader").classList.remove("hidden");
+      caricaPrenotazioni();
+      mostraPagina("registro");
+    } else {
+      document.getElementById("loginErrore").innerText = "❌ Credenziali errate";
+    }
+  });
+}
+
+function logout() {
+  location.reload();
+}
+
+function switchPage(val) {
+  mostraPagina(val);
+}
+
+function mostraPagina(nome) {
+  document.getElementById("paginaRegistro").classList.add("hidden");
+  document.getElementById("paginaStatistiche").classList.add("hidden");
+  document.getElementById("pagina" + capitalize(nome)).classList.remove("hidden");
+  if (nome === "statistiche") caricaStatistiche();
 }
 
 function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-function login() {
-  const email = document.getElementById('loginEmail').value.trim();
-  const password = document.getElementById('loginPassword').value.trim();
+function caricaPrenotazioni() {
+  fetch("/api/prenotazioni")
+    .then(res => res.json())
+    .then(dati => {
+      prenotazioni = dati;
+      const contenitore = document.getElementById("contenitoreGiorni");
+      contenitore.innerHTML = "";
+      const gruppi = {};
+      dati.forEach(p => {
+        if (!gruppi[p.data]) gruppi[p.data] = [];
+        gruppi[p.data].push(p);
+      });
 
-  fetch('/api/login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ ragioneSociale: email, password })
-  })
-  .then(res => res.ok ? res.json() : Promise.reject())
-  .then(json => {
-    if (json.tipo === 'admin') {
-      document.getElementById("loginBox").classList.add("hidden");
-      document.getElementById("contenutoAdmin").classList.remove("hidden");
-      document.getElementById("menuAdmin").classList.remove("hidden");
-      document.getElementById("logoutBtn").classList.remove("hidden");
-      caricaPrenotazioni();
-      caricaTrasporti();
-      caricaStatistiche();
-    } else throw new Error();
-  })
-  .catch(() => document.getElementById("loginErrore").innerText = "❌ Credenziali errate");
+      Object.keys(gruppi).sort((a,b)=>new Date(b)-new Date(a)).forEach(data => {
+        const giorno = document.createElement("div");
+        giorno.className = "giorno";
+        giorno.innerHTML = `<h3 onclick="toggleGiorno(this)">${formattaData(data)} (${gruppi[data].length})</h3>`;
+        const contenuto = document.createElement("div");
+        contenuto.className = "contenuto";
+        gruppi[data].forEach(p => {
+          const div = document.createElement("div");
+          div.className = "prenotazione";
+          div.innerHTML = `
+            <b>Cliente:</b> ${p.ragioneSociale}<br>
+            <b>Produttore:</b> ${p.produttore}<br>
+            <b>CER:</b> ${p.codiceCER} | <b>Quantità:</b> ${p.quantita} kg<br>
+            <b>Imballo:</b> ${p.tipoImballo} | <b>Stato:</b> ${p.statoFisico}<br>
+            <b>Pericolosità:</b> ${p.pericolosita || "N/D"}<br>
+            <b>Stato:</b> 
+            <select onchange="aggiornaStato(${p.id}, this.value)">
+              <option ${p.stato === "in attesa" ? "selected" : ""}>in attesa</option>
+              <option ${p.stato === "confermata" ? "selected" : ""}>confermata</option>
+              <option ${p.stato === "rifiutata" ? "selected" : ""}>rifiutata</option>
+            </select>
+            ${p.analisi ? `<div><b>Analisi:</b> <a href="/uploads/${p.analisi}" target="_blank">📄 PDF</a></div>` : ""}
+            <div class="chat">
+              <div class="chat-messaggi" id="chat-${p.id}">Caricamento...</div>
+              <input id="input-${p.id}" placeholder="Scrivi un messaggio..." onkeydown="if(event.key==='Enter') invia(${p.id})">
+              <button onclick="invia(${p.id})">📨</button>
+            </div>`;
+          contenuto.appendChild(div);
+          caricaChat(p.id);
+        });
+        giorno.appendChild(contenuto);
+        contenitore.appendChild(giorno);
+      });
+    });
 }
 
 function formattaData(dataStr) {
@@ -240,186 +219,58 @@ function formattaData(dataStr) {
   return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth()+1).toString().padStart(2, '0')}/${d.getFullYear()}`;
 }
 
-function aggiornaStato(id, stato, tipo = "prenotazioni") {
-  fetch(`/api/${tipo}/${id}`, {
+function toggleGiorno(el) {
+  const box = el.nextElementSibling;
+  box.style.display = box.style.display === "none" || !box.style.display ? "block" : "none";
+}
+
+function aggiornaStato(id, stato) {
+  fetch(`/api/prenotazioni/${id}`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ stato })
   });
 }
 
-async function caricaPrenotazioni() {
-  const res = await fetch("/api/prenotazioni");
-  const dati = await res.json();
-  const contenitore = document.getElementById("contenitoreGiorni");
-  contenitore.innerHTML = "";
-
-  const gruppi = {};
-  dati.forEach(p => {
-    if (!gruppi[p.data]) gruppi[p.data] = [];
-    gruppi[p.data].push(p);
-  });
-
-  Object.keys(gruppi).sort((a,b)=>new Date(b)-new Date(a)).forEach(data => {
-    const wrapper = document.createElement("div");
-    const toggle = document.createElement("div");
-    toggle.className = "giorno-blocco";
-    toggle.textContent = `📅 ${formattaData(data)} (${gruppi[data].length})`;
-    toggle.onclick = () => {
-      const box = wrapper.querySelector(".prenotazioni-giorno");
-      box.classList.toggle("hidden");
-    };
-
-    const contenuto = document.createElement("div");
-    contenuto.className = "prenotazioni-giorno hidden";
-
-    gruppi[data].forEach(p => {
-      const div = document.createElement("div");
-      div.className = "prenotazione";
-      div.innerHTML = `
-        <b>Cliente:</b> ${p.ragioneSociale}<br>
-        <b>Produttore:</b> ${p.produttore}<br>
-        <b>CER:</b> ${p.codiceCER} | <b>Quantità:</b> ${p.quantita} kg<br>
-        <b>Imballo:</b> ${p.tipoImballo} | <b>Stato Fisico:</b> ${p.statoFisico}<br>
-        <b>Pericolosità:</b> ${p.pericolosita || "N/D"}<br>
-        <b>Stato:</b> 
-        <select onchange="aggiornaStato(${p.id}, this.value)">
-          <option ${p.stato === "in attesa" ? "selected" : ""}>⏳ in attesa</option>
-          <option ${p.stato === "confermata" ? "selected" : ""}>✅ confermata</option>
-          <option ${p.stato === "rifiutata" ? "selected" : ""}>❌ rifiutata</option>
-        </select>
-        <div class="chat-messaggi" id="chat-${p.id}">Caricamento chat...</div>
-        <input id="input-${p.id}" placeholder="Scrivi un messaggio..." onkeydown="if(event.key==='Enter') inviaMessaggio(${p.id})" />
-        <button onclick="inviaMessaggio(${p.id})">📨 Invia</button>
-      `;
-      contenuto.appendChild(div);
-      caricaChat(p.id);
+function caricaChat(id) {
+  fetch(`/api/prenotazioni/${id}/chat`)
+    .then(res => res.json())
+    .then(chat => {
+      const box = document.getElementById(`chat-${id}`);
+      if (!box) return;
+      box.innerHTML = chat.map(m => `
+        <div class="messaggio">
+          <small><b>${m.autore}</b> – ${new Date(m.timestamp).toLocaleString()}</small>
+          ${m.testo}
+        </div>
+      `).join('');
+      box.scrollTop = box.scrollHeight;
     });
-
-    wrapper.appendChild(toggle);
-    wrapper.appendChild(contenuto);
-    contenitore.appendChild(wrapper);
-  });
 }
 
-async function caricaTrasporti() {
-  const res = await fetch("/api/trasporti");
-  const dati = await res.json();
-  const contenitore = document.getElementById("contenitoreTrasportiAdmin");
-  contenitore.innerHTML = "";
-
-  const gruppi = {};
-  dati.forEach(p => {
-    if (!gruppi[p.dataTrasporto]) gruppi[p.dataTrasporto] = [];
-    gruppi[p.dataTrasporto].push(p);
-  });
-
-  Object.keys(gruppi).sort((a,b)=>new Date(b)-new Date(a)).forEach(data => {
-    const toggle = document.createElement("div");
-    toggle.className = "giorno-blocco";
-    toggle.textContent = `📅 ${formattaData(data)} (${gruppi[data].length})`;
-
-    const contenuto = document.createElement("div");
-    contenuto.className = "prenotazioni-giorno";
-
-    gruppi[data].forEach(p => {
-      const div = document.createElement("div");
-      div.className = "prenotazione";
-      div.innerHTML = `
-        <b>Richiedente:</b> ${p.richiedente} | <b>Produttore:</b> ${p.produttore}<br>
-        <b>Tipo Trasporto:</b> ${p.tipoTrasporto} | <b>Automezzo:</b> ${p.automezzo}<br>
-        <b>Fascia Oraria:</b> ${p.fasciaOraria}<br>
-        <b>Referente:</b> ${p.referente} - ${p.cellulare}<br>
-        <b>Prezzo:</b> €${p.prezzo}<br>
-        <b>Stato:</b> 
-        <select onchange="aggiornaStato(${p.id}, this.value, 'trasporti')">
-          <option ${p.stato === "in attesa" ? "selected" : ""}>⏳ in attesa</option>
-          <option ${p.stato === "confermata" ? "selected" : ""}>✅ confermata</option>
-          <option ${p.stato === "rifiutata" ? "selected" : ""}>❌ rifiutata</option>
-        </select>
-        <div class="chat-messaggi" id="chat-trasporto-${p.id}">Chat...</div>
-        <input id="input-trasporto-${p.id}" placeholder="Scrivi un messaggio..." onkeydown="if(event.key==='Enter') inviaMessaggio(${p.id}, 'trasporti')" />
-        <button onclick="inviaMessaggio(${p.id}, 'trasporti')">📨 Invia</button>
-      `;
-      contenuto.appendChild(div);
-      caricaChat(p.id, 'trasporti');
-    });
-
-    contenitore.appendChild(toggle);
-    contenitore.appendChild(contenuto);
-  });
-}
-
-async function caricaChat(id, tipo = 'prenotazioni') {
-  const res = await fetch(`/api/${tipo}/${id}/chat`);
-  const chat = await res.json();
-  const box = document.getElementById(`chat${tipo === 'trasporti' ? '-trasporto' : ''}-${id}`);
-  if (!box) return;
-
-  const lastMsg = chat[chat.length - 1];
-  const lastKnown = chatLastMessage[id]?.timestamp;
-
-  if (
-    lastMsg &&
-    (!lastKnown || lastMsg.timestamp > lastKnown) &&
-    lastMsg.autore !== "impianto"
-  ) {
-    try { new Audio("/sounds/notify.mp3").play(); } catch {}
-  }
-
-  chatLastMessage[id] = lastMsg;
-
-  box.innerHTML = chat.map(m => `
-    <div class="msg">
-      <b>${m.autore}</b>: ${m.testo}
-      <small>${new Date(m.timestamp).toLocaleString()}</small>
-    </div>
-  `).join('');
-  box.scrollTop = box.scrollHeight;
-
-  if (!chatTimers[id]) {
-    chatTimers[id] = setInterval(() => caricaChat(id, tipo), 2000);
-  }
-}
-
-async function inviaMessaggio(id, tipo = "prenotazioni") {
-  const inputId = tipo === "trasporti" ? `input-trasporto-${id}` : `input-${id}`;
-  const input = document.getElementById(inputId);
+function invia(id) {
+  const input = document.getElementById(`input-${id}`);
   const testo = input.value.trim();
   if (!testo) return;
-
-  await fetch(`/api/${tipo}/${id}/chat`, {
+  fetch(`/api/prenotazioni/${id}/chat`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ autore: "impianto", testo })
+  }).then(() => {
+    input.value = "";
+    caricaChat(id);
   });
-
-  input.value = "";
-  caricaChat(id, tipo);
 }
 
-async function caricaStatistiche() {
-  const prenRes = await fetch("/api/prenotazioni");
-  const trasRes = await fetch("/api/trasporti");
-  const pren = await prenRes.json();
-  const tras = await trasRes.json();
-
-  const clientiUnici = [...new Set(pren.map(p => p.ragioneSociale))].length;
-  const totaleKg = pren.reduce((sum, p) => sum + Number(p.quantita || 0), 0);
+function caricaStatistiche() {
   const cer = {};
-  pren.forEach(p => {
-    cer[p.codiceCER] = (cer[p.codiceCER] || 0) + Number(p.quantita || 0);
+  prenotazioni.forEach(p => {
+    if (!cer[p.codiceCER]) cer[p.codiceCER] = 0;
+    cer[p.codiceCER] += Number(p.quantita || 0);
   });
 
-  const cardContainer = document.getElementById('statCards');
-  cardContainer.innerHTML = `
-    <div class="card"><h3>🧑‍💼 ${clientiUnici}</h3><p>Clienti</p></div>
-    <div class="card"><h3>📦 ${pren.length}</h3><p>Prenotazioni</p></div>
-    <div class="card"><h3>🚛 ${tras.length}</h3><p>Trasporti</p></div>
-    <div class="card"><h3>⚖️ ${totaleKg}</h3><p>Totale kg</p></div>
-  `;
-
-  new Chart(document.getElementById("graficoCER"), {
+  const ctx = document.getElementById("graficoCER").getContext("2d");
+  new Chart(ctx, {
     type: "pie",
     data: {
       labels: Object.keys(cer),
@@ -430,8 +281,23 @@ async function caricaStatistiche() {
     }
   });
 }
+
+function esportaCSV() {
+  const righe = [
+    ["Cliente", "Produttore", "CER", "Quantità", "Data", "Stato"]
+  ];
+  prenotazioni.forEach(p => {
+    righe.push([p.ragioneSociale, p.produttore, p.codiceCER, p.quantita, p.data, p.stato]);
+  });
+  const csv = righe.map(r => r.join(",")).join("\n");
+  const blob = new Blob([csv], { type: "text/csv" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "prenotazioni.csv";
+  link.click();
+}
 </script>
 </body>
 </html>
 
- 
