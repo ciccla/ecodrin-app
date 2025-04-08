@@ -3,314 +3,310 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Area Clienti – Ecodrin</title>
-  <link rel="stylesheet" href="style-ecodrin.css" />
+  <title>Admin – Eco.Drin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    input, select {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 12px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      background: #f1f4f6;
+      color: #333;
     }
-    .chat-box {
+
+    header {
+      background-color: #004c45;
+      color: white;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    header img {
+      height: 50px;
+    }
+
+    .menu-dropdown {
+      position: relative;
+    }
+
+    .menu-dropdown button {
+      background: #00785c;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      font-weight: bold;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .menu-dropdown-content {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 100%;
+      background-color: white;
+      min-width: 160px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+      z-index: 1;
+    }
+
+    .menu-dropdown-content a {
+      color: #004c45;
+      padding: 10px 15px;
+      text-decoration: none;
+      display: block;
+    }
+
+    .menu-dropdown-content a:hover {
+      background-color: #f1f1f1;
+    }
+
+    .menu-dropdown.hidden {
+      display: none;
+    }
+
+    .menu-dropdown:hover .menu-dropdown-content {
+      display: block;
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 30px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+
+    h2 {
+      margin-top: 0;
+      color: #004c45;
+    }
+
+    h3 {
+      margin-top: 30px;
+      color: #00785c;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .prenotazione {
+      background: #fff;
       border: 1px solid #ccc;
-      border-radius: 6px;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    .prenotazione b {
+      color: #00785c;
+    }
+
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    button, select, input {
+      font-family: 'Poppins', sans-serif;
+    }
+
+    select, input {
+      padding: 8px 10px;
+      margin-top: 5px;
+      margin-bottom: 10px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      padding: 8px 12px;
+      border-radius: 5px;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    .btn-green {
+      background-color: #28a745;
+      color: white;
+    }
+
+    .btn-red {
+      background-color: #dc3545;
+      color: white;
+    }
+
+    .chat-messaggi {
+      background: #f8f9fa;
       padding: 10px;
-      max-height: 250px;
+      border: 1px solid #ccc;
+      max-height: 150px;
       overflow-y: auto;
-      background: #f9f9f9;
+      border-radius: 6px;
       margin-bottom: 10px;
     }
+
     .msg {
-      background: #fff;
-      padding: 8px;
-      border-left: 4px solid #007acc;
-      border-radius: 4px;
+      background: #e1f5ec;
       margin-bottom: 5px;
+      padding: 8px 10px;
+      border-radius: 6px;
     }
-    .msg small { color: #666; font-size: 11px; display: block; }
+
+    .msg small {
+      display: block;
+      font-size: 11px;
+      color: #555;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 14px;
+      padding: 20px;
+      color: #777;
+      margin-top: 40px;
+    }
+
     @media (max-width: 600px) {
-      .top-nav {
+      .top {
         flex-direction: column;
-        gap: 10px;
+        align-items: flex-start;
+      }
+
+      .menu-dropdown {
+        width: 100%;
+      }
+
+      .menu-dropdown-content {
+        position: static;
       }
     }
   </style>
 </head>
-<body>
 
-<header class="header">
-  <a href="index.html"><img src="logo-ecodrin.png" alt="Logo Ecodrin" class="logo"></a>
-  <h1>Area Clienti</h1>
+<body>
+<header>
+  <div style="display:flex; align-items:center; gap:15px;">
+    <a href="index.html"><img src="eco.drin-_srl.png" alt="Logo Ecodrin" /></a>
+    <h1 style="margin:0;">Area Amministrativa</h1>
+  </div>
+  <div class="menu-dropdown hidden" id="menuAdmin">
+    <button>📂 Menu</button>
+    <div class="menu-dropdown-content">
+      <a href="#" onclick="switchPage('registro')">📋 Registro</a>
+      <a href="#" onclick="switchPage('statistiche')">📈 Statistiche</a>
+      <a href="#" onclick="logout()">🚪 Logout</a>
+    </div>
+  </div>
 </header>
 
-<main class="main">
+<main>
   <!-- LOGIN -->
-  <div id="authBox">
-    <h2>Accesso Clienti</h2>
-    <input id="loginEmail" placeholder="Ragione Sociale">
-    <input id="loginPassword" type="password" placeholder="Password">
-    <button onclick="login()">Login</button>
-    <p><a href="#" onclick="toggleRegistro()">Non hai un account? Registrati</a></p>
+  <div id="loginBox">
+    <h2>🔐 Accesso Amministratore</h2>
+    <input id="loginEmail" placeholder="Email" />
+    <input id="loginPassword" type="password" placeholder="Password" />
+    <button class="btn-green" onclick="login()">Accedi</button>
     <div id="loginErrore" style="color:red;"></div>
   </div>
 
-  <!-- REGISTRAZIONE -->
-  <div id="regBox" class="hidden">
-    <h2>Registrazione Cliente</h2>
-    <input id="regRagione" placeholder="Ragione Sociale">
-    <input id="regCF" placeholder="Codice Fiscale">
-    <input id="regPassword" type="password" placeholder="Password">
-    <button onclick="registrati()">Registrati</button>
-    <p><a href="#" onclick="toggleRegistro()">Hai già un account? Login</a></p>
-    <div id="regErrore" style="color:red;"></div>
-  </div>
+  <!-- CONTENUTO ADMIN -->
+  <div id="contenutoAdmin" class="hidden">
 
-  <!-- AREA CLIENTE -->
-  <div id="clienteBox" class="hidden">
-    <div class="top-nav" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
-      <div>Benvenuto, <span id="nomeCliente"></span></div>
-      <select onchange="switchClientePage(this.value)">
-        <option value="prenota">📦 Prenota</option>
-        <option value="elenco">📋 Le tue prenotazioni</option>
-        <option value="logout">🚪 Logout</option>
-      </select>
-    </div>
+    <!-- REGISTRO -->
+    <section id="paginaRegistro">
+      <div class="top">
+        <div>
+          <h2>📋 Registro Prenotazioni</h2>
+          <p style="margin:0; color:gray;">Gestisci le richieste ricevute</p>
+        </div>
+        <button onclick="caricaPrenotazioni()">🔄 Aggiorna</button>
+      </div>
+      <div id="contenitoreGiorni"></div>
+    </section>
 
-    <!-- FORM PRENOTAZIONE -->
-    <div id="paginaPrenota">
-      <h3>📦 Nuova Prenotazione</h3>
-      <form id="formPrenotazione">
-        <input name="produttore" placeholder="Produttore" required />
-        <input name="codiceCER" placeholder="Codice CER" required />
-        <input name="quantita" type="number" placeholder="Quantità (kg)" required />
+    <!-- STATISTICHE -->
+    <section id="paginaStatistiche" class="hidden">
+      <div class="top">
+        <div>
+          <h2>📈 Statistiche</h2>
+          <p style="margin:0; color:gray;">Andamento e CER gestiti</p>
+        </div>
+        <button onclick="esportaCSV()">📤 Esporta CSV</button>
+      </div>
+      <div id="statTotali" style="margin-top:20px;"></div>
+      <ul id="statistiche" style="margin-top:20px;"></ul>
+      <canvas id="graficoCER" style="max-width: 600px; margin: 30px auto;"></canvas>
+    </section>
 
-        <select name="pericolosita" required>
-          <option value="">Classe di pericolosità</option>
-          <option value="HP1">HP1 – Esplosivo</option>
-          <option value="HP2">HP2 – Comburente</option>
-          <option value="HP3">HP3 – Infiammabile</option>
-          <option value="HP4">HP4 – Irritante</option>
-          <option value="HP5">HP5 – Tossicità organi bersaglio</option>
-          <option value="HP6">HP6 – Tossico acuto</option>
-          <option value="HP7">HP7 – Cancerogeno</option>
-          <option value="HP8">HP8 – Corrosivo</option>
-          <option value="HP9">HP9 – Infettivo</option>
-          <option value="HP10">HP10 – Tossico riproduzione</option>
-          <option value="HP11">HP11 – Mutageno</option>
-          <option value="HP12">HP12 – Gas tossici</option>
-          <option value="HP13">HP13 – Sensibilizzante</option>
-          <option value="HP14">HP14 – Ecotossico</option>
-          <option value="HP15">HP15 – Rischio secondario</option>
-        </select>
-
-        <select name="statoFisico" required>
-          <option value="">Stato fisico</option>
-          <option value="1 - Solido pulverulento">1 - Solido pulverulento</option>
-          <option value="2 - Solido non pulverulento">2 - Solido non pulverulento</option>
-          <option value="3 - Fangoso palabile">3 - Fangoso palabile</option>
-          <option value="4 - Fangoso non palabile">4 - Fangoso non palabile</option>
-          <option value="5 - Liquido">5 - Liquido</option>
-          <option value="6 - Liquido denso">6 - Liquido denso</option>
-          <option value="7 - Fangoso liquido">7 - Fangoso liquido</option>
-          <option value="8 - Gas compressi">8 - Gas compressi</option>
-          <option value="9 - Gas liquefatti">9 - Gas liquefatti</option>
-          <option value="10 - Altro">10 - Altro</option>
-        </select>
-
-        <input name="tipoImballo" placeholder="Tipo Imballo">
-        <input name="data" type="date" required>
-        <input name="analisi" type="file">
-        <button type="submit">Invia Prenotazione</button>
-      </form>
-    </div>
-
-    <!-- ELENCO -->
-    <div id="paginaElenco" class="hidden">
-      <h3>📋 Le Tue Prenotazioni</h3>
-      <div id="prenotazioni"></div>
-    </div>
   </div>
 </main>
+
+<footer>
+  📍 Via delle Industrie – Zona Asi - 80011 Acerra (NA)<br />
+  📞 081.8857480 / 081.5207650<br />
+  ✉️ <a href="mailto:info@ecodrinsrl.it">info@ecodrinsrl.it</a> / <a href="mailto:impianto@ecodrinsrl.it">impianto@ecodrinsrl.it</a><br />
+  ©2025 Eco.Drin s.r.l. – P.I: 03378791218
+</footer>
 <script>
-let cliente = null;
-const chatTimers = {};
-const chatLastMessage = {};
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("formPrenotazione");
+  const messaggio = document.getElementById("messaggio");
 
-if ("Notification" in window) Notification.requestPermission();
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    messaggio.className = "";
+    messaggio.textContent = "⏳ Invio in corso...";
 
-function toggleRegistro() {
-  document.getElementById('authBox').classList.toggle('hidden');
-  document.getElementById('regBox').classList.toggle('hidden');
-  document.getElementById('loginErrore').innerText = '';
-  document.getElementById('regErrore').innerText = '';
-}
-
-function login() {
-  const ragioneSociale = document.getElementById('loginEmail').value.trim();
-  const password = document.getElementById('loginPassword').value.trim();
-
-  fetch('/api/login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ ragioneSociale, password })
-  })
-  .then(res => res.ok ? res.json() : Promise.reject())
-  .then(json => {
-    if (json.tipo === 'cliente') {
-      cliente = json.utente;
-      document.getElementById('nomeCliente').innerText = cliente.ragioneSociale;
-      document.getElementById('authBox').classList.add('hidden');
-      document.getElementById('clienteBox').classList.remove('hidden');
-      caricaPrenotazioni();
-    } else throw new Error();
-  })
-  .catch(() => document.getElementById('loginErrore').innerText = '❌ Credenziali errate');
-}
-
-document.getElementById('loginPassword').addEventListener('keydown', e => {
-  if (e.key === 'Enter') login();
-});
-
-function registrati() {
-  const ragioneSociale = document.getElementById('regRagione').value.trim();
-  const codiceFiscale = document.getElementById('regCF').value.trim();
-  const password = document.getElementById('regPassword').value.trim();
-
-  fetch('/api/registrazione', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ ragioneSociale, codiceFiscale, password })
-  })
-  .then(res => res.ok ? res.json() : Promise.reject())
-  .then(() => {
-    alert('Registrazione completata!');
-    toggleRegistro();
-  })
-  .catch(() => document.getElementById('regErrore').innerText = '⚠️ Errore nella registrazione');
-}
-
-document.getElementById('formPrenotazione').addEventListener('submit', e => {
-  e.preventDefault();
-  const form = e.target;
-  const dati = new FormData(form);
-  dati.append('email', cliente.email);
-  dati.append('codiceCliente', cliente.codiceCliente);
-  dati.append('ragioneSociale', cliente.ragioneSociale);
-
-  fetch('/api/prenotazioni', {
-    method: 'POST',
-    body: dati
-  })
-  .then(res => res.ok ? res.json() : Promise.reject())
-  .then(() => {
-    alert('Prenotazione inviata');
-    form.reset();
-    caricaPrenotazioni();
-    switchClientePage('elenco');
-  })
-  .catch(() => alert('Errore nella prenotazione'));
-});
-
-async function caricaPrenotazioni() {
-  const res = await fetch(`/api/prenotazioni/utente/${cliente.codiceCliente}`);
-  const lista = await res.json();
-  const div = document.getElementById('prenotazioni');
-  div.innerHTML = '';
-
-  if (!lista.length) {
-    div.innerHTML = '<p style="color:gray;">Nessuna prenotazione inviata.</p>';
-    return;
-  }
-
-  lista.sort((a,b) => new Date(b.data) - new Date(a.data));
-
-  for (const p of lista) {
-    const box = document.createElement('div');
-    box.style.border = '1px solid #ccc';
-    box.style.padding = '10px';
-    box.style.margin = '10px 0';
-    box.style.borderRadius = '6px';
-
-    box.innerHTML = `
-      <b>Data:</b> ${p.data}<br>
-      <b>CER:</b> ${p.codiceCER} – <b>Quantità:</b> ${p.quantita} kg<br>
-      <b>Pericolosità:</b> ${p.pericolosita || 'N/D'}<br>
-      <b>Stato Fisico:</b> ${p.statoFisico || 'N/D'}<br>
-      <b>Tipo Imballo:</b> ${p.tipoImballo || 'N/D'}<br>
-      <b>Stato:</b> ${p.stato}<br>
-      ${p.analisi ? `<b>Analisi:</b> <a href="/uploads/${p.analisi}" target="_blank">📎 Visualizza</a><br>` : ''}
-      <div class="chat-box" id="chat-${p.id}">Caricamento messaggi...</div>
-      <input id="msg-${p.id}" placeholder="Scrivi un messaggio..." />
-      <button onclick="inviaMessaggio(${p.id})">📨</button>
-    `;
-
-    div.appendChild(box);
-    caricaChat(p.id);
-
-    setTimeout(() => {
-      const input = document.getElementById(`msg-${p.id}`);
-      input?.addEventListener('keydown', e => {
-        if (e.key === 'Enter') inviaMessaggio(p.id);
-      });
-    }, 100);
-  }
-}
-
-async function caricaChat(id) {
-  const res = await fetch(`/api/prenotazioni/${id}/chat`);
-  const chat = await res.json();
-  const box = document.getElementById(`chat-${id}`);
-  if (!box) return;
-
-  const lastMsg = chat[chat.length - 1];
-  const lastKnown = chatLastMessage[id]?.timestamp;
-  if (
-    lastMsg &&
-    (!lastKnown || lastMsg.timestamp > lastKnown) &&
-    lastMsg.autore !== cliente.ragioneSociale
-  ) {
-    if (Notification.permission === "granted") {
-      new Notification("📨 Nuovo messaggio da " + lastMsg.autore, {
-        body: lastMsg.testo,
-      });
+    // Validazione email base
+    const email = form.email.value.trim();
+    if (!email.includes("@")) {
+      messaggio.textContent = "❌ Inserisci un'email valida.";
+      messaggio.className = "error";
+      return;
     }
-    try { new Audio("/sounds/notify.mp3").play(); } catch(e){}
-  }
 
-  chatLastMessage[id] = lastMsg;
+    // Validazione file PDF
+    const fileInput = form.analisi;
+    const file = fileInput.files[0];
+    if (file && file.type !== "application/pdf") {
+      messaggio.textContent = "❌ Il file deve essere in formato PDF.";
+      messaggio.className = "error";
+      return;
+    }
 
-  box.innerHTML = chat.map(m => `
-    <div class="msg"><b>${m.autore}</b>: ${m.testo}<br>
-    <small>${new Date(m.timestamp).toLocaleString()}</small></div>
-  `).join('');
-  box.scrollTop = box.scrollHeight;
+    // Invia i dati
+    const formData = new FormData(form);
+    try {
+      const res = await fetch("/api/prenotazioni", {
+        method: "POST",
+        body: formData
+      });
 
-  if (!chatTimers[id]) {
-    chatTimers[id] = setInterval(() => caricaChat(id), 2000);
-  }
-}
+      if (!res.ok) throw new Error();
 
-async function inviaMessaggio(id) {
-  const input = document.getElementById(`msg-${id}`);
-  const testo = input.value.trim();
-  if (!testo) return;
-  await fetch(`/api/prenotazioni/${id}/chat`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ autore: cliente.ragioneSociale, testo })
+      messaggio.textContent = "✅ Prenotazione inviata con successo!";
+      messaggio.className = "success";
+      form.reset();
+    } catch (err) {
+      console.error(err);
+      messaggio.textContent = "❌ Errore durante l'invio. Riprova.";
+      messaggio.className = "error";
+    }
   });
-  input.value = '';
-  caricaChat(id);
-}
-
-function switchClientePage(p) {
-  if (p === 'logout') return location.reload();
-  document.getElementById('paginaPrenota').classList.add('hidden');
-  document.getElementById('paginaElenco').classList.add('hidden');
-  document.getElementById(`pagina${p.charAt(0).toUpperCase() + p.slice(1)}`).classList.remove('hidden');
-}
+});
 </script>
 </body>
 </html>
