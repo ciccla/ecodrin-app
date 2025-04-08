@@ -196,7 +196,7 @@
   <!-- parte 2-->
 
 
-<script>
+  <script>
 let adminAutenticato = false;
 const chatTimers = {};
 const chatLastMessage = {};
@@ -281,10 +281,13 @@ async function caricaPrenotazioni() {
       div.className = 'prenotazione';
       div.innerHTML = `
         <b>Cliente:</b> ${p.ragioneSociale} (${p.codiceCliente})<br>
+        <b>Produttore:</b> ${p.produttore || 'N/D'}<br>
         <b>CER:</b> ${p.codiceCER} | <b>Quantità:</b> ${p.quantita} kg<br>
-        <b>Data:</b> ${p.data} | <b>Pericolosità:</b> ${p.pericolosita || 'N/D'}<br>
-        <b>Imballo:</b> ${p.tipoImballo || 'N/D'} | <b>Stato Fisico:</b> ${p.statoFisico || 'N/D'}<br>
+        <b>Pericolosità:</b> ${p.pericolosita || 'Nessuna'}<br>
+        <b>Stato Fisico:</b> ${p.statoFisico || 'N/D'} | <b>Tipo Imballo:</b> ${p.tipoImballo || 'N/D'}<br>
+        <b>Data:</b> ${formattaData(p.data)}<br>
         ${p.analisi ? `<b>Analisi:</b> <a href="/uploads/${p.analisi}" target="_blank">📎 Visualizza</a><br>` : ''}
+        ${p.autorizzazioni ? `<b>Autorizzazioni:</b> <a href="/uploads/${p.autorizzazioni}" target="_blank">📄 PDF</a><br>` : ''}
         <b>Stato:</b>
         <select onchange="aggiornaStato(${p.id}, this.value)">
           <option value="in attesa" ${p.stato === 'in attesa' ? 'selected' : ''}>⏳ In attesa</option>
@@ -414,3 +417,5 @@ async function caricaStatistiche() {
 </script>
 </body>
 </html>
+
+  
