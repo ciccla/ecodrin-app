@@ -195,13 +195,21 @@
 
   <!-- parte 2-->
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+let chatTimers = {};
+let chatLastMessage = {};
 
-  <script>
-let adminAutenticato = false;
-const chatTimers = {};
-const chatLastMessage = {};
+function switchPage(pagina) {
+  ["paginaRegistro", "paginaTrasporti", "paginaStatistiche"].forEach(id =>
+    document.getElementById(id).classList.add("hidden")
+  );
+  document.getElementById("pagina" + capitalize(pagina)).classList.remove("hidden");
+}
 
-if ("Notification" in window) Notification.requestPermission();
+function capitalize(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
 
 function login() {
   const email = document.getElementById('loginEmail').value.trim();
@@ -215,25 +223,16 @@ function login() {
   .then(res => res.ok ? res.json() : Promise.reject())
   .then(json => {
     if (json.tipo === 'admin') {
-      adminAutenticato = true;
-      document.getElementById('loginBox').classList.add('hidden');
-      document.getElementById('contenutoAdmin').classList.remove('hidden');
-      document.getElementById('menuAdmin').classList.remove('hidden');
+      document.getElementById("loginBox").classList.add("hidden");
+      document.getElementById("contenutoAdmin").classList.remove("hidden");
+      document.getElementById("menuAdmin").classList.remove("hidden");
+      document.getElementById("logoutBtn").classList.remove("hidden");
       caricaPrenotazioni();
+      caricaTrasporti();
       caricaStatistiche();
     } else throw new Error();
   })
-  .catch(() => document.getElementById('loginErrore').innerText = '❌ Credenziali errate');
-}
-
-function logout() {
-  location.reload();
-}
-
-function switchPage(pagina) {
-  document.getElementById('paginaRegistro').classList.add('hidden');
-  document.getElementById('paginaStatistiche').classList.add('hidden');
-  document.getElementById(`pagina${pagina.charAt(0).toUpperCase() + pagina.slice(1)}`).classList.remove('hidden');
+  .catch(() => document.getElementById("loginErrore").innerText = "❌ Credenziali errate");
 }
 
 function formattaData(dataStr) {
@@ -241,66 +240,57 @@ function formattaData(dataStr) {
   return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth()+1).toString().padStart(2, '0')}/${d.getFullYear()}`;
 }
 
+function aggiornaStato(id, stato, tipo = "prenotazioni") {
+  fetch(`/api/${tipo}/${id}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ stato })
+  });
+}
+
 async function caricaPrenotazioni() {
-  const res = await fetch('/api/prenotazioni');
+  const res = await fetch("/api/prenotazioni");
   const dati = await res.json();
-  const contenitore = document.getElementById('contenitoreGiorni');
-  contenitore.innerHTML = '';
+  const contenitore = document.getElementById("contenitoreGiorni");
+  contenitore.innerHTML = "";
 
   const gruppi = {};
   dati.forEach(p => {
-    if (p.data) {
-      if (!gruppi[p.data]) gruppi[p.data] = [];
-      gruppi[p.data].push(p);
-    }
+    if (!gruppi[p.data]) gruppi[p.data] = [];
+    gruppi[p.data].push(p);
   });
 
-  const giorni = Object.keys(gruppi).sort((a,b)=>new Date(b)-new Date(a));
-  if (!giorni.length) return contenitore.innerHTML = '<p>Nessuna prenotazione.</p>';
-
-  giorni.forEach(data => {
-    const wrapper = document.createElement('div');
-
-    const toggle = document.createElement('div');
-    toggle.className = 'giorno-blocco';
+  Object.keys(gruppi).sort((a,b)=>new Date(b)-new Date(a)).forEach(data => {
+    const wrapper = document.createElement("div");
+    const toggle = document.createElement("div");
+    toggle.className = "giorno-blocco";
     toggle.textContent = `📅 ${formattaData(data)} (${gruppi[data].length})`;
     toggle.onclick = () => {
-      const box = wrapper.querySelector('.prenotazioni-giorno');
-      box.classList.toggle('hidden');
-      gruppi[data].forEach(p => {
-        const notifica = document.getElementById(`notificaChat-${p.id}`);
-        if (notifica) notifica.classList.add('hidden');
-      });
+      const box = wrapper.querySelector(".prenotazioni-giorno");
+      box.classList.toggle("hidden");
     };
 
-    const contenuto = document.createElement('div');
-    contenuto.className = 'prenotazioni-giorno hidden';
+    const contenuto = document.createElement("div");
+    contenuto.className = "prenotazioni-giorno hidden";
 
     gruppi[data].forEach(p => {
-      const div = document.createElement('div');
-      div.className = 'prenotazione';
+      const div = document.createElement("div");
+      div.className = "prenotazione";
       div.innerHTML = `
-        <b>Cliente:</b> ${p.ragioneSociale} (${p.codiceCliente})<br>
-        <b>Produttore:</b> ${p.produttore || 'N/D'}<br>
+        <b>Cliente:</b> ${p.ragioneSociale}<br>
+        <b>Produttore:</b> ${p.produttore}<br>
         <b>CER:</b> ${p.codiceCER} | <b>Quantità:</b> ${p.quantita} kg<br>
-        <b>Pericolosità:</b> ${p.pericolosita || 'Nessuna'}<br>
-        <b>Stato Fisico:</b> ${p.statoFisico || 'N/D'} | <b>Tipo Imballo:</b> ${p.tipoImballo || 'N/D'}<br>
-        <b>Data:</b> ${formattaData(p.data)}<br>
-        ${p.analisi ? `<b>Analisi:</b> <a href="/uploads/${p.analisi}" target="_blank">📎 Visualizza</a><br>` : ''}
-        ${p.autorizzazioni ? `<b>Autorizzazioni:</b> <a href="/uploads/${p.autorizzazioni}" target="_blank">📄 PDF</a><br>` : ''}
-        <b>Stato:</b>
+        <b>Imballo:</b> ${p.tipoImballo} | <b>Stato Fisico:</b> ${p.statoFisico}<br>
+        <b>Pericolosità:</b> ${p.pericolosita || "N/D"}<br>
+        <b>Stato:</b> 
         <select onchange="aggiornaStato(${p.id}, this.value)">
-          <option value="in attesa" ${p.stato === 'in attesa' ? 'selected' : ''}>⏳ In attesa</option>
-          <option value="confermata" ${p.stato === 'confermata' ? 'selected' : ''}>✅ Confermata</option>
-          <option value="rifiutata" ${p.stato === 'rifiutata' ? 'selected' : ''}>❌ Rifiutata</option>
+          <option ${p.stato === "in attesa" ? "selected" : ""}>⏳ in attesa</option>
+          <option ${p.stato === "confermata" ? "selected" : ""}>✅ confermata</option>
+          <option ${p.stato === "rifiutata" ? "selected" : ""}>❌ rifiutata</option>
         </select>
-
-        <div class="chat">
-          <b>Chat:</b> <span id="notificaChat-${p.id}" class="chat-notifica hidden">🔴 Nuovo</span>
-          <div class="chat-messaggi" id="chatMsg-${p.id}">Caricamento...</div>
-          <input id="inputMsg-${p.id}" placeholder="Scrivi un messaggio..." onkeydown="if(event.key==='Enter'){inviaMessaggio(${p.id})}" />
-          <button class="btn-green" onclick="inviaMessaggio(${p.id})">📨 Invia</button>
-        </div>
+        <div class="chat-messaggi" id="chat-${p.id}">Caricamento chat...</div>
+        <input id="input-${p.id}" placeholder="Scrivi un messaggio..." onkeydown="if(event.key==='Enter') inviaMessaggio(${p.id})" />
+        <button onclick="inviaMessaggio(${p.id})">📨 Invia</button>
       `;
       contenuto.appendChild(div);
       caricaChat(p.id);
@@ -312,19 +302,58 @@ async function caricaPrenotazioni() {
   });
 }
 
-async function aggiornaStato(id, stato) {
-  await fetch(`/api/prenotazioni/${id}`, {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ stato })
+async function caricaTrasporti() {
+  const res = await fetch("/api/trasporti");
+  const dati = await res.json();
+  const contenitore = document.getElementById("contenitoreTrasportiAdmin");
+  contenitore.innerHTML = "";
+
+  const gruppi = {};
+  dati.forEach(p => {
+    if (!gruppi[p.dataTrasporto]) gruppi[p.dataTrasporto] = [];
+    gruppi[p.dataTrasporto].push(p);
+  });
+
+  Object.keys(gruppi).sort((a,b)=>new Date(b)-new Date(a)).forEach(data => {
+    const toggle = document.createElement("div");
+    toggle.className = "giorno-blocco";
+    toggle.textContent = `📅 ${formattaData(data)} (${gruppi[data].length})`;
+
+    const contenuto = document.createElement("div");
+    contenuto.className = "prenotazioni-giorno";
+
+    gruppi[data].forEach(p => {
+      const div = document.createElement("div");
+      div.className = "prenotazione";
+      div.innerHTML = `
+        <b>Richiedente:</b> ${p.richiedente} | <b>Produttore:</b> ${p.produttore}<br>
+        <b>Tipo Trasporto:</b> ${p.tipoTrasporto} | <b>Automezzo:</b> ${p.automezzo}<br>
+        <b>Fascia Oraria:</b> ${p.fasciaOraria}<br>
+        <b>Referente:</b> ${p.referente} - ${p.cellulare}<br>
+        <b>Prezzo:</b> €${p.prezzo}<br>
+        <b>Stato:</b> 
+        <select onchange="aggiornaStato(${p.id}, this.value, 'trasporti')">
+          <option ${p.stato === "in attesa" ? "selected" : ""}>⏳ in attesa</option>
+          <option ${p.stato === "confermata" ? "selected" : ""}>✅ confermata</option>
+          <option ${p.stato === "rifiutata" ? "selected" : ""}>❌ rifiutata</option>
+        </select>
+        <div class="chat-messaggi" id="chat-trasporto-${p.id}">Chat...</div>
+        <input id="input-trasporto-${p.id}" placeholder="Scrivi un messaggio..." onkeydown="if(event.key==='Enter') inviaMessaggio(${p.id}, 'trasporti')" />
+        <button onclick="inviaMessaggio(${p.id}, 'trasporti')">📨 Invia</button>
+      `;
+      contenuto.appendChild(div);
+      caricaChat(p.id, 'trasporti');
+    });
+
+    contenitore.appendChild(toggle);
+    contenitore.appendChild(contenuto);
   });
 }
 
-async function caricaChat(id) {
-  const res = await fetch(`/api/prenotazioni/${id}/chat`);
+async function caricaChat(id, tipo = 'prenotazioni') {
+  const res = await fetch(`/api/${tipo}/${id}/chat`);
   const chat = await res.json();
-  const box = document.getElementById(`chatMsg-${id}`);
-  const notificaEl = document.getElementById(`notificaChat-${id}`);
+  const box = document.getElementById(`chat${tipo === 'trasporti' ? '-trasporto' : ''}-${id}`);
   if (!box) return;
 
   const lastMsg = chat[chat.length - 1];
@@ -333,13 +362,9 @@ async function caricaChat(id) {
   if (
     lastMsg &&
     (!lastKnown || lastMsg.timestamp > lastKnown) &&
-    lastMsg.autore !== 'impianto'
+    lastMsg.autore !== "impianto"
   ) {
-    if (notificaEl) notificaEl.classList.remove('hidden');
-    if (Notification.permission === "granted") {
-      new Notification("📬 Nuovo messaggio", { body: lastMsg.testo });
-    }
-    try { new Audio("/sounds/notify.mp3").play(); } catch (e) {}
+    try { new Audio("/sounds/notify.mp3").play(); } catch {}
   }
 
   chatLastMessage[id] = lastMsg;
@@ -353,62 +378,53 @@ async function caricaChat(id) {
   box.scrollTop = box.scrollHeight;
 
   if (!chatTimers[id]) {
-    chatTimers[id] = setInterval(() => caricaChat(id), 2000);
+    chatTimers[id] = setInterval(() => caricaChat(id, tipo), 2000);
   }
 }
 
-async function inviaMessaggio(id) {
-  const input = document.getElementById(`inputMsg-${id}`);
+async function inviaMessaggio(id, tipo = "prenotazioni") {
+  const inputId = tipo === "trasporti" ? `input-trasporto-${id}` : `input-${id}`;
+  const input = document.getElementById(inputId);
   const testo = input.value.trim();
   if (!testo) return;
 
-  await fetch(`/api/prenotazioni/${id}/chat`, {
+  await fetch(`/api/${tipo}/${id}/chat`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ autore: "impianto", testo })
   });
 
   input.value = "";
-  caricaChat(id);
+  caricaChat(id, tipo);
 }
 
 async function caricaStatistiche() {
-  const res = await fetch('/api/prenotazioni');
-  const dati = await res.json();
+  const prenRes = await fetch("/api/prenotazioni");
+  const trasRes = await fetch("/api/trasporti");
+  const pren = await prenRes.json();
+  const tras = await trasRes.json();
 
-  const clientiUnici = [...new Set(dati.map(p => p.ragioneSociale))].length;
-  const totalePrenotazioni = dati.length;
-  const totaleKg = dati.reduce((sum, p) => sum + Number(p.quantita || 0), 0);
-  const stati = { 'confermata': 0, 'rifiutata': 0, 'in attesa': 0 };
-  dati.forEach(p => { if (stati[p.stato] !== undefined) stati[p.stato]++; });
+  const clientiUnici = [...new Set(pren.map(p => p.ragioneSociale))].length;
+  const totaleKg = pren.reduce((sum, p) => sum + Number(p.quantita || 0), 0);
+  const cer = {};
+  pren.forEach(p => {
+    cer[p.codiceCER] = (cer[p.codiceCER] || 0) + Number(p.quantita || 0);
+  });
 
   const cardContainer = document.getElementById('statCards');
   cardContainer.innerHTML = `
     <div class="card"><h3>🧑‍💼 ${clientiUnici}</h3><p>Clienti</p></div>
-    <div class="card"><h3>📦 ${totalePrenotazioni}</h3><p>Prenotazioni</p></div>
+    <div class="card"><h3>📦 ${pren.length}</h3><p>Prenotazioni</p></div>
+    <div class="card"><h3>🚛 ${tras.length}</h3><p>Trasporti</p></div>
     <div class="card"><h3>⚖️ ${totaleKg}</h3><p>Totale kg</p></div>
-    <div class="card"><h3>✅ ${stati.confermata}</h3><p>Confermate</p></div>
-    <div class="card"><h3>❌ ${stati.rifiutata}</h3><p>Rifiutate</p></div>
-    <div class="card"><h3>⏳ ${stati['in attesa']}</h3><p>In Attesa</p></div>
   `;
 
-  const statsCER = {};
-  dati.forEach(p => {
-    if (!statsCER[p.codiceCER]) statsCER[p.codiceCER] = 0;
-    statsCER[p.codiceCER] += Number(p.quantita);
-  });
-
-  const labels = Object.keys(statsCER);
-  const valori = Object.values(statsCER);
-
-  document.getElementById('statistiche').innerHTML = labels.map((k, i) => `<li>${k}: ${valori[i]} kg</li>`).join('');
-
-  new Chart(document.getElementById('graficoCER'), {
-    type: 'pie',
+  new Chart(document.getElementById("graficoCER"), {
+    type: "pie",
     data: {
-      labels,
+      labels: Object.keys(cer),
       datasets: [{
-        data: valori,
+        data: Object.values(cer),
         backgroundColor: ['#00785c', '#ffc107', '#dc3545', '#6f42c1', '#17a2b8', '#28a745', '#20c997']
       }]
     }
@@ -418,4 +434,4 @@ async function caricaStatistiche() {
 </body>
 </html>
 
-  
+ 
