@@ -292,10 +292,11 @@ async function caricaPrenotazioni() {
           <option value="confermata" ${p.stato === 'confermata' ? 'selected' : ''}>✅ Confermata</option>
           <option value="rifiutata" ${p.stato === 'rifiutata' ? 'selected' : ''}>❌ Rifiutata</option>
         </select>
+
         <div class="chat" style="margin-top:15px;">
           <b>Chat:</b>
           <div class="chat-messaggi" id="chatMsg-${p.id}">Caricamento...</div>
-          <input id="inputMsg-${p.id}" placeholder="Scrivi un messaggio..." />
+          <input id="inputMsg-${p.id}" placeholder="Scrivi un messaggio..." onkeydown="if(event.key==='Enter'){inviaMessaggio(${p.id})}" />
           <button onclick="inviaMessaggio(${p.id})" class="btn-green">📨 Invia</button>
         </div>
       `;
@@ -339,8 +340,10 @@ async function caricaChat(id) {
   chatLastMessage[id] = lastMsg;
 
   box.innerHTML = chat.map(m => `
-    <div class="msg"><b>${m.autore}</b>: ${m.testo}<br>
-    <small>${new Date(m.timestamp).toLocaleString()}</small></div>
+    <div class="msg">
+      <b>${m.autore}</b>: ${m.testo}
+      <small>${new Date(m.timestamp).toLocaleString()}</small>
+    </div>
   `).join('');
   box.scrollTop = box.scrollHeight;
 
