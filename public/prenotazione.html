@@ -1,280 +1,101 @@
-<!DOCTYPE html>
-<html lang="it">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Area Clienti – Eco.Drin</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Poppins', sans-serif;
-      margin: 0;
-      background: #f1f4f6;
-      color: #333;
-    }
-
-    header {
-      background-color: #004c45;
-      color: white;
-      padding: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    header img {
-      height: 50px;
-    }
-
-    #logoutBtn {
-      background: #ff4d4d;
-      color: white;
-      padding: 8px 14px;
-      border: none;
-      border-radius: 6px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    main {
-      max-width: 1000px;
-      margin: 30px auto;
-      background: white;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-    }
-
-    h2 {
-      color: #004c45;
-      margin-top: 0;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    .section {
-      margin-bottom: 30px;
-    }
-
-    input, select, textarea {
-      width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      box-sizing: border-box;
-    }
-
-    select[multiple] {
-      height: auto;
-    }
-
-    button {
-      margin-top: 20px;
-      background-color: #00785c;
-      color: white;
-      border: none;
-      padding: 12px 20px;
-      font-size: 16px;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background-color: #009072;
-    }
-
-    .navCliente {
-      margin-bottom: 20px;
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .navCliente button {
-      background: #004c45;
-      border-radius: 6px;
-      padding: 10px 16px;
-      color: white;
-      font-weight: bold;
-    }
-
-    .navCliente button.active {
-      background: #009072;
-    }
-
-    .giorno-blocco {
-      background: #eafaf5;
-      padding: 12px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
-      margin-top: 20px;
-      border: 1px solid #b3e5c5;
-    }
-
-    .prenotazione {
-      background: #f8f9fa;
-      border: 1px solid #ccc;
-      padding: 15px;
-      margin: 10px 0;
-      border-radius: 6px;
-    }
-
-    .chat-messaggi {
-      background: #e9fdf4;
-      padding: 12px;
-      border: 1px solid #b0eacd;
-      border-radius: 8px;
-      box-shadow: inset 0 0 6px rgba(0, 120, 92, 0.15);
-      max-height: 180px;
-      overflow-y: auto;
-      margin: 10px 0;
-    }
-
-    .msg {
-      background: #c8f7e3;
-      border: 1px solid #a2e7cd;
-      padding: 10px 14px;
-      border-radius: 8px;
-      margin-bottom: 8px;
-      font-size: 14px;
-      box-shadow: 0 2px 4px rgba(0, 120, 92, 0.08);
-    }
-
-    .msg small {
-      display: block;
-      font-size: 11px;
-      color: #555;
-      margin-top: 6px;
-    }
-
-    .chat-notifica {
-      display: inline-block;
-      background: #dc3545;
-      color: white;
-      font-size: 12px;
-      padding: 2px 8px;
-      border-radius: 12px;
-      margin-left: 8px;
-      vertical-align: middle;
-    }
-
-    footer {
-      text-align: center;
-      font-size: 14px;
-      padding: 20px;
-      color: #777;
-      margin-top: 40px;
-    }
-  </style>
-</head>
-<body>
-
-<header>
-  <div style="display:flex; align-items:center; gap:15px;">
-    <img src="eco.drin-_srl.png" alt="Logo Ecodrin" />
-    <h1 style="margin:0;">Area Clienti</h1>
-  </div>
-  <button id="logoutBtn" class="hidden" onclick="logout()">Logout</button>
-</header>
-
-<main>
-  <!-- LOGIN -->
-  <div id="loginBox">
-    <h2>🔐 Accesso Clienti</h2>
-    <input id="loginEmail" placeholder="Ragione Sociale"
-      onkeydown="if(event.key==='Enter') login()" />
-    <input id="loginPassword" type="password" placeholder="Password"
-      onkeydown="if(event.key==='Enter') login()" />
-    <button onclick="login()">Accedi</button>
-    <div id="loginErrore" style="color:red;"></div>
-  </div>
-
-  <!-- AREA CLIENTE -->
-  <div id="contenutoCliente" class="hidden">
-    <div class="navCliente">
-      <button id="btnNuova" class="active" onclick="mostraSezione('formPrenotazione')">➕ Nuova Prenotazione</button>
-      <button id="btnStorico" onclick="mostraSezione('archivioPrenotazioni')">📁 Le tue Prenotazioni</button>
-      <button id="btnProfilo" onclick="mostraSezione('profiloCliente')">👤 Profilo</button>
-    </div>
-
     <!-- FORM PRENOTAZIONE -->
     <section id="formPrenotazione" class="section">
       <h2>➕ Nuova Prenotazione</h2>
       <form id="form">
         <label>Produttore</label>
         <input name="produttore" required />
-
         <label>Codice CER</label>
         <input name="codiceCER" required />
-
         <label>Pericolosità (HP)</label>
         <select name="pericolosita" multiple>
           <option>HP1</option><option>HP2</option><option>HP3</option><option>HP4</option><option>HP5</option>
           <option>HP6</option><option>HP7</option><option>HP8</option><option>HP9</option><option>HP10</option>
           <option>HP11</option><option>HP12</option><option>HP13</option><option>HP14</option><option>HP15</option>
         </select>
-        <small>Premi CTRL o ⌘ per selezionare più valori</small>
-
         <label>Tipo Imballo</label>
         <select name="tipoImballo" required>
-          <option>sfuso</option>
-          <option>big bags</option>
-          <option>pallet</option>
-          <option>cisterna 5mc</option>
-          <option>cisterna 15mc</option>
-          <option>cisterna 30mc</option>
-          <option>altro</option>
+          <option>sfuso</option><option>big bags</option><option>pallet</option>
+          <option>cisterna 5mc</option><option>cisterna 15mc</option>
+          <option>cisterna 30mc</option><option>altro</option>
         </select>
-
         <label>Stato Fisico</label>
         <select name="statoFisico" required>
-          <option>SP (polverulento)</option>
-          <option>S (solido)</option>
-          <option>VS (vischioso/sciropposo)</option>
-          <option>Fp (fangoso)</option>
-          <option>L (liquido)</option>
+          <option>SP (polverulento)</option><option>S (solido)</option>
+          <option>VS (vischioso/sciropposo)</option><option>Fp (fangoso)</option><option>L (liquido)</option>
         </select>
-
         <label>Quantità (kg)</label>
         <input name="quantita" type="number" required />
-
         <label>Data Ritiro</label>
         <input name="data" type="date" required />
-
         <label>Allega Analisi (PDF)</label>
         <input name="analisi" type="file" accept=".pdf" />
-
         <button type="submit">📨 Invia Prenotazione</button>
         <div id="msgRisultato" style="margin-top: 10px;"></div>
       </form>
     </section>
 
-    <!-- ARCHIVIO -->
+    <!-- FORM RICHIESTA TRASPORTO -->
+    <section id="formTrasporto" class="section hidden">
+      <h2>🚛 Richiesta Trasporto</h2>
+      <form id="formTrasportoForm">
+        <label>Richiedente</label>
+        <input name="richiedente" id="richiedente" />
+        <label>Produttore</label>
+        <input name="produttore" required />
+        <label>Codice CER</label>
+        <input name="codiceCER" required />
+        <label>Tipo Automezzo</label>
+        <select name="automezzo" required>
+          <option>Motrice</option>
+          <option>Autotreno</option>
+          <option>Cassonato</option>
+          <option>Ribaltabile</option>
+          <option>Altro</option>
+        </select>
+        <label>Data Trasporto</label>
+        <input name="dataTrasporto" type="date" required />
+        <label>Fascia Oraria Preferita</label>
+        <select name="fasciaOraria" required>
+          <option>8:30–10:30</option>
+          <option>10:30–12:30</option>
+          <option>14:30–16:30</option>
+        </select>
+        <label>Referente e Cellulare</label>
+        <input name="referente" placeholder="Nome referente" required />
+        <input name="cellulare" type="tel" placeholder="Cellulare" required />
+        <label>Prezzo pattuito (€)</label>
+        <input name="prezzo" type="number" step="0.01" required />
+        <button type="submit">📨 Invia Richiesta</button>
+        <div id="msgTrasporto" style="margin-top:10px;"></div>
+      </form>
+    </section>
+
+    <!-- ARCHIVIO PRENOTAZIONI -->
     <section id="archivioPrenotazioni" class="section hidden">
       <h2>📁 Le Tue Prenotazioni</h2>
       <div id="contenitorePrenotazioni"></div>
+    </section>
+
+    <!-- ARCHIVIO TRASPORTI -->
+    <section id="archivioTrasporti" class="section hidden">
+      <h2>📦 Le Tue Richieste di Trasporto</h2>
+      <div id="contenitoreTrasporti"></div>
     </section>
 
     <!-- PROFILO -->
     <section id="profiloCliente" class="section hidden">
       <h2>👤 Profilo Cliente</h2>
       <form id="formProfilo">
+        <label>Ragione Sociale (non modificabile)</label>
+        <input name="ragioneSociale" id="profiloRagione" disabled />
         <label>Email</label>
-        <input name="email" type="email" placeholder="esempio@email.it" />
-
+        <input name="email" type="email" required />
         <label>Telefono</label>
         <input name="telefono" type="text" />
-
         <label>Nuova Password</label>
         <input name="nuovaPassword" type="password" />
-
-        <label>Autorizzazioni (PDF opzionale)</label>
+        <label>Autorizzazioni (PDF)</label>
         <input name="autorizzazioni" type="file" accept=".pdf" />
-
         <button type="submit">💾 Salva Profilo</button>
         <div id="profiloMsg" style="margin-top: 10px;"></div>
       </form>
@@ -289,10 +110,130 @@
   ©2025 Eco.Drin s.r.l. – P.I: 03378791218
 </footer>
 
+<!-- SCRIPT JS -->
+<script src="cliente-script.js"></script>
+</body>
+</html>
+
   
  <!-- parte 2 -->
+    <!-- FORM PRENOTAZIONE -->
+    <section id="formPrenotazione" class="section">
+      <h2>➕ Nuova Prenotazione</h2>
+      <form id="form">
+        <label>Produttore</label>
+        <input name="produttore" required />
+        <label>Codice CER</label>
+        <input name="codiceCER" required />
+        <label>Pericolosità (HP)</label>
+        <select name="pericolosita" multiple>
+          <option>HP1</option><option>HP2</option><option>HP3</option><option>HP4</option><option>HP5</option>
+          <option>HP6</option><option>HP7</option><option>HP8</option><option>HP9</option><option>HP10</option>
+          <option>HP11</option><option>HP12</option><option>HP13</option><option>HP14</option><option>HP15</option>
+        </select>
+        <label>Tipo Imballo</label>
+        <select name="tipoImballo" required>
+          <option>sfuso</option><option>big bags</option><option>pallet</option>
+          <option>cisterna 5mc</option><option>cisterna 15mc</option>
+          <option>cisterna 30mc</option><option>altro</option>
+        </select>
+        <label>Stato Fisico</label>
+        <select name="statoFisico" required>
+          <option>SP (polverulento)</option><option>S (solido)</option>
+          <option>VS (vischioso/sciropposo)</option><option>Fp (fangoso)</option><option>L (liquido)</option>
+        </select>
+        <label>Quantità (kg)</label>
+        <input name="quantita" type="number" required />
+        <label>Data Ritiro</label>
+        <input name="data" type="date" required />
+        <label>Allega Analisi (PDF)</label>
+        <input name="analisi" type="file" accept=".pdf" />
+        <button type="submit">📨 Invia Prenotazione</button>
+        <div id="msgRisultato" style="margin-top: 10px;"></div>
+      </form>
+    </section>
 
+    <!-- FORM RICHIESTA TRASPORTO -->
+    <section id="formTrasporto" class="section hidden">
+      <h2>🚛 Richiesta Trasporto</h2>
+      <form id="formTrasportoForm">
+        <label>Richiedente</label>
+        <input name="richiedente" id="richiedente" />
+        <label>Produttore</label>
+        <input name="produttore" required />
+        <label>Codice CER</label>
+        <input name="codiceCER" required />
+        <label>Tipo Automezzo</label>
+        <select name="automezzo" required>
+          <option>Motrice</option>
+          <option>Autotreno</option>
+          <option>Cassonato</option>
+          <option>Ribaltabile</option>
+          <option>Altro</option>
+        </select>
+        <label>Data Trasporto</label>
+        <input name="dataTrasporto" type="date" required />
+        <label>Fascia Oraria Preferita</label>
+        <select name="fasciaOraria" required>
+          <option>8:30–10:30</option>
+          <option>10:30–12:30</option>
+          <option>14:30–16:30</option>
+        </select>
+        <label>Referente e Cellulare</label>
+        <input name="referente" placeholder="Nome referente" required />
+        <input name="cellulare" type="tel" placeholder="Cellulare" required />
+        <label>Prezzo pattuito (€)</label>
+        <input name="prezzo" type="number" step="0.01" required />
+        <button type="submit">📨 Invia Richiesta</button>
+        <div id="msgTrasporto" style="margin-top:10px;"></div>
+      </form>
+    </section>
 
+    <!-- ARCHIVIO PRENOTAZIONI -->
+    <section id="archivioPrenotazioni" class="section hidden">
+      <h2>📁 Le Tue Prenotazioni</h2>
+      <div id="contenitorePrenotazioni"></div>
+    </section>
+
+    <!-- ARCHIVIO TRASPORTI -->
+    <section id="archivioTrasporti" class="section hidden">
+      <h2>📦 Le Tue Richieste di Trasporto</h2>
+      <div id="contenitoreTrasporti"></div>
+    </section>
+
+    <!-- PROFILO -->
+    <section id="profiloCliente" class="section hidden">
+      <h2>👤 Profilo Cliente</h2>
+      <form id="formProfilo">
+        <label>Ragione Sociale (non modificabile)</label>
+        <input name="ragioneSociale" id="profiloRagione" disabled />
+        <label>Email</label>
+        <input name="email" type="email" required />
+        <label>Telefono</label>
+        <input name="telefono" type="text" />
+        <label>Nuova Password</label>
+        <input name="nuovaPassword" type="password" />
+        <label>Autorizzazioni (PDF)</label>
+        <input name="autorizzazioni" type="file" accept=".pdf" />
+        <button type="submit">💾 Salva Profilo</button>
+        <div id="profiloMsg" style="margin-top: 10px;"></div>
+      </form>
+    </section>
+  </div>
+</main>
+
+<footer>
+  📍 Via delle Industrie – Zona Asi - 80011 Acerra (NA)<br />
+  📞 081.8857480 / 081.5207650<br />
+  ✉️ info@ecodrinsrl.it / impianto@ecodrinsrl.it<br />
+  ©2025 Eco.Drin s.r.l. – P.I: 03378791218
+</footer>
+
+<!-- SCRIPT JS -->
+<script src="cliente-script.js"></script>
+</body>
+</html>
+<!-- parte 3 -->
 <script>
 let utente = null;
 const chatTimers = {};
@@ -301,17 +242,13 @@ const chatLastMessage = {};
 if ("Notification" in window) Notification.requestPermission();
 
 function mostraSezione(id) {
-  ["formPrenotazione", "archivioPrenotazioni", "profiloCliente"].forEach(s => {
+  [
+    "formPrenotazione", "archivioPrenotazioni", "formTrasporto",
+    "archivioTrasporti", "profiloCliente"
+  ].forEach(s => {
     document.getElementById(s).classList.add("hidden");
   });
   document.getElementById(id).classList.remove("hidden");
-
-  ["btnNuova", "btnStorico", "btnProfilo"].forEach(b => {
-    document.getElementById(b).classList.remove("active");
-  });
-  const btnId = id === "formPrenotazione" ? "btnNuova" :
-                id === "archivioPrenotazioni" ? "btnStorico" : "btnProfilo";
-  document.getElementById(btnId).classList.add("active");
 }
 
 function logout() {
@@ -337,7 +274,11 @@ function login() {
       document.getElementById("loginBox").classList.add("hidden");
       document.getElementById("contenutoCliente").classList.remove("hidden");
       document.getElementById("logoutBtn").classList.remove("hidden");
+      document.getElementById("richiedente").value = utente.ragioneSociale;
+      document.getElementById("profiloRagione").value = utente.ragioneSociale;
+      document.querySelector("[name='email']").value = utente.email;
       caricaPrenotazioni();
+      caricaTrasporti();
     } else throw new Error();
   })
   .catch(() => document.getElementById("loginErrore").innerText = "❌ Login fallito.");
@@ -345,27 +286,42 @@ function login() {
 
 document.getElementById("form").addEventListener("submit", async e => {
   e.preventDefault();
-  const form = e.target;
-  const formData = new FormData(form);
-
+  const formData = new FormData(e.target);
   formData.append("ragioneSociale", utente.ragioneSociale);
   formData.append("codiceCliente", utente.codiceCliente);
   formData.append("email", utente.email);
-
-  const hp = Array.from(form.elements["pericolosita"].selectedOptions).map(o => o.value);
+  const hp = Array.from(e.target.elements["pericolosita"].selectedOptions).map(o => o.value);
   formData.set("pericolosita", hp.join(", "));
 
-  document.getElementById("msgRisultato").textContent = "⏳ Invio in corso...";
-
+  document.getElementById("msgRisultato").textContent = "⏳ Invio...";
   try {
     const res = await fetch("/api/prenotazioni", { method: "POST", body: formData });
     if (!res.ok) throw new Error();
-    form.reset();
+    e.target.reset();
     document.getElementById("msgRisultato").textContent = "✅ Prenotazione inviata!";
     caricaPrenotazioni();
     mostraSezione("archivioPrenotazioni");
-  } catch (err) {
+  } catch {
     document.getElementById("msgRisultato").textContent = "❌ Errore durante l'invio.";
+  }
+});
+
+document.getElementById("formTrasportoForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const formData = new FormData(e.target);
+  formData.append("codiceCliente", utente.codiceCliente);
+  formData.append("email", utente.email);
+
+  document.getElementById("msgTrasporto").textContent = "⏳ Invio...";
+  try {
+    const res = await fetch("/api/trasporti", { method: "POST", body: formData });
+    if (!res.ok) throw new Error();
+    e.target.reset();
+    document.getElementById("msgTrasporto").textContent = "✅ Richiesta inviata!";
+    caricaTrasporti();
+    mostraSezione("archivioTrasporti");
+  } catch {
+    document.getElementById("msgTrasporto").textContent = "❌ Errore durante l'invio.";
   }
 });
 
@@ -377,13 +333,12 @@ document.getElementById("formProfilo").addEventListener("submit", async e => {
 
   try {
     const res = await fetch("/api/cliente/profilo", {
-      method: "POST",
-      body: formData
+      method: "POST", body: formData
     });
     if (!res.ok) throw new Error();
     document.getElementById("profiloMsg").textContent = "✅ Profilo aggiornato!";
   } catch {
-    document.getElementById("profiloMsg").textContent = "❌ Errore salvataggio.";
+    document.getElementById("profiloMsg").textContent = "❌ Errore salvataggio profilo.";
   }
 });
 
@@ -395,30 +350,19 @@ async function caricaPrenotazioni() {
 
   const gruppi = {};
   dati.forEach(p => {
-    if (p.data) {
-      if (!gruppi[p.data]) gruppi[p.data] = [];
-      gruppi[p.data].push(p);
-    }
+    if (!gruppi[p.data]) gruppi[p.data] = [];
+    gruppi[p.data].push(p);
   });
 
-  const giorni = Object.keys(gruppi).sort((a,b)=>new Date(b)-new Date(a));
-  if (!giorni.length) return contenitore.innerHTML = "<p>Nessuna prenotazione trovata.</p>";
-
-  giorni.forEach(data => {
+  Object.keys(gruppi).sort((a,b)=>new Date(b)-new Date(a)).forEach(data => {
     const wrapper = document.createElement("div");
-
     const toggle = document.createElement("div");
     toggle.className = "giorno-blocco";
     toggle.textContent = `📅 ${formattaData(data)} (${gruppi[data].length})`;
     toggle.onclick = () => {
       const box = wrapper.querySelector(".prenotazioni-giorno");
       box.classList.toggle("hidden");
-      gruppi[data].forEach(p => {
-        const notifica = document.getElementById(`notificaChat-${p.id}`);
-        if (notifica) notifica.classList.add('hidden');
-      });
     };
-
     const contenuto = document.createElement("div");
     contenuto.className = "prenotazioni-giorno hidden";
 
@@ -430,14 +374,13 @@ async function caricaPrenotazioni() {
         <b>Pericolosità:</b> ${p.pericolosita || "N/D"} | <b>Stato:</b> ${p.stato}<br>
         <b>Data:</b> ${formattaData(p.data)}<br>
         ${p.analisi ? `<b>Analisi:</b> <a href="/uploads/${p.analisi}" target="_blank">📎 Visualizza</a><br>` : ""}
-        <b>Chat:</b> <span id="notificaChat-${p.id}" class="chat-notifica hidden">🔴 Nuovo</span>
+        <b>Chat:</b>
         <div class="chat-messaggi" id="chatMsg-${p.id}">Caricamento...</div>
-        <input id="inputMsg-${p.id}" placeholder="Scrivi un messaggio..."
-          onkeydown="if(event.key==='Enter'){inviaMessaggio(${p.id})}" />
+        <input id="inputMsg-${p.id}" placeholder="Scrivi un messaggio..." onkeydown="if(event.key==='Enter') inviaMessaggio(${p.id})" />
         <button onclick="inviaMessaggio(${p.id})">📨 Invia</button>
       `;
       contenuto.appendChild(div);
-      caricaChat(p.id);
+      caricaChat(p.id, "prenotazioni");
     });
 
     wrapper.appendChild(toggle);
@@ -446,16 +389,39 @@ async function caricaPrenotazioni() {
   });
 }
 
+async function caricaTrasporti() {
+  const res = await fetch(`/api/trasporti/utente/${utente.codiceCliente}`);
+  const dati = await res.json();
+  const contenitore = document.getElementById("contenitoreTrasporti");
+  contenitore.innerHTML = "";
+
+  dati.forEach(p => {
+    const div = document.createElement("div");
+    div.className = "prenotazione";
+    div.innerHTML = `
+      <b>Data:</b> ${formattaData(p.dataTrasporto)} | <b>Stato:</b> ${p.stato || "In attesa"}<br>
+      <b>Produttore:</b> ${p.produttore}<br>
+      <b>Automezzo:</b> ${p.automezzo} | <b>Fascia:</b> ${p.fasciaOraria}<br>
+      <b>Referente:</b> ${p.referente} - ${p.cellulare}<br>
+      <b>Prezzo:</b> € ${p.prezzo}<br>
+      <div class="chat-messaggi" id="chatTrasporto-${p.id}">Caricamento...</div>
+      <input id="inputTrasporto-${p.id}" placeholder="Scrivi un messaggio..." onkeydown="if(event.key==='Enter') inviaMessaggio(${p.id}, 'trasporti')" />
+      <button onclick="inviaMessaggio(${p.id}, 'trasporti')">📨 Invia</button>
+    `;
+    contenitore.appendChild(div);
+    caricaChat(p.id, "trasporti");
+  });
+}
+
 function formattaData(dataStr) {
   const d = new Date(dataStr);
   return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth()+1).toString().padStart(2, '0')}/${d.getFullYear()}`;
 }
 
-async function caricaChat(id) {
-  const res = await fetch(`/api/prenotazioni/${id}/chat`);
+async function caricaChat(id, tipo = "prenotazioni") {
+  const res = await fetch(`/api/${tipo}/${id}/chat`);
   const chat = await res.json();
-  const box = document.getElementById(`chatMsg-${id}`);
-  const notificaEl = document.getElementById(`notificaChat-${id}`);
+  const box = document.getElementById(`chat${tipo === "trasporti" ? "Trasporto" : "Msg"}-${id}`);
   if (!box) return;
 
   const lastMsg = chat[chat.length - 1];
@@ -466,10 +432,6 @@ async function caricaChat(id) {
     (!lastKnown || lastMsg.timestamp > lastKnown) &&
     lastMsg.autore !== utente.ragioneSociale
   ) {
-    if (notificaEl) notificaEl.classList.remove('hidden');
-    if (Notification.permission === "granted") {
-      new Notification("📬 Nuovo messaggio", { body: lastMsg.testo });
-    }
     try { new Audio("/sounds/notify.mp3").play(); } catch (e) {}
   }
 
@@ -484,24 +446,26 @@ async function caricaChat(id) {
   box.scrollTop = box.scrollHeight;
 
   if (!chatTimers[id]) {
-    chatTimers[id] = setInterval(() => caricaChat(id), 2000);
+    chatTimers[id] = setInterval(() => caricaChat(id, tipo), 2000);
   }
 }
 
-async function inviaMessaggio(id) {
-  const input = document.getElementById(`inputMsg-${id}`);
+async function inviaMessaggio(id, tipo = "prenotazioni") {
+  const inputId = tipo === "trasporti" ? `inputTrasporto-${id}` : `inputMsg-${id}`;
+  const input = document.getElementById(inputId);
   const testo = input.value.trim();
   if (!testo) return;
 
-  await fetch(`/api/prenotazioni/${id}/chat`, {
+  await fetch(`/api/${tipo}/${id}/chat`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ autore: utente.ragioneSociale, testo })
   });
 
   input.value = "";
-  caricaChat(id);
+  caricaChat(id, tipo);
 }
 </script>
-</body>
-</html>
+
+
+
