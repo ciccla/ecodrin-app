@@ -2,56 +2,51 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Area Clienti – Ecodrin</title>
+  <link rel="stylesheet" href="style-ecodrin.css" />
   <style>
-    body { font-family: Arial; background: #f4f6f8; margin: 0; }
-    main {
-      max-width: 800px; margin: 30px auto;
-      background: white; padding: 30px;
-      border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
-    h2, h3 { margin-top: 0; }
-    input, select, textarea {
-      width: 100%; padding: 10px; margin-bottom: 15px;
-      border: 1px solid #ccc; border-radius: 4px; font-size: 16px;
-    }
-    button {
-      padding: 10px 15px; border: none;
-      background: #007acc; color: white;
-      border-radius: 4px; cursor: pointer; font-size: 16px;
-    }
-    .hidden { display: none; }
-    .top-nav {
-      display: flex; justify-content: space-between;
-      align-items: center; flex-wrap: wrap; gap: 10px;
-      margin-bottom: 20px;
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 12px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
     }
     .chat-box {
-      border: 1px solid #ccc; padding: 10px;
-      border-radius: 6px; max-height: 300px;
-      overflow-y: auto; background: #f9f9f9;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      padding: 10px;
+      max-height: 250px;
+      overflow-y: auto;
+      background: #f9f9f9;
       margin-bottom: 10px;
     }
     .msg {
-      background: #fff; padding: 8px; margin-bottom: 6px;
-      border-left: 4px solid #007acc; border-radius: 4px;
+      background: #fff;
+      padding: 8px;
+      border-left: 4px solid #007acc;
+      border-radius: 4px;
+      margin-bottom: 5px;
     }
-    .msg small {
-      font-size: 11px; color: #555; display: block;
-    }
-
+    .msg small { color: #666; font-size: 11px; display: block; }
     @media (max-width: 600px) {
-      body { padding: 10px; }
-      main { padding: 20px; margin: 10px; }
-      input, select, button { font-size: 16px; }
+      .top-nav {
+        flex-direction: column;
+        gap: 10px;
+      }
     }
   </style>
 </head>
 <body>
 
-<main>
-  <!-- Login -->
+<header class="header">
+  <a href="index.html"><img src="logo-ecodrin.png" alt="Logo Ecodrin" class="logo"></a>
+  <h1>Area Clienti</h1>
+</header>
+
+<main class="main">
+  <!-- LOGIN -->
   <div id="authBox">
     <h2>Accesso Clienti</h2>
     <input id="loginEmail" placeholder="Ragione Sociale">
@@ -61,9 +56,9 @@
     <div id="loginErrore" style="color:red;"></div>
   </div>
 
-  <!-- Registrazione -->
+  <!-- REGISTRAZIONE -->
   <div id="regBox" class="hidden">
-    <h2>Registrazione</h2>
+    <h2>Registrazione Cliente</h2>
     <input id="regRagione" placeholder="Ragione Sociale">
     <input id="regCF" placeholder="Codice Fiscale">
     <input id="regPassword" type="password" placeholder="Password">
@@ -72,9 +67,9 @@
     <div id="regErrore" style="color:red;"></div>
   </div>
 
-  <!-- Area cliente -->
+  <!-- AREA CLIENTE -->
   <div id="clienteBox" class="hidden">
-    <div class="top-nav">
+    <div class="top-nav" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
       <div>Benvenuto, <span id="nomeCliente"></span></div>
       <select onchange="switchClientePage(this.value)">
         <option value="prenota">📦 Prenota</option>
@@ -83,15 +78,14 @@
       </select>
     </div>
 
-    <!-- Form prenotazione -->
+    <!-- FORM PRENOTAZIONE -->
     <div id="paginaPrenota">
-      <h3>📦 Prenotazione Rifiuti</h3>
+      <h3>📦 Nuova Prenotazione</h3>
       <form id="formPrenotazione">
-        <input name="produttore" placeholder="Produttore" required>
-        <input name="codiceCER" placeholder="Codice CER" required>
-        <input name="quantita" type="number" placeholder="Quantità (kg)" required>
+        <input name="produttore" placeholder="Produttore" required />
+        <input name="codiceCER" placeholder="Codice CER" required />
+        <input name="quantita" type="number" placeholder="Quantità (kg)" required />
 
-        <!-- Pericolosità -->
         <select name="pericolosita" required>
           <option value="">Classe di pericolosità</option>
           <option value="HP1">HP1 – Esplosivo</option>
@@ -105,13 +99,12 @@
           <option value="HP9">HP9 – Infettivo</option>
           <option value="HP10">HP10 – Tossico riproduzione</option>
           <option value="HP11">HP11 – Mutageno</option>
-          <option value="HP12">HP12 – Rilascia gas tossici</option>
+          <option value="HP12">HP12 – Gas tossici</option>
           <option value="HP13">HP13 – Sensibilizzante</option>
           <option value="HP14">HP14 – Ecotossico</option>
           <option value="HP15">HP15 – Rischio secondario</option>
         </select>
 
-        <!-- Stato Fisico -->
         <select name="statoFisico" required>
           <option value="">Stato fisico</option>
           <option value="1 - Solido pulverulento">1 - Solido pulverulento</option>
@@ -128,12 +121,12 @@
 
         <input name="tipoImballo" placeholder="Tipo Imballo">
         <input name="data" type="date" required>
-        <input name="analisi" type="file" />
+        <input name="analisi" type="file">
         <button type="submit">Invia Prenotazione</button>
       </form>
     </div>
 
-    <!-- Elenco prenotazioni -->
+    <!-- ELENCO -->
     <div id="paginaElenco" class="hidden">
       <h3>📋 Le Tue Prenotazioni</h3>
       <div id="prenotazioni"></div>
@@ -145,9 +138,7 @@ let cliente = null;
 const chatTimers = {};
 const chatLastMessage = {};
 
-if ("Notification" in window) {
-  Notification.requestPermission();
-}
+if ("Notification" in window) Notification.requestPermission();
 
 function toggleRegistro() {
   document.getElementById('authBox').classList.toggle('hidden');
@@ -173,13 +164,9 @@ function login() {
       document.getElementById('authBox').classList.add('hidden');
       document.getElementById('clienteBox').classList.remove('hidden');
       caricaPrenotazioni();
-    } else {
-      throw new Error();
-    }
+    } else throw new Error();
   })
-  .catch(() => {
-    document.getElementById('loginErrore').innerText = '❌ Credenziali errate';
-  });
+  .catch(() => document.getElementById('loginErrore').innerText = '❌ Credenziali errate');
 }
 
 document.getElementById('loginPassword').addEventListener('keydown', e => {
@@ -201,9 +188,7 @@ function registrati() {
     alert('Registrazione completata!');
     toggleRegistro();
   })
-  .catch(() => {
-    document.getElementById('regErrore').innerText = '⚠️ Errore nella registrazione';
-  });
+  .catch(() => document.getElementById('regErrore').innerText = '⚠️ Errore nella registrazione');
 }
 
 document.getElementById('formPrenotazione').addEventListener('submit', e => {
@@ -279,7 +264,6 @@ async function caricaChat(id) {
   const box = document.getElementById(`chat-${id}`);
   if (!box) return;
 
-  // 🔔 Notifica nuovi messaggi
   const lastMsg = chat[chat.length - 1];
   const lastKnown = chatLastMessage[id]?.timestamp;
   if (
@@ -292,17 +276,15 @@ async function caricaChat(id) {
         body: lastMsg.testo,
       });
     }
-    try {
-      new Audio("/sounds/notify.mp3").play();
-    } catch (e) {}
+    try { new Audio("/sounds/notify.mp3").play(); } catch(e){}
   }
+
   chatLastMessage[id] = lastMsg;
 
   box.innerHTML = chat.map(m => `
-    <div class="msg">
-      <b>${m.autore}</b>: ${m.testo}<br>
-      <small>${new Date(m.timestamp).toLocaleString()}</small>
-    </div>`).join('');
+    <div class="msg"><b>${m.autore}</b>: ${m.testo}<br>
+    <small>${new Date(m.timestamp).toLocaleString()}</small></div>
+  `).join('');
   box.scrollTop = box.scrollHeight;
 
   if (!chatTimers[id]) {
@@ -327,8 +309,7 @@ function switchClientePage(p) {
   if (p === 'logout') return location.reload();
   document.getElementById('paginaPrenota').classList.add('hidden');
   document.getElementById('paginaElenco').classList.add('hidden');
-  if (p === 'prenota') document.getElementById('paginaPrenota').classList.remove('hidden');
-  if (p === 'elenco') document.getElementById('paginaElenco').classList.remove('hidden');
+  document.getElementById(`pagina${p.charAt(0).toUpperCase() + p.slice(1)}`).classList.remove('hidden');
 }
 </script>
 </body>
