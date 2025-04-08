@@ -2,34 +2,50 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Area Clienti – Ecodrin</title>
   <style>
     body { font-family: Arial; background: #f4f6f8; margin: 0; }
-    main { max-width: 800px; margin: 30px auto; background: white; padding: 30px;
-      border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    main {
+      max-width: 800px; margin: 30px auto;
+      background: white; padding: 30px;
+      border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
     h2, h3 { margin-top: 0; }
     input, select, textarea {
-      width: 100%; padding: 8px; margin-bottom: 15px;
-      border: 1px solid #ccc; border-radius: 4px;
+      width: 100%; padding: 10px; margin-bottom: 15px;
+      border: 1px solid #ccc; border-radius: 4px; font-size: 16px;
     }
     button {
       padding: 10px 15px; border: none;
-      background: #007acc; color: white; border-radius: 4px; cursor: pointer;
+      background: #007acc; color: white;
+      border-radius: 4px; cursor: pointer; font-size: 16px;
     }
     .hidden { display: none; }
     .top-nav {
-      display: flex; justify-content: space-between; align-items: center;
+      display: flex; justify-content: space-between;
+      align-items: center; flex-wrap: wrap; gap: 10px;
       margin-bottom: 20px;
     }
     .chat-box {
-      border: 1px solid #ccc; padding: 10px; border-radius: 6px;
-      max-height: 300px; overflow-y: auto; background: #f9f9f9; margin-bottom: 10px;
+      border: 1px solid #ccc; padding: 10px;
+      border-radius: 6px; max-height: 300px;
+      overflow-y: auto; background: #f9f9f9;
+      margin-bottom: 10px;
     }
     .msg {
       background: #fff; padding: 8px; margin-bottom: 6px;
       border-left: 4px solid #007acc; border-radius: 4px;
     }
-    .msg small { font-size: 11px; color: #555; display: block; }
+    .msg small {
+      font-size: 11px; color: #555; display: block;
+    }
+
+    @media (max-width: 600px) {
+      body { padding: 10px; }
+      main { padding: 20px; margin: 10px; }
+      input, select, button { font-size: 16px; }
+    }
   </style>
 </head>
 <body>
@@ -81,18 +97,18 @@
           <option value="HP1">HP1 – Esplosivo</option>
           <option value="HP2">HP2 – Comburente</option>
           <option value="HP3">HP3 – Infiammabile</option>
-          <option value="HP4">HP4 – Irritante (irritazione cutanea e oculare)</option>
-          <option value="HP5">HP5 – Tossicità specifica per organi bersaglio</option>
+          <option value="HP4">HP4 – Irritante</option>
+          <option value="HP5">HP5 – Tossicità organi bersaglio</option>
           <option value="HP6">HP6 – Tossico acuto</option>
           <option value="HP7">HP7 – Cancerogeno</option>
           <option value="HP8">HP8 – Corrosivo</option>
           <option value="HP9">HP9 – Infettivo</option>
-          <option value="HP10">HP10 – Tossico per la riproduzione</option>
+          <option value="HP10">HP10 – Tossico riproduzione</option>
           <option value="HP11">HP11 – Mutageno</option>
-          <option value="HP12">HP12 – Rifiuti che liberano gas a tossicità acuta</option>
+          <option value="HP12">HP12 – Rilascia gas tossici</option>
           <option value="HP13">HP13 – Sensibilizzante</option>
           <option value="HP14">HP14 – Ecotossico</option>
-          <option value="HP15">HP15 – Reattivo</option>
+          <option value="HP15">HP15 – Rischio secondario</option>
         </select>
 
         <!-- Stato Fisico -->
@@ -127,6 +143,11 @@
 <script>
 let cliente = null;
 const chatTimers = {};
+const chatLastMessage = {};
+
+if ("Notification" in window) {
+  Notification.requestPermission();
+}
 
 function toggleRegistro() {
   document.getElementById('authBox').classList.toggle('hidden');
@@ -258,6 +279,25 @@ async function caricaChat(id) {
   const box = document.getElementById(`chat-${id}`);
   if (!box) return;
 
+  // 🔔 Notifica nuovi messaggi
+  const lastMsg = chat[chat.length - 1];
+  const lastKnown = chatLastMessage[id]?.timestamp;
+  if (
+    lastMsg &&
+    (!lastKnown || lastMsg.timestamp > lastKnown) &&
+    lastMsg.autore !== cliente.ragioneSociale
+  ) {
+    if (Notification.permission === "granted") {
+      new Notification("📨 Nuovo messaggio da " + lastMsg.autore, {
+        body: lastMsg.testo,
+      });
+    }
+    try {
+      new Audio("/sounds/notify.mp3").play();
+    } catch (e) {}
+  }
+  chatLastMessage[id] = lastMsg;
+
   box.innerHTML = chat.map(m => `
     <div class="msg">
       <b>${m.autore}</b>: ${m.testo}<br>
@@ -265,7 +305,6 @@ async function caricaChat(id) {
     </div>`).join('');
   box.scrollTop = box.scrollHeight;
 
-  // ⏱️ Auto-refresh ogni 2s
   if (!chatTimers[id]) {
     chatTimers[id] = setInterval(() => caricaChat(id), 2000);
   }
