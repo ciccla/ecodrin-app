@@ -112,8 +112,9 @@
     </div>
   </div>
 </main>
-<script>
+  <script>
 let adminAutenticato = false;
+const chatTimers = {};
 
 function login() {
   const email = document.getElementById('loginEmail').value.trim();
@@ -252,12 +253,19 @@ async function caricaChat(id) {
   const res = await fetch(`/api/prenotazioni/${id}/chat`);
   const chat = await res.json();
   const div = document.getElementById(`chatMsg-${id}`);
+  if (!div) return;
+
   div.innerHTML = chat.map(m => `
     <div class="messaggio">
       <b>${m.autore}</b>: ${m.testo}<br>
       <small>${new Date(m.timestamp).toLocaleString()}</small>
     </div>`).join('');
   div.scrollTop = div.scrollHeight;
+
+  // Start polling if not already running
+  if (!chatTimers[id]) {
+    chatTimers[id] = setInterval(() => caricaChat(id), 2000);
+  }
 }
 
 async function inviaMessaggio(id) {
@@ -298,3 +306,4 @@ function esportaCSV() {
 </script>
 </body>
 </html>
+
