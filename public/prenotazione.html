@@ -35,40 +35,59 @@
     </section>
 
     <!-- FORM RICHIESTA TRASPORTO -->
-    <section id="formTrasporto" class="section hidden">
-      <h2>🚛 Richiesta Trasporto</h2>
-      <form id="formTrasportoForm">
-        <label>Richiedente</label>
-        <input name="richiedente" id="richiedente" />
-        <label>Produttore</label>
-        <input name="produttore" required />
-        <label>Codice CER</label>
-        <input name="codiceCER" required />
-        <label>Tipo Automezzo</label>
-        <select name="automezzo" required>
-          <option>Motrice</option>
-          <option>Autotreno</option>
-          <option>Cassonato</option>
-          <option>Ribaltabile</option>
-          <option>Altro</option>
-        </select>
-        <label>Data Trasporto</label>
-        <input name="dataTrasporto" type="date" required />
-        <label>Fascia Oraria Preferita</label>
-        <select name="fasciaOraria" required>
-          <option>8:30–10:30</option>
-          <option>10:30–12:30</option>
-          <option>14:30–16:30</option>
-        </select>
-        <label>Referente e Cellulare</label>
-        <input name="referente" placeholder="Nome referente" required />
-        <input name="cellulare" type="tel" placeholder="Cellulare" required />
-        <label>Prezzo pattuito (€)</label>
-        <input name="prezzo" type="number" step="0.01" required />
-        <button type="submit">📨 Invia Richiesta</button>
-        <div id="msgTrasporto" style="margin-top:10px;"></div>
-      </form>
-    </section>
+  <!-- FORM RICHIESTA TRASPORTO -->
+<section id="formTrasporto" class="section hidden">
+  <h2>🚛 Richiesta Trasporto</h2>
+  <form id="formTrasportoForm">
+    <label>Richiedente</label>
+    <input name="richiedente" id="richiedente" />
+
+    <label>Produttore</label>
+    <input name="produttore" required />
+
+    <label>Codice CER</label>
+    <input name="codiceCER" required />
+
+    <label>Tipo di Trasporto</label>
+    <select name="tipoTrasporto" required>
+      <option value="">Seleziona tipo...</option>
+      <option>Cambio cassa</option>
+      <option>Ritiro definitivo</option>
+    </select>
+
+    <label>Tipo Automezzo</label>
+    <select name="automezzo" required>
+      <option>Motrice</option>
+      <option>Autotreno</option>
+      <option>Cassonato</option>
+      <option>Ribaltabile</option>
+      <option>Altro</option>
+    </select>
+
+    <label>Data Trasporto</label>
+    <input name="dataTrasporto" type="date" required />
+
+    <label>Fascia Oraria Preferita</label>
+    <select name="fasciaOraria" required>
+      <option>8:30–10:30</option>
+      <option>10:30–12:30</option>
+      <option>14:30–16:30</option>
+    </select>
+
+    <label>Referente</label>
+    <input name="referente" placeholder="Nome referente" required />
+
+    <label>Numero di cellulare</label>
+    <input name="cellulare" type="tel" required />
+
+    <label>Prezzo pattuito (€)</label>
+    <input name="prezzo" type="number" step="0.01" required />
+
+    <button type="submit">📨 Invia Richiesta</button>
+    <div id="msgTrasporto" style="margin-top:10px;"></div>
+  </form>
+</section>
+
 
     <!-- ARCHIVIO PRENOTAZIONI -->
     <section id="archivioPrenotazioni" class="section hidden">
