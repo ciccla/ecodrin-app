@@ -1,16 +1,15 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Admin – Eco.Drin</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Area Clienti – Eco.Drin</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
       font-family: 'Poppins', sans-serif;
       margin: 0;
-      background: #f4f6f8;
+      background: #f1f4f6;
       color: #333;
     }
 
@@ -19,8 +18,8 @@
       color: white;
       padding: 20px;
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 15px;
     }
 
     header img {
@@ -28,44 +27,63 @@
     }
 
     main {
-      max-width: 1100px;
+      max-width: 1000px;
       margin: 30px auto;
-      padding: 30px;
       background: white;
+      padding: 30px;
       border-radius: 10px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.05);
     }
 
     h2 {
       color: #004c45;
-      margin-top: 0;
     }
 
     .hidden {
       display: none !important;
     }
 
-    .btn-green {
-      background: #28a745;
-      color: white;
-      padding: 8px 16px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      margin-left: 5px;
+    .section {
+      margin-bottom: 40px;
     }
 
-    .btn-green:hover {
-      background: #218838;
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: 600;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+
+    button {
+      margin-top: 20px;
+      background-color: #00785c;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #009072;
     }
 
     .giorno-blocco {
       background: #eafaf5;
-      padding: 10px 15px;
-      border-radius: 8px;
-      margin-top: 20px;
+      padding: 12px;
+      border-radius: 6px;
       cursor: pointer;
       font-weight: bold;
+      margin-top: 20px;
       border: 1px solid #b3e5c5;
     }
 
@@ -73,17 +91,8 @@
       background: #f8f9fa;
       border: 1px solid #ccc;
       padding: 15px;
-      margin-top: 10px;
+      margin: 10px 0;
       border-radius: 6px;
-    }
-
-    select, input {
-      padding: 6px;
-      margin-top: 5px;
-      width: 100%;
-      max-width: 300px;
-      border-radius: 4px;
-      border: 1px solid #ccc;
     }
 
     .chat-messaggi {
@@ -114,15 +123,6 @@
       margin-top: 6px;
     }
 
-    .card {
-      background: #eafaf5;
-      padding: 20px;
-      border-radius: 10px;
-      display: inline-block;
-      margin: 10px;
-      text-align: center;
-    }
-
     .chat-notifica {
       display: inline-block;
       background: #dc3545;
@@ -134,72 +134,105 @@
       vertical-align: middle;
     }
 
-    .hidden {
-      display: none !important;
-    }
-
     footer {
       text-align: center;
       font-size: 14px;
+      padding: 20px;
       color: #777;
-      margin-top: 50px;
+      margin-top: 40px;
     }
   </style>
 </head>
 <body>
+
 <header>
-  <img src="eco.drin-_srl.png" alt="Logo" />
-  <h1>Area Amministratore</h1>
+  <div style="display:flex; align-items:center; gap:15px;">
+    <img src="eco.drin-_srl.png" alt="Logo Ecodrin" />
+    <h1 style="margin:0;">Area Clienti</h1>
+  </div>
 </header>
 
 <main>
+  <!-- LOGIN -->
   <div id="loginBox">
-    <h2>🔐 Login Admin</h2>
-    <input id="loginEmail" placeholder="Email"
+    <h2>🔐 Accesso Clienti</h2>
+    <input id="loginEmail" placeholder="Ragione Sociale"
       onkeydown="if(event.key==='Enter') login()" />
     <input id="loginPassword" type="password" placeholder="Password"
       onkeydown="if(event.key==='Enter') login()" />
-    <button class="btn-green" onclick="login()">Accedi</button>
-    <div id="loginErrore" style="color:red; margin-top:10px;"></div>
+    <button onclick="login()">Accedi</button>
+    <div id="loginErrore" style="color:red;"></div>
   </div>
 
-  <div id="contenutoAdmin" class="hidden">
-    <div id="menuAdmin" style="margin-bottom:20px;">
-      <button class="btn-green" onclick="switchPage('registro')">📦 Prenotazioni</button>
-      <button class="btn-green" onclick="switchPage('statistiche')">📊 Statistiche</button>
-      <button class="btn-green" onclick="logout()">🚪 Logout</button>
-    </div>
+  <!-- AREA CLIENTE -->
+  <div id="contenutoCliente" class="hidden">
+    <section id="formPrenotazione" class="section">
+      <h2>📦 Nuova Prenotazione</h2>
+      <form id="form">
+        <label>Codice CER</label>
+        <input name="codiceCER" required />
 
-    <section id="paginaRegistro">
-      <h2>📁 Registro Prenotazioni</h2>
-      <div id="contenitoreGiorni"></div>
+        <label>Pericolosità (HP)</label>
+        <select name="pericolosita">
+          <option value="">Nessuna</option>
+          ${Array.from({ length: 15 }, (_, i) => `<option>HP${i + 1}</option>`).join("")}
+        </select>
+
+        <label>Tipo Imballo</label>
+        <input name="tipoImballo" required />
+
+        <label>Stato Fisico</label>
+        <select name="statoFisico" required>
+          <option>Solido</option>
+          <option>Liquido</option>
+          <option>Fangoso</option>
+          <option>Polverulento</option>
+          <option>Pasta</option>
+          <option>Solido impregnato</option>
+          <option>Gassoso</option>
+          <option>Aerosol</option>
+          <option>Miscela</option>
+          <option>Emulsione</option>
+        </select>
+
+        <label>Quantità (kg)</label>
+        <input name="quantita" type="number" required />
+
+        <label>Data Ritiro</label>
+        <input name="data" type="date" required />
+
+        <label>Allega Analisi (PDF)</label>
+        <input name="analisi" type="file" accept=".pdf" />
+
+        <button type="submit">📨 Invia Prenotazione</button>
+        <div id="msgRisultato"></div>
+      </form>
     </section>
 
-    <section id="paginaStatistiche" class="hidden">
-      <h2>📊 Statistiche</h2>
-      <div id="statCards"></div>
-      <canvas id="graficoCER" style="max-width:600px; margin-top:30px;"></canvas>
-      <ul id="statistiche"></ul>
+    <section id="archivioPrenotazioni" class="section">
+      <h2>📁 Le Tue Prenotazioni</h2>
+      <div id="contenitorePrenotazioni"></div>
     </section>
   </div>
 </main>
 
 <footer>
-  📍 Via delle Industrie – Zona Asi - 80011 Acerra (NA) |
-  📞 081.8857480 / 081.5207650 |
-  ✉️ info@ecodrinsrl.it / impianto@ecodrinsrl.it
-  <br>©2025 Eco.Drin s.r.l. – P.I: 03378791218
+  📍 Via delle Industrie – Zona Asi - 80011 Acerra (NA)<br />
+  📞 081.8857480 / 081.5207650<br />
+  ✉️ info@ecodrinsrl.it / impianto@ecodrinsrl.it<br />
+  ©2025 Eco.Drin s.r.l. – P.I: 03378791218
 </footer>
-
 
 
  <!-- parte 2 -->
 
 
-  <script>
+<script>
 let utente = null;
 const chatTimers = {};
 const chatLastMessage = {};
+
+if ("Notification" in window) Notification.requestPermission();
 
 document.getElementById("form").addEventListener("submit", async e => {
   e.preventDefault();
@@ -220,7 +253,7 @@ document.getElementById("form").addEventListener("submit", async e => {
     document.getElementById("msgRisultato").textContent = "✅ Prenotazione inviata!";
     caricaPrenotazioni();
   } catch (err) {
-    document.getElementById("msgRisultato").textContent = "❌ Errore nell'invio. Riprova.";
+    document.getElementById("msgRisultato").textContent = "❌ Errore durante l'invio.";
   }
 });
 
@@ -268,7 +301,14 @@ async function caricaPrenotazioni() {
     const toggle = document.createElement("div");
     toggle.className = "giorno-blocco";
     toggle.textContent = `📅 ${formattaData(data)} (${gruppi[data].length})`;
-    toggle.onclick = () => wrapper.querySelector(".prenotazioni-giorno").classList.toggle("hidden");
+    toggle.onclick = () => {
+      const box = wrapper.querySelector(".prenotazioni-giorno");
+      box.classList.toggle("hidden");
+      gruppi[data].forEach(p => {
+        const notifica = document.getElementById(`notificaChat-${p.id}`);
+        if (notifica) notifica.classList.add('hidden');
+      });
+    };
 
     const contenuto = document.createElement("div");
     contenuto.className = "prenotazioni-giorno hidden";
@@ -281,9 +321,10 @@ async function caricaPrenotazioni() {
         <b>Pericolosità:</b> ${p.pericolosita || "N/D"} | <b>Stato:</b> ${p.stato}<br>
         <b>Data:</b> ${formattaData(p.data)}<br>
         ${p.analisi ? `<b>Analisi:</b> <a href="/uploads/${p.analisi}" target="_blank">📎 Visualizza</a><br>` : ""}
-       <b>Chat:</b> <span id="notificaChat-${p.id}" class="chat-notifica hidden">🔴 Nuovo</span>
+        <b>Chat:</b> <span id="notificaChat-${p.id}" class="chat-notifica hidden">🔴 Nuovo</span>
         <div class="chat-messaggi" id="chatMsg-${p.id}">Caricamento...</div>
-        <input id="inputMsg-${p.id}" placeholder="Scrivi un messaggio..." />
+        <input id="inputMsg-${p.id}" placeholder="Scrivi un messaggio..."
+          onkeydown="if(event.key==='Enter'){inviaMessaggio(${p.id})}" />
         <button onclick="inviaMessaggio(${p.id})">📨 Invia</button>
       `;
       contenuto.appendChild(div);
@@ -305,29 +346,20 @@ async function caricaChat(id) {
   const res = await fetch(`/api/prenotazioni/${id}/chat`);
   const chat = await res.json();
   const box = document.getElementById(`chatMsg-${id}`);
+  const notificaEl = document.getElementById(`notificaChat-${id}`);
   if (!box) return;
 
   const lastMsg = chat[chat.length - 1];
-  const notificaEl = document.getElementById(`notificaChat-${id}`);
-const lastKnown = chatLastMessage[id]?.timestamp;
-const isAdmin = typeof utente === 'undefined';
-const autoreCorrente = isAdmin ? 'impianto' : utente.ragioneSociale;
-
-if (
-  lastMsg &&
-  (!lastKnown || lastMsg.timestamp > lastKnown) &&
-  lastMsg.autore !== autoreCorrente
-) {
-  if (notificaEl) notificaEl.classList.remove('hidden');
-  if (Notification.permission === "granted") {
-    new Notification("📬 Nuovo messaggio", { body: lastMsg.testo });
-  }
-  try { new Audio("/sounds/notify.mp3").play(); } catch (e) {}
-}
   const lastKnown = chatLastMessage[id]?.timestamp;
-  if (lastMsg && (!lastKnown || lastMsg.timestamp > lastKnown) && lastMsg.autore !== utente.ragioneSociale) {
+
+  if (
+    lastMsg &&
+    (!lastKnown || lastMsg.timestamp > lastKnown) &&
+    lastMsg.autore !== utente.ragioneSociale
+  ) {
+    if (notificaEl) notificaEl.classList.remove('hidden');
     if (Notification.permission === "granted") {
-      new Notification("📬 Nuovo messaggio da amministratore", { body: lastMsg.testo });
+      new Notification("📬 Nuovo messaggio", { body: lastMsg.testo });
     }
     try { new Audio("/sounds/notify.mp3").play(); } catch (e) {}
   }
@@ -335,8 +367,10 @@ if (
   chatLastMessage[id] = lastMsg;
 
   box.innerHTML = chat.map(m => `
-    <div class="msg"><b>${m.autore}</b>: ${m.testo}<br>
-    <small>${new Date(m.timestamp).toLocaleString()}</small></div>
+    <div class="msg">
+      <b>${m.autore}</b>: ${m.testo}
+      <small>${new Date(m.timestamp).toLocaleString()}</small>
+    </div>
   `).join('');
   box.scrollTop = box.scrollHeight;
 
