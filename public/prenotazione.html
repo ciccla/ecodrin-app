@@ -126,6 +126,7 @@
 </main>
 <script>
 let cliente = null;
+const chatTimers = {};
 
 function toggleRegistro() {
   document.getElementById('authBox').classList.toggle('hidden');
@@ -255,12 +256,19 @@ async function caricaChat(id) {
   const res = await fetch(`/api/prenotazioni/${id}/chat`);
   const chat = await res.json();
   const box = document.getElementById(`chat-${id}`);
+  if (!box) return;
+
   box.innerHTML = chat.map(m => `
     <div class="msg">
       <b>${m.autore}</b>: ${m.testo}<br>
       <small>${new Date(m.timestamp).toLocaleString()}</small>
     </div>`).join('');
   box.scrollTop = box.scrollHeight;
+
+  // ⏱️ Auto-refresh ogni 2s
+  if (!chatTimers[id]) {
+    chatTimers[id] = setInterval(() => caricaChat(id), 2000);
+  }
 }
 
 async function inviaMessaggio(id) {
