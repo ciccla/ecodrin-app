@@ -319,7 +319,7 @@ async function caricaPrenotazioni() {
         <b>Pericolosità:</b> ${p.pericolosita || "N/D"} | <b>Stato:</b> ${p.stato}<br>
         <b>Data:</b> ${formattaData(p.data)}<br>
         ${p.analisi ? `<b>Analisi:</b> <a href="/uploads/${p.analisi}" target="_blank">📎 Visualizza</a><br>` : ""}
-        <b>Chat:</b>
+       <b>Chat:</b> <span id="notificaChat-${p.id}" class="chat-notifica hidden">🔴 Nuovo</span>
         <div class="chat-messaggi" id="chatMsg-${p.id}">Caricamento...</div>
         <input id="inputMsg-${p.id}" placeholder="Scrivi un messaggio..." />
         <button onclick="inviaMessaggio(${p.id})">📨 Invia</button>
