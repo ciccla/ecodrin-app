@@ -3,31 +3,35 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Area Admin – Eco.Drin</title>
-  <link rel="stylesheet" href="style-ecodrin.css" />
+  <title>Admin – Eco.Drin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
+      font-family: 'Poppins', sans-serif;
       margin: 0;
-      background: #f4f6f8;
+      background: #f1f4f6;
       color: #333;
     }
+
     header {
       background-color: #004c45;
       color: white;
-      padding: 10px 20px;
+      padding: 20px;
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
       flex-wrap: wrap;
     }
+
     header img {
       height: 50px;
     }
+
     .menu-dropdown {
       position: relative;
     }
+
     .menu-dropdown button {
       background: #00785c;
       color: white;
@@ -37,6 +41,7 @@
       border-radius: 4px;
       cursor: pointer;
     }
+
     .menu-dropdown-content {
       display: none;
       position: absolute;
@@ -47,15 +52,22 @@
       box-shadow: 0 8px 16px rgba(0,0,0,0.2);
       z-index: 1;
     }
+
     .menu-dropdown-content a {
       color: #004c45;
       padding: 10px 15px;
       text-decoration: none;
       display: block;
     }
+
     .menu-dropdown-content a:hover {
       background-color: #f1f1f1;
     }
+
+    .menu-dropdown.hidden {
+      display: none;
+    }
+
     .menu-dropdown:hover .menu-dropdown-content {
       display: block;
     }
@@ -66,15 +78,34 @@
       background: white;
       padding: 30px;
       border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
     }
 
     h2 {
       margin-top: 0;
+      color: #004c45;
+    }
+
+    h3 {
+      margin-top: 30px;
+      color: #00785c;
     }
 
     .hidden {
       display: none;
+    }
+
+    .prenotazione {
+      background: #fff;
+      border: 1px solid #ccc;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    .prenotazione b {
+      color: #00785c;
     }
 
     .top {
@@ -82,6 +113,62 @@
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
+    }
+
+    button, select, input {
+      font-family: 'Poppins', sans-serif;
+    }
+
+    select, input {
+      padding: 8px 10px;
+      margin-top: 5px;
+      margin-bottom: 10px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      padding: 8px 12px;
+      border-radius: 5px;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    .btn-green {
+      background-color: #28a745;
+      color: white;
+    }
+
+    .btn-red {
+      background-color: #dc3545;
+      color: white;
+    }
+
+    .chat-messaggi {
+      background: #f8f9fa;
+      padding: 10px;
+      border: 1px solid #ccc;
+      max-height: 150px;
+      overflow-y: auto;
+      border-radius: 6px;
+      margin-bottom: 10px;
+    }
+
+    .msg {
+      background: #e1f5ec;
+      margin-bottom: 5px;
+      padding: 8px 10px;
+      border-radius: 6px;
+    }
+
+    .msg small {
+      display: block;
+      font-size: 11px;
+      color: #555;
     }
 
     footer {
@@ -93,26 +180,29 @@
     }
 
     @media (max-width: 600px) {
-      .menu-dropdown button {
-        width: 100%;
-      }
       .top {
         flex-direction: column;
         align-items: flex-start;
       }
+
+      .menu-dropdown {
+        width: 100%;
+      }
+
+      .menu-dropdown-content {
+        position: static;
+      }
     }
   </style>
 </head>
-<body>
 
+<body>
 <header>
   <div style="display:flex; align-items:center; gap:15px;">
-    <a href="index.html">
-      <img src="eco.drin-_srl.png" alt="Logo Ecodrin" />
-    </a>
-    <h1 style="margin: 0;">Area Amministrativa</h1>
+    <a href="index.html"><img src="eco.drin-_srl.png" alt="Logo Ecodrin" /></a>
+    <h1 style="margin:0;">Area Amministrativa</h1>
   </div>
-  <div class="menu-dropdown">
+  <div class="menu-dropdown hidden" id="menuAdmin">
     <button>📂 Menu</button>
     <div class="menu-dropdown-content">
       <a href="#" onclick="switchPage('registro')">📋 Registro</a>
@@ -125,19 +215,23 @@
 <main>
   <!-- LOGIN -->
   <div id="loginBox">
-    <h2>Accesso Amministratore</h2>
+    <h2>🔐 Accesso Amministratore</h2>
     <input id="loginEmail" placeholder="Email" />
     <input id="loginPassword" type="password" placeholder="Password" />
-    <button onclick="login()">Accedi</button>
+    <button class="btn-green" onclick="login()">Accedi</button>
     <div id="loginErrore" style="color:red;"></div>
   </div>
 
-  <!-- AREA ADMIN -->
+  <!-- CONTENUTO ADMIN -->
   <div id="contenutoAdmin" class="hidden">
+
     <!-- REGISTRO -->
     <section id="paginaRegistro">
       <div class="top">
-        <h2>📋 Registro Prenotazioni</h2>
+        <div>
+          <h2>📋 Registro Prenotazioni</h2>
+          <p style="margin:0; color:gray;">Gestisci le richieste ricevute</p>
+        </div>
         <button onclick="caricaPrenotazioni()">🔄 Aggiorna</button>
       </div>
       <div id="contenitoreGiorni"></div>
@@ -146,20 +240,24 @@
     <!-- STATISTICHE -->
     <section id="paginaStatistiche" class="hidden">
       <div class="top">
-        <h2>📈 Statistiche CER</h2>
+        <div>
+          <h2>📈 Statistiche</h2>
+          <p style="margin:0; color:gray;">Andamento e CER gestiti</p>
+        </div>
         <button onclick="esportaCSV()">📤 Esporta CSV</button>
       </div>
-      <div id="statTotali"></div>
-      <ul id="statistiche"></ul>
+      <div id="statTotali" style="margin-top:20px;"></div>
+      <ul id="statistiche" style="margin-top:20px;"></ul>
       <canvas id="graficoCER" style="max-width: 600px; margin: 30px auto;"></canvas>
     </section>
+
   </div>
 </main>
 
 <footer>
-  📍 Via delle Industrie – Zona Asi - 80011 Acerra (NA) <br />
-  📞 081.8857480 / 081.5207650 <br />
-  ✉️ <a href="mailto:info@ecodrinsrl.it">info@ecodrinsrl.it</a> / <a href="mailto:impianto@ecodrinsrl.it">impianto@ecodrinsrl.it</a> <br />
+  📍 Via delle Industrie – Zona Asi - 80011 Acerra (NA)<br />
+  📞 081.8857480 / 081.5207650<br />
+  ✉️ <a href="mailto:info@ecodrinsrl.it">info@ecodrinsrl.it</a> / <a href="mailto:impianto@ecodrinsrl.it">impianto@ecodrinsrl.it</a><br />
   ©2025 Eco.Drin s.r.l. – P.I: 03378791218
 </footer>
 <script>
@@ -184,6 +282,7 @@ function login() {
       adminAutenticato = true;
       document.getElementById('loginBox').classList.add('hidden');
       document.getElementById('contenutoAdmin').classList.remove('hidden');
+      document.getElementById('menuAdmin').classList.remove('hidden');
       caricaPrenotazioni();
       caricaStatistiche();
     } else throw new Error();
@@ -235,10 +334,7 @@ async function caricaPrenotazioni() {
 
     gruppi[data].forEach(p => {
       const div = document.createElement('div');
-      div.style.border = '1px solid #ccc';
-      div.style.padding = '15px';
-      div.style.marginBottom = '15px';
-      div.style.borderRadius = '6px';
+      div.className = 'prenotazione';
       div.innerHTML = `
         <b>Cliente:</b> ${p.ragioneSociale} (${p.codiceCliente})<br>
         <b>CER:</b> ${p.codiceCER} | <b>Quantità:</b> ${p.quantita} kg<br>
@@ -253,9 +349,9 @@ async function caricaPrenotazioni() {
         </select>
         <div class="chat" style="margin-top:15px;">
           <b>Chat:</b>
-          <div class="chat-messaggi" id="chatMsg-${p.id}" style="border:1px solid #ccc; padding:10px; max-height:150px; overflow:auto; background:#f9f9f9; margin-bottom:10px;">Caricamento...</div>
+          <div class="chat-messaggi" id="chatMsg-${p.id}">Caricamento...</div>
           <input id="inputMsg-${p.id}" placeholder="Scrivi un messaggio..." />
-          <button onclick="inviaMessaggio(${p.id})" style="background:#00785c; color:white; border:none; padding:6px 12px; border-radius:4px;">📨 Invia</button>
+          <button onclick="inviaMessaggio(${p.id})" class="btn-green">📨 Invia</button>
         </div>
       `;
       contenuto.appendChild(div);
@@ -297,7 +393,7 @@ async function caricaChat(id) {
   chatLastMessage[id] = lastMsg;
 
   box.innerHTML = chat.map(m => `
-    <div><b>${m.autore}</b>: ${m.testo}<br>
+    <div class="msg"><b>${m.autore}</b>: ${m.testo}<br>
     <small>${new Date(m.timestamp).toLocaleString()}</small></div>
   `).join('');
   box.scrollTop = box.scrollHeight;
@@ -324,14 +420,10 @@ async function caricaStatistiche() {
   const res = await fetch('/api/prenotazioni');
   const dati = await res.json();
 
-  // Dati statistici
   const total = dati.length;
   const totaleKg = dati.reduce((sum, p) => sum + Number(p.quantita || 0), 0);
   const stati = { "in attesa": 0, "confermata": 0, "rifiutata": 0 };
-
-  dati.forEach(p => {
-    if (stati[p.stato] !== undefined) stati[p.stato]++;
-  });
+  dati.forEach(p => { if (stati[p.stato] !== undefined) stati[p.stato]++; });
 
   document.getElementById('statTotali').innerHTML = `
     <p><b>Totale prenotazioni:</b> ${total}</p>
