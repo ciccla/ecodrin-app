@@ -37,7 +37,6 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-// LOGIN
 app.post('/api/login', (req, res) => {
   const { ragioneSociale, password } = req.body;
   if (ragioneSociale === 'admin@ecodrin.it' && password === 'admin123') {
@@ -51,7 +50,6 @@ app.post('/api/login', (req, res) => {
   res.status(401).json({ errore: 'Credenziali errate' });
 });
 
-// REGISTRAZIONE
 app.post('/api/registrazione', (req, res) => {
   const { ragioneSociale, codiceFiscale, password } = req.body;
   const wb = xlsx.readFile('clienti.xlsx');
@@ -74,9 +72,7 @@ app.post('/api/registrazione', (req, res) => {
   });
   scriviDati('utenti.json', utenti);
   res.json({ success: true });
-});
-
-// PDF
+});// 📄 Generazione PDF ricevuta
 function generaRicevutaPDF(prenotazione, path) {
   return new Promise(resolve => {
     const doc = new PDFDocument();
@@ -91,7 +87,7 @@ function generaRicevutaPDF(prenotazione, path) {
   });
 }
 
-// CREAZIONE PRENOTAZIONE
+// ✅ CREA PRENOTAZIONE
 app.post('/api/prenotazioni', (req, res, next) => {
   upload.single('analisi')(req, res, err => {
     if (err) return res.status(400).json({ errore: 'Errore upload file' });
@@ -115,6 +111,7 @@ app.post('/api/prenotazioni', (req, res, next) => {
     stato: 'in attesa',
     chat: []
   };
+
   dati.push(nuova);
   scriviDati('prenotazioni.json', dati);
 
@@ -136,17 +133,17 @@ app.post('/api/prenotazioni', (req, res, next) => {
   res.json({ success: true });
 });
 
-// AGGIORNA STATO
-app.patch('/api/prenotazioni/:id', async (req, res) => {
+// 🔁 Stato prenotazione
+app.patch('/api/prenotazioni/:id', (req, res) => {
   const dati = leggiDati('prenotazioni.json');
   const p = dati.find(p => p.id == req.params.id);
-  if (!p) return res.status(404).json({ errore: 'Prenotazione non trovata' });
+  if (!p) return res.status(404).json({ errore: 'Non trovata' });
   p.stato = req.body.stato;
   scriviDati('prenotazioni.json', dati);
   res.json({ success: true });
 });
 
-// CHAT
+// 📬 Chat prenotazione
 app.get('/api/prenotazioni/:id/chat', (req, res) => {
   const dati = leggiDati('prenotazioni.json');
   const p = dati.find(p => p.id == req.params.id);
@@ -156,20 +153,19 @@ app.get('/api/prenotazioni/:id/chat', (req, res) => {
 app.post('/api/prenotazioni/:id/chat', (req, res) => {
   const dati = leggiDati('prenotazioni.json');
   const p = dati.find(p => p.id == req.params.id);
-  if (!p) return res.status(404).json({ errore: 'Prenotazione non trovata' });
+  if (!p) return res.status(404).json({ errore: 'Non trovata' });
   p.chat.push({ ...req.body, timestamp: Date.now() });
   scriviDati('prenotazioni.json', dati);
   res.json({ success: true });
 });
 
-// PRENOTAZIONI CLIENTE
+// 👤 Prenotazioni utente
 app.get('/api/prenotazioni/utente/:codice', (req, res) => {
   const dati = leggiDati('prenotazioni.json');
-  const filtrate = dati.filter(p => p.codiceCliente === req.params.codice);
-  res.json(filtrate);
+  res.json(dati.filter(p => p.codiceCliente === req.params.codice));
 });
 
-// STATISTICHE
+// 📊 Statistiche CER
 app.get('/api/grafico/cer', (req, res) => {
   const dati = leggiDati('prenotazioni.json');
   const stats = {};
@@ -180,7 +176,7 @@ app.get('/api/grafico/cer', (req, res) => {
   res.json(stats);
 });
 
-// EXPORT CSV
+// 📤 Esporta CSV
 app.get('/api/prenotazioni/export', (req, res) => {
   const dati = leggiDati('prenotazioni.json');
   const csv = [
@@ -191,13 +187,13 @@ app.get('/api/prenotazioni/export', (req, res) => {
   res.setHeader('Content-Type', 'text/csv');
   res.send(csv);
 });
-
-// 🚛 TRASPORTO
+// 🚛 Crea richiesta trasporto
 app.post('/api/trasporti', (req, res) => {
   const dati = leggiDati('trasporti.json');
   const nuova = {
     id: Date.now(),
     ragioneSociale: req.body.ragioneSociale,
+    codiceCliente: req.body.codiceCliente,
     produttore: req.body.produttore,
     codiceCER: req.body.codiceCER,
     tipoTrasporto: req.body.tipoTrasporto,
@@ -206,7 +202,9 @@ app.post('/api/trasporti', (req, res) => {
     fasciaOraria: req.body.fasciaOraria,
     cellulare: req.body.cellulare,
     referente: req.body.referente,
-    prezzo: req.body.prezzo
+    prezzo: req.body.prezzo,
+    email: req.body.email,
+    chat: []
   };
   dati.push(nuova);
   scriviDati('trasporti.json', dati);
@@ -214,9 +212,9 @@ app.post('/api/trasporti', (req, res) => {
   try {
     transporter.sendMail({
       from: `"Ecodrin" <${process.env.SMTP_USER}>`,
-      to: process.env.SMTP_USER,
-      subject: '📤 Nuova richiesta trasporto',
-      text: `Nuova richiesta trasporto per ${nuova.ragioneSociale}`
+      to: nuova.email,
+      subject: '🚛 Richiesta Trasporto Ricevuta',
+      text: `Richiesta trasporto per il ${nuova.dataTrasporto} confermata.`
     });
   } catch (err) {
     console.error('Errore email:', err.message);
@@ -225,13 +223,39 @@ app.post('/api/trasporti', (req, res) => {
   res.json({ success: true });
 });
 
-// GET TRASPORTI
+// 📬 Chat trasporti
+app.get('/api/trasporti/:id/chat', (req, res) => {
+  const dati = leggiDati('trasporti.json');
+  const trasporto = dati.find(t => t.id == req.params.id);
+  if (!trasporto) return res.status(404).json({ errore: 'Trasporto non trovato' });
+  res.json(trasporto.chat || []);
+});
+
+app.post('/api/trasporti/:id/chat', (req, res) => {
+  const dati = leggiDati('trasporti.json');
+  const trasporto = dati.find(t => t.id == req.params.id);
+  if (!trasporto) return res.status(404).json({ errore: 'Trasporto non trovato' });
+
+  trasporto.chat = trasporto.chat || [];
+  trasporto.chat.push({ ...req.body, timestamp: Date.now() });
+  scriviDati('trasporti.json', dati);
+  res.json({ success: true });
+});
+
+// 👤 Trasporti per utente
+app.get('/api/trasporti/utente/:codice', (req, res) => {
+  const dati = leggiDati('trasporti.json');
+  res.json(dati.filter(t => t.codiceCliente === req.params.codice));
+});
+
+// 📦 Lista trasporti (admin)
 app.get('/api/trasporti', (req, res) => {
   const dati = leggiDati('trasporti.json');
   res.json(dati);
 });
 
-// AVVIO SERVER
+// ▶️ Avvio del server
 app.listen(port, () => {
   console.log(`✅ Server attivo su http://localhost:${port}`);
 });
+
