@@ -234,6 +234,43 @@ app.get('/api/prenotazioni/export', (req, res) => {
 });
 
 // ✅ AVVIO SERVER
+// ✅ RICHIESTA TRASPORTO + EMAIL
+app.post('/api/trasporti', async (req, res) => {
+  const dati = leggiDati('trasporti.json');
+  const nuova = {
+    id: Date.now(),
+    ragioneSociale: req.body.ragioneSociale,
+    codiceCliente: req.body.codiceCliente,
+    email: req.body.email,
+    produttore: req.body.produttore,
+    codiceCER: req.body.codiceCER,
+    tipoTrasporto: req.body.tipoTrasporto,
+    automezzo: req.body.automezzo,
+    dataTrasporto: req.body.dataTrasporto,
+    fasciaOraria: req.body.fasciaOraria,
+    referente: req.body.referente,
+    cellulare: req.body.cellulare,
+    prezzo: req.body.prezzo,
+    chat: []
+  };
+
+  dati.push(nuova);
+  scriviDati('trasporti.json', dati);
+
+  try {
+    await transporter.sendMail({
+      from: `"Ecodrin" <${process.env.SMTP_USER}>`,
+      to: nuova.email,
+      subject: '🚛 Richiesta Trasporto Ricevuta',
+      text: `La tua richiesta di trasporto è stata registrata per il giorno ${nuova.dataTrasporto} nella fascia ${nuova.fasciaOraria}. Tipo: ${nuova.tipoTrasporto}, Mezzo: ${nuova.automezzo}, Prezzo: €${nuova.prezzo}`
+    });
+  } catch (err) {
+    console.error('Errore invio email trasporto:', err.message);
+  }
+
+  res.json({ success: true });
+});
+
 app.listen(port, () => {
   console.log(`✅ Server attivo su http://localhost:${port}`);
 });
