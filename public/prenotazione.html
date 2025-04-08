@@ -75,34 +75,39 @@
         <input name="codiceCER" placeholder="Codice CER" required>
         <input name="quantita" type="number" placeholder="Quantità (kg)" required>
 
-        <select name="pericolosita">
-          <option value="">Pericolosità</option>
+        <!-- Pericolosità -->
+        <select name="pericolosita" required>
+          <option value="">Classe di pericolosità</option>
           <option value="HP1">HP1 – Esplosivo</option>
           <option value="HP2">HP2 – Comburente</option>
           <option value="HP3">HP3 – Infiammabile</option>
-          <option value="HP4">HP4 – Irritante</option>
-          <option value="HP5">HP5 – Nocivo</option>
-          <option value="HP6">HP6 – Tossico</option>
+          <option value="HP4">HP4 – Irritante (irritazione cutanea e oculare)</option>
+          <option value="HP5">HP5 – Tossicità specifica per organi bersaglio</option>
+          <option value="HP6">HP6 – Tossico acuto</option>
           <option value="HP7">HP7 – Cancerogeno</option>
           <option value="HP8">HP8 – Corrosivo</option>
           <option value="HP9">HP9 – Infettivo</option>
-          <option value="HP10">HP10 – Teratogeno</option>
+          <option value="HP10">HP10 – Tossico per la riproduzione</option>
           <option value="HP11">HP11 – Mutageno</option>
-          <option value="HP12">HP12 – Rilascia gas tossici</option>
+          <option value="HP12">HP12 – Rifiuti che liberano gas a tossicità acuta</option>
           <option value="HP13">HP13 – Sensibilizzante</option>
           <option value="HP14">HP14 – Ecotossico</option>
           <option value="HP15">HP15 – Reattivo</option>
         </select>
 
+        <!-- Stato Fisico -->
         <select name="statoFisico" required>
           <option value="">Stato fisico</option>
-          <option value="Solido">Solido</option>
-          <option value="Solido non polverulento">Solido non polverulento</option>
-          <option value="Polverulento">Polverulento</option>
-          <option value="Fangoso">Fangoso</option>
-          <option value="Liquido">Liquido</option>
-          <option value="Oleoso">Oleoso</option>
-          <option value="Pastoso">Pastoso</option>
+          <option value="1 - Solido pulverulento">1 - Solido pulverulento</option>
+          <option value="2 - Solido non pulverulento">2 - Solido non pulverulento</option>
+          <option value="3 - Fangoso palabile">3 - Fangoso palabile</option>
+          <option value="4 - Fangoso non palabile">4 - Fangoso non palabile</option>
+          <option value="5 - Liquido">5 - Liquido</option>
+          <option value="6 - Liquido denso">6 - Liquido denso</option>
+          <option value="7 - Fangoso liquido">7 - Fangoso liquido</option>
+          <option value="8 - Gas compressi">8 - Gas compressi</option>
+          <option value="9 - Gas liquefatti">9 - Gas liquefatti</option>
+          <option value="10 - Altro">10 - Altro</option>
         </select>
 
         <input name="tipoImballo" placeholder="Tipo Imballo">
@@ -119,7 +124,7 @@
     </div>
   </div>
 </main>
-  <script>
+<script>
 let cliente = null;
 
 function toggleRegistro() {
@@ -281,4 +286,3 @@ function switchClientePage(p) {
 </script>
 </body>
 </html>
-
