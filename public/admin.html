@@ -312,7 +312,7 @@ async function caricaPrenotazioni() {
         </select>
 
         <div class="chat" style="margin-top:15px;">
-          <b>Chat:</b>
+         <b>Chat:</b> <span id="notificaChat-${p.id}" class="chat-notifica hidden">🔴 Nuovo</span>
           <div class="chat-messaggi" id="chatMsg-${p.id}">Caricamento...</div>
           <input id="inputMsg-${p.id}" placeholder="Scrivi un messaggio..." 
             onkeydown="if(event.key==='Enter'){inviaMessaggio(${p.id})}" />
