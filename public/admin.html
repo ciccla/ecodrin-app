@@ -1,134 +1,84 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin – Ecodrin</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Area Admin – Ecodrin</title>
+  <link rel="stylesheet" href="style-ecodrin.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    body { font-family: Arial; margin: 0; background: #f4f6f8; }
-    header {
-      background: #007acc; color: white; padding: 15px 30px;
-      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;
-    }
-    main {
-      max-width: 1100px; margin: 30px auto;
-      background: white; padding: 30px;
-      border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
-    .hidden { display: none; }
-    .giorno { margin-top: 20px; border: 1px solid #ddd; border-radius: 6px; background: #f9f9f9; }
-    .giorno h3 {
-      margin: 0; padding: 15px; background: #007acc;
-      color: white; cursor: pointer; font-size: 18px;
-      border-radius: 6px 6px 0 0; user-select: none;
-    }
-    .contenuto { padding: 15px; display: none; }
-    .prenotazione {
-      border-bottom: 1px solid #eee;
-      padding: 12px 0; position: relative;
-    }
-    .badge {
-      position: absolute; top: 10px; right: 10px;
-      background: red; color: white; font-size: 12px;
-      padding: 4px 6px; border-radius: 10px; display: none;
-    }
-    .chat {
-      background: #eef2f5; padding: 10px;
-      border-radius: 6px; margin-top: 10px;
-    }
-    .chat-messaggi {
-      max-height: 200px; overflow-y: auto;
-      background: white; padding: 10px;
-      border: 1px solid #ccc; border-radius: 4px;
-    }
-    .messaggio {
-      margin-bottom: 8px; padding: 6px 10px;
-      background: white; border-left: 4px solid #007acc;
-      border-radius: 4px;
-    }
-    .messaggio small {
-      display: block; font-size: 11px; color: #555;
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
     }
     .chat input {
-      width: 80%; padding: 8px;
-      border-radius: 4px; border: 1px solid #ccc;
-      margin-right: 5px;
+      width: calc(100% - 100px);
     }
     .chat button {
-      padding: 8px 12px; background-color: #28a745;
-      color: white; border: none; border-radius: 4px;
+      width: 80px;
     }
-    button {
-      margin: 5px 5px 0 0; padding: 5px 12px;
-      border: none; background: #007acc;
-      color: white; border-radius: 4px; cursor: pointer;
+    .giorno h3 {
+      cursor: pointer;
     }
-    button.rifiuta { background: #d9534f; }
-    .stato { font-weight: bold; }
-    canvas { max-width: 500px; margin-top: 30px; }
-    .top-bar {
-      display: flex; justify-content: space-between;
-      align-items: center; flex-wrap: wrap;
-    }
-
     @media (max-width: 600px) {
-      header, .top-bar {
-        flex-direction: column;
-        align-items: flex-start;
+      .chat input, .chat button {
+        width: 100%;
+        margin-top: 5px;
       }
-      .chat input { width: 100%; margin-bottom: 10px; }
-      .chat button { width: 100%; }
     }
   </style>
 </head>
 <body>
 
-<header class="hidden" id="adminHeader">
-  <h1>📊 Pannello Admin – Ecodrin</h1>
-  <div>
-    <select onchange="switchPage(this.value)">
-      <option value="registro">📋 Registro</option>
-      <option value="statistiche">📈 Statistiche</option>
-    </select>
-    <button onclick="logout()">🚪 Logout</button>
-  </div>
+<header class="header">
+  <a href="index.html">
+    <img src="logo-ecodrin.png" alt="Logo Ecodrin" class="logo" />
+  </a>
+  <h1>Area Admin</h1>
 </header>
 
-<main>
+<main class="main">
   <!-- LOGIN -->
   <div id="loginBox">
-    <h2>🔐 Login Admin</h2>
+    <h2>Accesso Amministratore</h2>
     <input id="loginEmail" placeholder="Email">
     <input id="loginPassword" type="password" placeholder="Password">
     <button onclick="login()">Accedi</button>
     <div id="loginErrore" style="color:red;"></div>
   </div>
 
-  <!-- CONTENUTO ADMIN -->
+  <!-- AREA ADMIN -->
   <div id="contenutoAdmin" class="hidden">
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
+      <h2>Registro Prenotazioni</h2>
+      <div>
+        <select onchange="switchPage(this.value)">
+          <option value="registro">📋 Registro</option>
+          <option value="statistiche">📈 Statistiche</option>
+        </select>
+        <button onclick="logout()">🚪 Logout</button>
+      </div>
+    </div>
+
     <div id="paginaRegistro">
-      <h2>📋 Registro Prenotazioni</h2>
       <div id="contenitoreGiorni"></div>
     </div>
 
     <div id="paginaStatistiche" class="hidden">
-      <div class="top-bar">
-        <h2>📈 Statistiche CER</h2>
-        <button type="button" onclick="esportaCSV()">📤 Esporta CSV</button>
-      </div>
+      <h3>📈 Statistiche CER</h3>
+      <button onclick="esportaCSV()">📤 Esporta CSV</button>
       <ul id="statistiche"></ul>
       <canvas id="graficoCER"></canvas>
     </div>
-  </div>
-</main><script>
+  </div><script>
 let adminAutenticato = false;
 const chatTimers = {};
 const chatLastMessage = {};
 
-if ("Notification" in window) {
-  Notification.requestPermission();
-}
+if ("Notification" in window) Notification.requestPermission();
 
 function login() {
   const email = document.getElementById('loginEmail').value.trim();
@@ -145,16 +95,11 @@ function login() {
       adminAutenticato = true;
       document.getElementById('loginBox').classList.add('hidden');
       document.getElementById('contenutoAdmin').classList.remove('hidden');
-      document.getElementById('adminHeader').classList.remove('hidden');
       caricaPrenotazioni();
       caricaStatistiche();
-    } else {
-      throw new Error();
-    }
+    } else throw new Error();
   })
-  .catch(() => {
-    document.getElementById('loginErrore').innerText = '❌ Credenziali errate';
-  });
+  .catch(() => document.getElementById('loginErrore').innerText = '❌ Credenziali errate');
 }
 
 document.getElementById('loginPassword').addEventListener('keydown', e => {
@@ -180,7 +125,7 @@ function toggleGiorno(el) {
 function formattaData(dataStr) {
   const d = new Date(dataStr);
   const giorni = ['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato'];
-  const mesi = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
+  const mesi = ['Gen','Feb','Mar','Apr','Mag','Giu','Lug','Ago','Set','Ott','Nov','Dic'];
   return `${giorni[d.getDay()]} ${d.getDate()} ${mesi[d.getMonth()]} ${d.getFullYear()}`;
 }
 
@@ -199,10 +144,7 @@ async function caricaPrenotazioni() {
   });
 
   const giorni = Object.keys(gruppi).sort((a,b)=>new Date(b)-new Date(a));
-  if (!giorni.length) {
-    contenitore.innerHTML = '<p style="color:gray;">Nessuna prenotazione disponibile.</p>';
-    return;
-  }
+  if (!giorni.length) return contenitore.innerHTML = '<p>Nessuna prenotazione.</p>';
 
   giorni.forEach(data => {
     const giorno = document.createElement('div');
@@ -215,38 +157,23 @@ async function caricaPrenotazioni() {
       const div = document.createElement('div');
       div.className = 'prenotazione';
       div.innerHTML = `
-        <span class="badge" id="badge-${p.id}">🛎️</span>
-        <div><b>Cliente:</b> ${p.ragioneSociale} (${p.codiceCliente})</div>
-        <div><b>Produttore:</b> ${p.produttore}</div>
-        <div><b>Codice CER:</b> ${p.codiceCER}</div>
-        <div><b>Quantità:</b> ${p.quantita} kg</div>
-        <div><b>Pericolosità:</b> ${p.pericolosita || 'N/D'}</div>
-        <div><b>Tipo Imballo:</b> ${p.tipoImballo || 'N/D'}</div>
-        <div><b>Stato Fisico:</b> ${p.statoFisico || 'N/D'}</div>
+        <div><b>Cliente:</b> ${p.ragioneSociale}</div>
+        <div><b>CER:</b> ${p.codiceCER} | <b>Quantità:</b> ${p.quantita} kg</div>
+        <div><b>Pericolosità:</b> ${p.pericolosita || 'N/D'} | <b>Stato Fisico:</b> ${p.statoFisico || 'N/D'}</div>
         <div><b>Data:</b> ${p.data}</div>
-        ${p.analisi ? `<div><b>Analisi:</b> <a href="/uploads/${p.analisi}" target="_blank">📎 Visualizza</a></div>` : ''}
-        <div><b>Stato:</b> <span id="stato-${p.id}" class="stato">${p.stato}</span></div>
-        <div>
-          <button type="button" onclick="aggiornaStato(${p.id}, 'confermata')">✅ Conferma</button>
-          <button type="button" onclick="aggiornaStato(${p.id}, 'rifiutata')" class="rifiuta">❌ Rifiuta</button>
-        </div>
+        ${p.analisi ? `<div><b>Analisi:</b> <a href="/uploads/${p.analisi}" target="_blank">Visualizza</a></div>` : ''}
+        <div><b>Stato:</b> <span id="stato-${p.id}">${p.stato}</span></div>
+        <button onclick="aggiornaStato(${p.id}, 'confermata')">✅ Conferma</button>
+        <button onclick="aggiornaStato(${p.id}, 'rifiutata')">❌ Rifiuta</button>
         <div class="chat">
           <b>Chat:</b>
           <div class="chat-messaggi" id="chatMsg-${p.id}">Caricamento...</div>
-          <div style="margin-top:10px;">
-            <input id="inputMsg-${p.id}" placeholder="Scrivi un messaggio...">
-            <button onclick="inviaMessaggio(${p.id})">📨</button>
-          </div>
-        </div>`;
+          <input id="inputMsg-${p.id}" placeholder="Scrivi un messaggio...">
+          <button onclick="inviaMessaggio(${p.id})">📨</button>
+        </div>
+      `;
       contenuto.appendChild(div);
       caricaChat(p.id);
-
-      setTimeout(() => {
-        const input = document.getElementById(`inputMsg-${p.id}`);
-        input?.addEventListener('keydown', e => {
-          if (e.key === 'Enter') inviaMessaggio(p.id);
-        });
-      }, 100);
     });
 
     giorno.appendChild(contenuto);
@@ -266,8 +193,8 @@ async function aggiornaStato(id, stato) {
 async function caricaChat(id) {
   const res = await fetch(`/api/prenotazioni/${id}/chat`);
   const chat = await res.json();
-  const div = document.getElementById(`chatMsg-${id}`);
-  if (!div) return;
+  const box = document.getElementById(`chatMsg-${id}`);
+  if (!box) return;
 
   const lastMsg = chat[chat.length - 1];
   const lastKnown = chatLastMessage[id]?.timestamp;
@@ -277,22 +204,18 @@ async function caricaChat(id) {
     lastMsg.autore !== 'admin'
   ) {
     if (Notification.permission === "granted") {
-      new Notification(`📨 Nuovo messaggio da ${lastMsg.autore}`, {
-        body: lastMsg.testo,
-      });
+      new Notification("📬 Nuovo messaggio da " + lastMsg.autore, { body: lastMsg.testo });
     }
-    try {
-      new Audio("/sounds/notify.mp3").play();
-    } catch (e) {}
+    try { new Audio("/sounds/notify.mp3").play(); } catch(e){}
   }
+
   chatLastMessage[id] = lastMsg;
 
-  div.innerHTML = chat.map(m => `
-    <div class="messaggio">
-      <b>${m.autore}</b>: ${m.testo}<br>
-      <small>${new Date(m.timestamp).toLocaleString()}</small>
-    </div>`).join('');
-  div.scrollTop = div.scrollHeight;
+  box.innerHTML = chat.map(m => `
+    <div class="messaggio"><b>${m.autore}</b>: ${m.testo}<br>
+    <small>${new Date(m.timestamp).toLocaleString()}</small></div>
+  `).join('');
+  box.scrollTop = box.scrollHeight;
 
   if (!chatTimers[id]) {
     chatTimers[id] = setInterval(() => caricaChat(id), 2000);
