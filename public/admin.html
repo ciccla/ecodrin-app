@@ -196,7 +196,7 @@
   <!-- parte 2-->
 
 
- <script>
+<script>
 let adminAutenticato = false;
 const chatTimers = {};
 const chatLastMessage = {};
@@ -261,20 +261,22 @@ async function caricaPrenotazioni() {
   giorni.forEach(data => {
     const wrapper = document.createElement('div');
 
-    gruppi[data].forEach(p => {
-      const toggle = document.createElement('div');
-      toggle.className = 'giorno-blocco';
-      toggle.textContent = `📅 ${formattaData(p.data)} (${gruppi[data].length})`;
-      toggle.onclick = () => {
-        const box = wrapper.querySelector('.prenotazioni-giorno');
-        box.classList.toggle('hidden');
+    const toggle = document.createElement('div');
+    toggle.className = 'giorno-blocco';
+    toggle.textContent = `📅 ${formattaData(data)} (${gruppi[data].length})`;
+    toggle.onclick = () => {
+      const box = wrapper.querySelector('.prenotazioni-giorno');
+      box.classList.toggle('hidden');
+      gruppi[data].forEach(p => {
         const notifica = document.getElementById(`notificaChat-${p.id}`);
         if (notifica) notifica.classList.add('hidden');
-      };
+      });
+    };
 
-      const contenuto = document.createElement('div');
-      contenuto.className = 'prenotazioni-giorno hidden';
+    const contenuto = document.createElement('div');
+    contenuto.className = 'prenotazioni-giorno hidden';
 
+    gruppi[data].forEach(p => {
       const div = document.createElement('div');
       div.className = 'prenotazione';
       div.innerHTML = `
@@ -298,11 +300,12 @@ async function caricaPrenotazioni() {
         </div>
       `;
       contenuto.appendChild(div);
-      wrapper.appendChild(toggle);
-      wrapper.appendChild(contenuto);
-      contenitore.appendChild(wrapper);
       caricaChat(p.id);
     });
+
+    wrapper.appendChild(toggle);
+    wrapper.appendChild(contenuto);
+    contenitore.appendChild(wrapper);
   });
 }
 
