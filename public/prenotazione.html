@@ -6,9 +6,7 @@
   <title>Area Clienti – Eco.Drin</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       font-family: 'Poppins', sans-serif;
@@ -77,6 +75,7 @@
       border-radius: 8px;
       border: 1px solid #ddd;
       background: #fdfdfd;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
     }
 
     input, select, textarea {
@@ -119,6 +118,28 @@
       color: #777;
       margin-top: 40px;
     }
+
+    .badge {
+      background: #dc3545;
+      color: white;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      margin-left: 6px;
+      display: none;
+    }
+
+    .badge.show {
+      display: inline-block;
+    }
+
+    .prenotazione {
+      border: 1px solid #ccc;
+      background: #f8f8f8;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 6px;
+    }
   </style>
 </head>
 <body>
@@ -155,10 +176,9 @@
       </select>
     </div>
 
-
   
  <!-- parte 2 -->
-    <!-- FORM PRENOTAZIONE -->
+  <!-- FORM PRENOTAZIONE -->
 <section id="formPrenotazione" class="section">
   <h2>➕ Nuova Prenotazione</h2>
   <form id="form">
@@ -170,9 +190,7 @@
 
     <label>Pericolosità (HP)</label>
     <select name="pericolosita" multiple>
-      <option>HP1</option><option>HP2</option><option>HP3</option><option>HP4</option><option>HP5</option>
-      <option>HP6</option><option>HP7</option><option>HP8</option><option>HP9</option><option>HP10</option>
-      <option>HP11</option><option>HP12</option><option>HP13</option><option>HP14</option><option>HP15</option>
+      ${[...Array(15)].map((_, i) => `<option>HP${i+1}</option>`).join("")}
     </select>
 
     <label>Tipo Imballo</label>
@@ -298,140 +316,154 @@
   ©2025 Eco.Drin s.r.l. – P.I: 03378791218
 </footer>
 
+<script>
+// Il blocco <script> JS è già stato fornito nella PARTE 3 finale precedentemente
+// oppure posso ristamparlo completo aggiornato con notify, invio enter, e aggiornamento
+</script>
+</body>
+</html>
+
+
 <!-- parte 3 -->
-    <script>
+ <script>
 let utente = null;
 let ultimaChatCliente = {};
 
-function mostra(id) {
+function mostraSezione(id) {
   ["formPrenotazione", "archivioPrenotazioni", "formTrasporto", "archivioTrasporti", "profiloCliente"]
     .forEach(sez => document.getElementById(sez).classList.add("hidden"));
   document.getElementById(id).classList.remove("hidden");
 }
 
 function mostraMenu() {
-  document.getElementById("logoutBtn").classList.remove("hidden");
-  document.getElementById("contenutoCliente").classList.remove("hidden");
-}
-
-function logout() {
-  localStorage.removeItem("utente");
-  location.reload();
+  document.getElementById('logoutBtn').classList.remove('hidden');
+  document.getElementById('contenutoCliente').classList.remove('hidden');
+  document.getElementById('richiedente').value = utente.ragioneSociale;
+  document.getElementById('profiloRagione').value = utente.ragioneSociale;
 }
 
 function login() {
-  const ragioneSociale = document.getElementById("loginEmail").value.trim();
-  const password = document.getElementById("loginPassword").value.trim();
-
-  fetch("/api/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+  const ragioneSociale = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value.trim();
+  fetch('/api/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ ragioneSociale, password })
   })
-  .then(res => res.json())
-  .then(data => {
-    utente = data.utente;
-    localStorage.setItem("utente", JSON.stringify(utente));
-    document.getElementById("loginBox").classList.add("hidden");
+  .then(res => res.ok ? res.json() : Promise.reject())
+  .then(json => {
+    utente = json.utente;
+    localStorage.setItem('utente', JSON.stringify(utente));
+    document.getElementById('loginBox').classList.add('hidden');
     mostraMenu();
-    mostra("formPrenotazione");
+    mostraSezione("formPrenotazione");
     caricaPrenotazioni();
     caricaTrasporti();
   })
-  .catch(() => {
-    document.getElementById("loginErrore").innerText = "❌ Login fallito";
-  });
+  .catch(() => document.getElementById('loginErrore').innerText = '❌ Login fallito');
 }
 
-// Prenotazione
-document.getElementById("form").addEventListener("submit", async e => {
+function logout() {
+  localStorage.removeItem('utente');
+  location.reload();
+}
+
+document.getElementById('form').addEventListener('submit', async e => {
   e.preventDefault();
-  const form = e.target;
-  const dati = new FormData(form);
-  dati.append("ragioneSociale", utente.ragioneSociale);
-  dati.append("codiceCliente", utente.codiceCliente);
-  dati.append("email", utente.email);
-
-  const res = await fetch("/api/prenotazioni", { method: "POST", body: dati });
-
+  const dati = new FormData(e.target);
+  dati.append('codiceCliente', utente.codiceCliente);
+  dati.append('ragioneSociale', utente.ragioneSociale);
+  dati.append('email', utente.email);
+  const res = await fetch('/api/prenotazioni', { method: 'POST', body: dati });
   if (res.ok) {
-    document.getElementById("msgRisultato").innerText = "✅ Prenotazione inviata!";
-    form.reset();
+    e.target.reset();
     caricaPrenotazioni();
-    mostra("archivioPrenotazioni");
+    mostraSezione("archivioPrenotazioni");
+    document.getElementById("msgRisultato").innerText = "✅ Prenotazione inviata!";
   }
 });
 
-// Trasporto
-document.getElementById("formTrasportoForm").addEventListener("submit", async e => {
+document.getElementById('formTrasportoForm').addEventListener('submit', async e => {
   e.preventDefault();
-  const form = e.target;
-  const dati = Object.fromEntries(new FormData(form));
-  dati.ragioneSociale = utente.ragioneSociale;
-  dati.codiceCliente = utente.codiceCliente;
-  dati.email = utente.email;
-
-  const res = await fetch("/api/trasporti", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(dati)
+  const dati = new FormData(e.target);
+  dati.append('codiceCliente', utente.codiceCliente);
+  dati.append('email', utente.email);
+  const plain = Object.fromEntries(dati.entries());
+  const res = await fetch('/api/trasporti', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(plain)
   });
-
   if (res.ok) {
-    document.getElementById("msgTrasporto").innerText = "✅ Richiesta inviata!";
-    form.reset();
+    e.target.reset();
     caricaTrasporti();
-    mostra("archivioTrasporti");
+    mostraSezione("archivioTrasporti");
+    document.getElementById("msgTrasporto").innerText = "✅ Richiesta inviata!";
   }
 });
 
-// Profilo (solo mockup, puoi integrarlo con backend)
-document.getElementById("formProfilo").addEventListener("submit", e => {
-  e.preventDefault();
-  document.getElementById("profiloMsg").innerText = "✅ Profilo aggiornato (salvataggio simulato)";
-});
-
-// Chat
 async function caricaPrenotazioni() {
   const res = await fetch(`/api/prenotazioni/utente/${utente.codiceCliente}`);
   const dati = await res.json();
-  const contenitore = document.getElementById("contenitorePrenotazioni");
-  contenitore.innerHTML = "";
-
+  const container = document.getElementById('contenitorePrenotazioni');
+  container.innerHTML = '';
   dati.forEach(p => {
-    const div = document.createElement("div");
-    div.className = "prenotazione";
+    const div = document.createElement('div');
+    div.className = 'prenotazione';
+    div.id = `pren-${p.id}`;
     div.innerHTML = `
-      <b>Data:</b> ${p.data} | <b>Stato:</b> ${p.stato}<br>
-      <b>Produttore:</b> ${p.produttore} | <b>CER:</b> ${p.codiceCER}<br>
-      <b>Quantità:</b> ${p.quantita} kg | <b>Imballo:</b> ${p.tipoImballo}<br>
-      <b>Pericolosità:</b> ${p.pericolosita || "N/D"}<br>
-      <b>PDF:</b> ${p.analisi ? `<a href="/uploads/${p.analisi}" target="_blank">📄</a>` : '—'}<br>
-      <b>Chat:</b> <span class="badge" id="badge-${p.id}">🛎️</span>
-      <div id="chatMsg-${p.id}">Caricamento...</div>
-      <input id="inputMsg-${p.id}" placeholder="Scrivi un messaggio..." onkeydown="if(event.key==='Enter') inviaMessaggio(${p.id})">
-      <button onclick="inviaMessaggio(${p.id})">📨</button>
-    `;
-    contenitore.appendChild(div);
+      <div><b>Data:</b> ${p.data}</div>
+      <div><b>CER:</b> ${p.codiceCER}</div>
+      <div><b>Quantità:</b> ${p.quantita} kg</div>
+      <div><b>Stato:</b> ${p.stato}</div>
+      <div><b>PDF:</b> ${p.analisi ? `<a href="/uploads/${p.analisi}" target="_blank">📄</a>` : 'Nessuno'}</div>
+      <div>
+        <b>Chat:</b> <span class="badge" id="badge-${p.id}">🛎️</span>
+        <div id="chatMsg-${p.id}"></div>
+        <input id="inputMsg-${p.id}" placeholder="Scrivi un messaggio" onkeydown="if(event.key==='Enter') inviaMessaggio(${p.id})">
+        <button onclick="inviaMessaggio(${p.id})">📨</button>
+      </div>`;
+    container.appendChild(div);
     caricaChat(p.id);
+  });
+}
+
+async function caricaTrasporti() {
+  const res = await fetch(`/api/trasporti/utente/${utente.codiceCliente}`);
+  const dati = await res.json();
+  const container = document.getElementById('contenitoreTrasporti');
+  container.innerHTML = '';
+  dati.forEach(p => {
+    const div = document.createElement('div');
+    div.className = 'prenotazione';
+    div.innerHTML = `
+      <div><b>Data:</b> ${p.dataTrasporto}</div>
+      <div><b>Produttore:</b> ${p.produttore}</div>
+      <div><b>Tipo:</b> ${p.tipoTrasporto} – ${p.automezzo}</div>
+      <div><b>Fascia oraria:</b> ${p.fasciaOraria}</div>
+      <div><b>Referente:</b> ${p.referente} (${p.cellulare})</div>
+      <div><b>Prezzo:</b> € ${p.prezzo}</div>
+    `;
+    container.appendChild(div);
   });
 }
 
 async function caricaChat(id) {
   const res = await fetch(`/api/prenotazioni/${id}/chat`);
   const chat = await res.json();
+  const key = JSON.stringify(chat);
   const box = document.getElementById(`chatMsg-${id}`);
   const badge = document.getElementById(`badge-${id}`);
-  const key = JSON.stringify(chat);
+
   if (key === ultimaChatCliente[id]) return;
   ultimaChatCliente[id] = key;
 
-  if (chat.length && chat[chat.length - 1].autore === 'impianto') {
-    badge?.classList.add("show");
+  if (chat.length && chat[chat.length - 1].autore === 'admin') {
+    badge?.classList.add('show');
   }
 
   box.innerHTML = chat.map(m => `
-    <div class="msg">
+    <div class="messaggio">
       <small><b>${m.autore}</b> – ${new Date(m.timestamp).toLocaleString()}</small>
       ${m.testo}
     </div>
@@ -442,93 +474,33 @@ async function inviaMessaggio(id) {
   const input = document.getElementById(`inputMsg-${id}`);
   const testo = input.value.trim();
   if (!testo) return;
-
   await fetch(`/api/prenotazioni/${id}/chat`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ autore: utente.ragioneSociale, testo })
   });
-
-  input.value = "";
-  document.getElementById(`badge-${id}`)?.classList.remove("show");
+  input.value = '';
+  document.getElementById(`badge-${id}`)?.classList.remove('show');
   caricaChat(id);
 }
 
-async function caricaTrasporti() {
-  const res = await fetch(`/api/trasporti/utente/${utente.codiceCliente}`);
-  const dati = await res.json();
-  const contenitore = document.getElementById("contenitoreTrasporti");
-  contenitore.innerHTML = "";
-
-  dati.forEach(t => {
-    const div = document.createElement("div");
-    div.className = "prenotazione";
-    div.innerHTML = `
-      <b>Data:</b> ${t.dataTrasporto} | <b>Fascia:</b> ${t.fasciaOraria}<br>
-      <b>Tipo:</b> ${t.tipoTrasporto} | <b>Automezzo:</b> ${t.automezzo}<br>
-      <b>Produttore:</b> ${t.produttore} | <b>CER:</b> ${t.codiceCER}<br>
-      <b>Referente:</b> ${t.referente} (${t.cellulare})<br>
-      <b>Prezzo:</b> €${t.prezzo}<br>
-      <b>Chat:</b> <span class="badge" id="badge-tras-${t.id}">🛎️</span>
-      <div id="chatMsg-tras-${t.id}">Caricamento...</div>
-      <input id="inputMsg-tras-${t.id}" placeholder="Scrivi..." onkeydown="if(event.key==='Enter') inviaMessaggioTrasporto(${t.id})">
-      <button onclick="inviaMessaggioTrasporto(${t.id})">📨</button>
-    `;
-    contenitore.appendChild(div);
-    caricaChatTrasporto(t.id);
-  });
-}
-
-async function caricaChatTrasporto(id) {
-  const res = await fetch(`/api/trasporti/${id}/chat`);
-  const chat = await res.json();
-  const box = document.getElementById(`chatMsg-tras-${id}`);
-  const badge = document.getElementById(`badge-tras-${id}`);
-  const key = JSON.stringify(chat);
-  if (key === ultimaChatCliente[id]) return;
-  ultimaChatCliente[id] = key;
-
-  if (chat.length && chat[chat.length - 1].autore === 'impianto') {
-    badge?.classList.add("show");
-  }
-
-  box.innerHTML = chat.map(m => `
-    <div class="msg">
-      <small><b>${m.autore}</b> – ${new Date(m.timestamp).toLocaleString()}</small>
-      ${m.testo}
-    </div>
-  `).join('');
-}
-
-async function inviaMessaggioTrasporto(id) {
-  const input = document.getElementById(`inputMsg-tras-${id}`);
-  const testo = input.value.trim();
-  if (!testo) return;
-
-  await fetch(`/api/trasporti/${id}/chat`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ autore: utente.ragioneSociale, testo })
-  });
-
-  input.value = "";
-  document.getElementById(`badge-tras-${id}`)?.classList.remove("show");
-  caricaChatTrasporto(id);
-}
-
-// Avvio
 window.onload = () => {
-  const salvato = localStorage.getItem("utente");
-  if (salvato) {
-    utente = JSON.parse(salvato);
-    document.getElementById("loginBox").classList.add("hidden");
+  const saved = localStorage.getItem('utente');
+  if (saved) {
+    utente = JSON.parse(saved);
+    document.getElementById('loginBox').classList.add('hidden');
     mostraMenu();
-    mostra("formPrenotazione");
+    mostraSezione("formPrenotazione");
     caricaPrenotazioni();
     caricaTrasporti();
   }
 };
-</script>
-</body>
-</html>
 
+setInterval(() => {
+  if (!utente) return;
+  document.querySelectorAll('.prenotazione').forEach(div => {
+    const id = div.id?.split('-')[1];
+    if (id) caricaChat(id);
+  });
+}, 3000);
+</script>
