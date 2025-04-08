@@ -2,15 +2,15 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Admin – Eco.Drin</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
       font-family: 'Poppins', sans-serif;
       margin: 0;
-      background: #f1f4f6;
+      background: #f4f6f8;
       color: #333;
     }
 
@@ -19,203 +19,177 @@
       color: white;
       padding: 20px;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      flex-wrap: wrap;
+      gap: 15px;
     }
 
     header img {
       height: 50px;
     }
 
-    .menu-dropdown {
-      position: relative;
-    }
-
-    .menu-dropdown button {
-      background: #00785c;
-      color: white;
-      border: none;
-      padding: 10px 15px;
-      font-weight: bold;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    .menu-dropdown-content {
-      display: none;
-      position: absolute;
-      right: 0;
-      top: 100%;
-      background-color: white;
-      min-width: 160px;
-      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-      z-index: 1;
-    }
-
-    .menu-dropdown-content a {
-      color: #004c45;
-      padding: 10px 15px;
-      text-decoration: none;
-      display: block;
-    }
-
-    .menu-dropdown-content a:hover {
-      background-color: #f1f1f1;
-    }
-
-    .menu-dropdown.hidden {
-      display: none;
-    }
-
-    .menu-dropdown:hover .menu-dropdown-content {
-      display: block;
-    }
-
     main {
       max-width: 1100px;
       margin: 30px auto;
-      background: white;
       padding: 30px;
+      background: white;
       border-radius: 10px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.05);
     }
 
     h2 {
-      margin-top: 0;
       color: #004c45;
+      margin-top: 0;
     }
 
     .hidden {
-      display: none;
+      display: none !important;
     }
 
-    .card-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      margin-bottom: 30px;
+    .btn-green {
+      background: #28a745;
+      color: white;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-left: 5px;
     }
 
-    .card {
-      flex: 1 1 200px;
-      background: #f9f9f9;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-      text-align: center;
-    }
-
-    .card h3 {
-      margin: 0;
-      font-size: 22px;
-      color: #00785c;
-    }
-
-    .card p {
-      margin: 10px 0 0;
-      font-size: 16px;
+    .btn-green:hover {
+      background: #218838;
     }
 
     .giorno-blocco {
       background: #eafaf5;
-      padding: 12px;
-      border-radius: 6px;
+      padding: 10px 15px;
+      border-radius: 8px;
+      margin-top: 20px;
       cursor: pointer;
       font-weight: bold;
-      margin-top: 20px;
       border: 1px solid #b3e5c5;
     }
 
     .prenotazione {
-      background: #fff;
+      background: #f8f9fa;
       border: 1px solid #ccc;
       padding: 15px;
-      margin: 10px 0;
+      margin-top: 10px;
       border-radius: 6px;
+    }
+
+    select, input {
+      padding: 6px;
+      margin-top: 5px;
+      width: 100%;
+      max-width: 300px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+
+    .chat-messaggi {
+      background: #e9fdf4;
+      padding: 12px;
+      border: 1px solid #b0eacd;
+      border-radius: 8px;
+      box-shadow: inset 0 0 6px rgba(0, 120, 92, 0.15);
+      max-height: 180px;
+      overflow-y: auto;
+      margin: 10px 0;
+    }
+
+    .msg {
+      background: #c8f7e3;
+      border: 1px solid #a2e7cd;
+      padding: 10px 14px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      font-size: 14px;
+      box-shadow: 0 2px 4px rgba(0, 120, 92, 0.08);
+    }
+
+    .msg small {
+      display: block;
+      font-size: 11px;
+      color: #555;
+      margin-top: 6px;
+    }
+
+    .card {
+      background: #eafaf5;
+      padding: 20px;
+      border-radius: 10px;
+      display: inline-block;
+      margin: 10px;
+      text-align: center;
+    }
+
+    .chat-notifica {
+      display: inline-block;
+      background: #dc3545;
+      color: white;
+      font-size: 12px;
+      padding: 2px 8px;
+      border-radius: 12px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+
+    .hidden {
+      display: none !important;
     }
 
     footer {
       text-align: center;
       font-size: 14px;
-      padding: 20px;
       color: #777;
-      margin-top: 40px;
+      margin-top: 50px;
     }
   </style>
 </head>
-/* ... altri stili ... */
-
-  .chat-notifica {
-    display: inline-block;
-    background: #dc3545;
-    color: white;
-    font-size: 12px;
-    padding: 2px 8px;
-    border-radius: 12px;
-    margin-left: 8px;
-    vertical-align: middle;
-  }
-
-  .hidden {
-    display: none !important;
-  }
-</style>
 <body>
 <header>
-  <div style="display:flex; align-items:center; gap:15px;">
-    <a href="index.html"><img src="eco.drin-_srl.png" alt="Logo Ecodrin" /></a>
-    <h1 style="margin:0;">Area Amministrativa</h1>
-  </div>
-  <div class="menu-dropdown hidden" id="menuAdmin">
-    <button>📂 Menu</button>
-    <div class="menu-dropdown-content">
-      <a href="#" onclick="switchPage('registro')">📋 Registro</a>
-      <a href="#" onclick="switchPage('statistiche')">📈 Statistiche</a>
-      <a href="#" onclick="logout()">🚪 Logout</a>
-    </div>
-  </div>
+  <img src="eco.drin-_srl.png" alt="Logo" />
+  <h1>Area Amministratore</h1>
 </header>
 
 <main>
- <!-- LOGIN ADMIN -->
-<div id="loginBox">
-  <h2>🔐 Accesso Amministratore</h2>
-  <input id="loginEmail" placeholder="Email"
-    onkeydown="if(event.key==='Enter') login()" />
-  <input id="loginPassword" type="password" placeholder="Password"
-    onkeydown="if(event.key==='Enter') login()" />
-  <button onclick="login()">Accedi</button>
-  <div id="loginErrore" style="color:red;"></div>
-</div>
+  <div id="loginBox">
+    <h2>🔐 Login Admin</h2>
+    <input id="loginEmail" placeholder="Email"
+      onkeydown="if(event.key==='Enter') login()" />
+    <input id="loginPassword" type="password" placeholder="Password"
+      onkeydown="if(event.key==='Enter') login()" />
+    <button class="btn-green" onclick="login()">Accedi</button>
+    <div id="loginErrore" style="color:red; margin-top:10px;"></div>
+  </div>
 
-  <!-- CONTENUTO ADMIN -->
   <div id="contenutoAdmin" class="hidden">
+    <div id="menuAdmin" style="margin-bottom:20px;">
+      <button class="btn-green" onclick="switchPage('registro')">📦 Prenotazioni</button>
+      <button class="btn-green" onclick="switchPage('statistiche')">📊 Statistiche</button>
+      <button class="btn-green" onclick="logout()">🚪 Logout</button>
+    </div>
 
-    <!-- REGISTRO -->
     <section id="paginaRegistro">
-      <h2>📋 Registro Prenotazioni</h2>
+      <h2>📁 Registro Prenotazioni</h2>
       <div id="contenitoreGiorni"></div>
     </section>
 
-    <!-- STATISTICHE -->
     <section id="paginaStatistiche" class="hidden">
-      <h2>📈 Statistiche</h2>
-      <div class="card-grid" id="statCards"></div>
-      <canvas id="graficoCER" style="max-width:600px; margin:0 auto;"></canvas>
-      <ul id="statistiche" style="margin-top:30px;"></ul>
+      <h2>📊 Statistiche</h2>
+      <div id="statCards"></div>
+      <canvas id="graficoCER" style="max-width:600px; margin-top:30px;"></canvas>
+      <ul id="statistiche"></ul>
     </section>
-
   </div>
 </main>
 
 <footer>
-  📍 Via delle Industrie – Zona Asi - 80011 Acerra (NA)<br />
-  📞 081.8857480 / 081.5207650<br />
-  ✉️ <a href="mailto:info@ecodrinsrl.it">info@ecodrinsrl.it</a> / <a href="mailto:impianto@ecodrinsrl.it">impianto@ecodrinsrl.it</a><br />
-  ©2025 Eco.Drin s.r.l. – P.I: 03378791218
+  📍 Via delle Industrie – Zona Asi - 80011 Acerra (NA) |
+  📞 081.8857480 / 081.5207650 |
+  ✉️ info@ecodrinsrl.it / impianto@ecodrinsrl.it
+  <br>©2025 Eco.Drin s.r.l. – P.I: 03378791218
 </footer>
-
 
 
 
