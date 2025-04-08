@@ -2,13 +2,14 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin – Ecodrin</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body { font-family: Arial; margin: 0; background: #f4f6f8; }
     header {
       background: #007acc; color: white; padding: 15px 30px;
-      display: flex; justify-content: space-between; align-items: center;
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;
     }
     main {
       max-width: 1100px; margin: 30px auto;
@@ -68,7 +69,16 @@
     canvas { max-width: 500px; margin-top: 30px; }
     .top-bar {
       display: flex; justify-content: space-between;
-      align-items: center;
+      align-items: center; flex-wrap: wrap;
+    }
+
+    @media (max-width: 600px) {
+      header, .top-bar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .chat input { width: 100%; margin-bottom: 10px; }
+      .chat button { width: 100%; }
     }
   </style>
 </head>
@@ -111,10 +121,14 @@
       <canvas id="graficoCER"></canvas>
     </div>
   </div>
-</main>
-  <script>
+</main><script>
 let adminAutenticato = false;
 const chatTimers = {};
+const chatLastMessage = {};
+
+if ("Notification" in window) {
+  Notification.requestPermission();
+}
 
 function login() {
   const email = document.getElementById('loginEmail').value.trim();
@@ -255,6 +269,24 @@ async function caricaChat(id) {
   const div = document.getElementById(`chatMsg-${id}`);
   if (!div) return;
 
+  const lastMsg = chat[chat.length - 1];
+  const lastKnown = chatLastMessage[id]?.timestamp;
+  if (
+    lastMsg &&
+    (!lastKnown || lastMsg.timestamp > lastKnown) &&
+    lastMsg.autore !== 'admin'
+  ) {
+    if (Notification.permission === "granted") {
+      new Notification(`📨 Nuovo messaggio da ${lastMsg.autore}`, {
+        body: lastMsg.testo,
+      });
+    }
+    try {
+      new Audio("/sounds/notify.mp3").play();
+    } catch (e) {}
+  }
+  chatLastMessage[id] = lastMsg;
+
   div.innerHTML = chat.map(m => `
     <div class="messaggio">
       <b>${m.autore}</b>: ${m.testo}<br>
@@ -262,7 +294,6 @@ async function caricaChat(id) {
     </div>`).join('');
   div.scrollTop = div.scrollHeight;
 
-  // Start polling if not already running
   if (!chatTimers[id]) {
     chatTimers[id] = setInterval(() => caricaChat(id), 2000);
   }
