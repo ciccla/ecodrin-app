@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin – Eco.Drin</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
@@ -19,8 +19,8 @@
       color: white;
       padding: 20px;
       display: flex;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
       flex-wrap: wrap;
     }
 
@@ -86,89 +86,53 @@
       color: #004c45;
     }
 
-    h3 {
-      margin-top: 30px;
+    .hidden {
+      display: none;
+    }
+
+    .card-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .card {
+      flex: 1 1 200px;
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    .card h3 {
+      margin: 0;
+      font-size: 22px;
       color: #00785c;
     }
 
-    .hidden {
-      display: none;
+    .card p {
+      margin: 10px 0 0;
+      font-size: 16px;
+    }
+
+    .giorno-blocco {
+      background: #eafaf5;
+      padding: 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-top: 20px;
+      border: 1px solid #b3e5c5;
     }
 
     .prenotazione {
       background: #fff;
       border: 1px solid #ccc;
-      padding: 20px;
-      margin: 20px 0;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-    }
-
-    .prenotazione b {
-      color: #00785c;
-    }
-
-    .top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    button, select, input {
-      font-family: 'Poppins', sans-serif;
-    }
-
-    select, input {
-      padding: 8px 10px;
-      margin-top: 5px;
-      margin-bottom: 10px;
-      border-radius: 4px;
-      border: 1px solid #ccc;
-    }
-
-    button {
-      padding: 8px 12px;
-      border-radius: 5px;
-      border: none;
-      cursor: pointer;
-    }
-
-    button:hover {
-      opacity: 0.9;
-    }
-
-    .btn-green {
-      background-color: #28a745;
-      color: white;
-    }
-
-    .btn-red {
-      background-color: #dc3545;
-      color: white;
-    }
-
-    .chat-messaggi {
-      background: #f8f9fa;
-      padding: 10px;
-      border: 1px solid #ccc;
-      max-height: 150px;
-      overflow-y: auto;
+      padding: 15px;
+      margin: 10px 0;
       border-radius: 6px;
-      margin-bottom: 10px;
-    }
-
-    .msg {
-      background: #e1f5ec;
-      margin-bottom: 5px;
-      padding: 8px 10px;
-      border-radius: 6px;
-    }
-
-    .msg small {
-      display: block;
-      font-size: 11px;
-      color: #555;
     }
 
     footer {
@@ -177,21 +141,6 @@
       padding: 20px;
       color: #777;
       margin-top: 40px;
-    }
-
-    @media (max-width: 600px) {
-      .top {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .menu-dropdown {
-        width: 100%;
-      }
-
-      .menu-dropdown-content {
-        position: static;
-      }
     }
   </style>
 </head>
@@ -218,7 +167,7 @@
     <h2>🔐 Accesso Amministratore</h2>
     <input id="loginEmail" placeholder="Email" />
     <input id="loginPassword" type="password" placeholder="Password" />
-    <button class="btn-green" onclick="login()">Accedi</button>
+    <button onclick="login()">Accedi</button>
     <div id="loginErrore" style="color:red;"></div>
   </div>
 
@@ -227,28 +176,16 @@
 
     <!-- REGISTRO -->
     <section id="paginaRegistro">
-      <div class="top">
-        <div>
-          <h2>📋 Registro Prenotazioni</h2>
-          <p style="margin:0; color:gray;">Gestisci le richieste ricevute</p>
-        </div>
-        <button onclick="caricaPrenotazioni()">🔄 Aggiorna</button>
-      </div>
+      <h2>📋 Registro Prenotazioni</h2>
       <div id="contenitoreGiorni"></div>
     </section>
 
     <!-- STATISTICHE -->
     <section id="paginaStatistiche" class="hidden">
-      <div class="top">
-        <div>
-          <h2>📈 Statistiche</h2>
-          <p style="margin:0; color:gray;">Andamento e CER gestiti</p>
-        </div>
-        <button onclick="esportaCSV()">📤 Esporta CSV</button>
-      </div>
-      <div id="statTotali" style="margin-top:20px;"></div>
-      <ul id="statistiche" style="margin-top:20px;"></ul>
-      <canvas id="graficoCER" style="max-width: 600px; margin: 30px auto;"></canvas>
+      <h2>📈 Statistiche</h2>
+      <div class="card-grid" id="statCards"></div>
+      <canvas id="graficoCER" style="max-width:600px; margin:0 auto;"></canvas>
+      <ul id="statistiche" style="margin-top:30px;"></ul>
     </section>
 
   </div>
@@ -260,7 +197,14 @@
   ✉️ <a href="mailto:info@ecodrinsrl.it">info@ecodrinsrl.it</a> / <a href="mailto:impianto@ecodrinsrl.it">impianto@ecodrinsrl.it</a><br />
   ©2025 Eco.Drin s.r.l. – P.I: 03378791218
 </footer>
-<script>
+
+
+
+
+  <!-- parte 2-->
+
+
+  <script>
 let adminAutenticato = false;
 const chatTimers = {};
 const chatLastMessage = {};
@@ -290,24 +234,19 @@ function login() {
   .catch(() => document.getElementById('loginErrore').innerText = '❌ Credenziali errate');
 }
 
-document.getElementById('loginPassword').addEventListener('keydown', e => {
-  if (e.key === 'Enter') login();
-});
-
 function logout() {
-  adminAutenticato = false;
   location.reload();
 }
 
-function switchPage(page) {
+function switchPage(pagina) {
   document.getElementById('paginaRegistro').classList.add('hidden');
   document.getElementById('paginaStatistiche').classList.add('hidden');
-  document.getElementById(`pagina${page.charAt(0).toUpperCase() + page.slice(1)}`).classList.remove('hidden');
+  document.getElementById(`pagina${pagina.charAt(0).toUpperCase() + pagina.slice(1)}`).classList.remove('hidden');
 }
 
 function formattaData(dataStr) {
   const d = new Date(dataStr);
-  return `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()}`;
+  return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth()+1).toString().padStart(2, '0')}/${d.getFullYear()}`;
 }
 
 async function caricaPrenotazioni() {
@@ -325,12 +264,21 @@ async function caricaPrenotazioni() {
   });
 
   const giorni = Object.keys(gruppi).sort((a,b)=>new Date(b)-new Date(a));
-  if (!giorni.length) return contenitore.innerHTML = '<p>Nessuna prenotazione disponibile.</p>';
+  if (!giorni.length) return contenitore.innerHTML = '<p>Nessuna prenotazione.</p>';
 
   giorni.forEach(data => {
-    const giorno = document.createElement('div');
-    giorno.innerHTML = `<h3>${formattaData(data)} (${gruppi[data].length})</h3>`;
+    const wrapper = document.createElement('div');
+
+    const toggle = document.createElement('div');
+    toggle.className = 'giorno-blocco';
+    toggle.textContent = `📅 ${formattaData(data)} (${gruppi[data].length})`;
+    toggle.onclick = () => {
+      const box = wrapper.querySelector('.prenotazioni-giorno');
+      box.classList.toggle('hidden');
+    };
+
     const contenuto = document.createElement('div');
+    contenuto.className = 'prenotazioni-giorno hidden';
 
     gruppi[data].forEach(p => {
       const div = document.createElement('div');
@@ -343,23 +291,17 @@ async function caricaPrenotazioni() {
         ${p.analisi ? `<b>Analisi:</b> <a href="/uploads/${p.analisi}" target="_blank">📎 Visualizza</a><br>` : ''}
         <b>Stato:</b>
         <select onchange="aggiornaStato(${p.id}, this.value)">
-          <option value="in attesa" ${p.stato === 'in attesa' ? 'selected' : ''}>🕐 In attesa</option>
+          <option value="in attesa" ${p.stato === 'in attesa' ? 'selected' : ''}>⏳ In attesa</option>
           <option value="confermata" ${p.stato === 'confermata' ? 'selected' : ''}>✅ Confermata</option>
           <option value="rifiutata" ${p.stato === 'rifiutata' ? 'selected' : ''}>❌ Rifiutata</option>
         </select>
-        <div class="chat" style="margin-top:15px;">
-          <b>Chat:</b>
-          <div class="chat-messaggi" id="chatMsg-${p.id}">Caricamento...</div>
-          <input id="inputMsg-${p.id}" placeholder="Scrivi un messaggio..." />
-          <button onclick="inviaMessaggio(${p.id})" class="btn-green">📨 Invia</button>
-        </div>
       `;
       contenuto.appendChild(div);
-      caricaChat(p.id);
     });
 
-    contenitore.appendChild(giorno);
-    contenitore.appendChild(contenuto);
+    wrapper.appendChild(toggle);
+    wrapper.appendChild(contenuto);
+    contenitore.appendChild(wrapper);
   });
 }
 
@@ -369,66 +311,27 @@ async function aggiornaStato(id, stato) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ stato })
   });
-}
-
-async function caricaChat(id) {
-  const res = await fetch(`/api/prenotazioni/${id}/chat`);
-  const chat = await res.json();
-  const box = document.getElementById(`chatMsg-${id}`);
-  if (!box) return;
-
-  const lastMsg = chat[chat.length - 1];
-  const lastKnown = chatLastMessage[id]?.timestamp;
-  if (
-    lastMsg &&
-    (!lastKnown || lastMsg.timestamp > lastKnown) &&
-    lastMsg.autore !== 'admin'
-  ) {
-    if (Notification.permission === "granted") {
-      new Notification("📬 Nuovo messaggio da " + lastMsg.autore, { body: lastMsg.testo });
-    }
-    try { new Audio("/sounds/notify.mp3").play(); } catch(e) {}
-  }
-
-  chatLastMessage[id] = lastMsg;
-
-  box.innerHTML = chat.map(m => `
-    <div class="msg"><b>${m.autore}</b>: ${m.testo}<br>
-    <small>${new Date(m.timestamp).toLocaleString()}</small></div>
-  `).join('');
-  box.scrollTop = box.scrollHeight;
-
-  if (!chatTimers[id]) {
-    chatTimers[id] = setInterval(() => caricaChat(id), 2000);
-  }
-}
-
-async function inviaMessaggio(id) {
-  const input = document.getElementById(`inputMsg-${id}`);
-  const testo = input.value.trim();
-  if (!testo) return;
-  await fetch(`/api/prenotazioni/${id}/chat`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ autore: 'admin', testo })
-  });
-  input.value = '';
-  caricaChat(id);
+  caricaPrenotazioni();
 }
 
 async function caricaStatistiche() {
   const res = await fetch('/api/prenotazioni');
   const dati = await res.json();
 
-  const total = dati.length;
+  const clientiUnici = [...new Set(dati.map(p => p.ragioneSociale))].length;
+  const totalePrenotazioni = dati.length;
   const totaleKg = dati.reduce((sum, p) => sum + Number(p.quantita || 0), 0);
-  const stati = { "in attesa": 0, "confermata": 0, "rifiutata": 0 };
+  const stati = { 'confermata': 0, 'rifiutata': 0, 'in attesa': 0 };
   dati.forEach(p => { if (stati[p.stato] !== undefined) stati[p.stato]++; });
 
-  document.getElementById('statTotali').innerHTML = `
-    <p><b>Totale prenotazioni:</b> ${total}</p>
-    <p><b>Quantità totale:</b> ${totaleKg} kg</p>
-    <p><b>In attesa:</b> ${stati['in attesa']} | <b>Confermate:</b> ${stati['confermata']} | <b>Rifiutate:</b> ${stati['rifiutata']}</p>
+  const cardContainer = document.getElementById('statCards');
+  cardContainer.innerHTML = `
+    <div class="card"><h3>🧑‍💼 ${clientiUnici}</h3><p>Clienti</p></div>
+    <div class="card"><h3>📦 ${totalePrenotazioni}</h3><p>Prenotazioni</p></div>
+    <div class="card"><h3>⚖️ ${totaleKg}</h3><p>Totale kg</p></div>
+    <div class="card"><h3>✅ ${stati.confermata}</h3><p>Confermate</p></div>
+    <div class="card"><h3>❌ ${stati.rifiutata}</h3><p>Rifiutate</p></div>
+    <div class="card"><h3>⏳ ${stati['in attesa']}</h3><p>In Attesa</p></div>
   `;
 
   const statsCER = {};
@@ -441,21 +344,20 @@ async function caricaStatistiche() {
   const valori = Object.values(statsCER);
 
   document.getElementById('statistiche').innerHTML = labels.map((k, i) => `<li>${k}: ${valori[i]} kg</li>`).join('');
+
   new Chart(document.getElementById('graficoCER'), {
     type: 'pie',
     data: {
       labels,
       datasets: [{
         data: valori,
-        backgroundColor: ['#00785c','#ffc107','#dc3545','#6610f2','#17a2b8','#28a745','#6f42c1']
+        backgroundColor: ['#00785c', '#ffc107', '#dc3545', '#6f42c1', '#17a2b8', '#28a745', '#20c997']
       }]
     }
   });
 }
-
-function esportaCSV() {
-  window.open('/api/prenotazioni/export', '_blank');
-}
 </script>
 </body>
 </html>
+
+  
