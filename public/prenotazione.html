@@ -434,6 +434,31 @@ function logout() {
   localStorage.removeItem('utente');
   location.reload();
 }
+// 📄 Aggiornamento profilo utente (email, telefono, password)
+document.getElementById("formProfilo").addEventListener("submit", async e => {
+  e.preventDefault();
+  const form = new FormData(e.target);
+
+  const dati = {
+    email: form.get("email"),
+    telefono: form.get("telefono"),
+    nuovaPassword: form.get("nuovaPassword")
+  };
+
+  const res = await fetch(`/api/utenti/${utente.id}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(dati)
+  });
+
+  if (res.ok) {
+    const json = await res.json();
+    utente = json.utente;
+    document.getElementById("profiloMsg").innerText = "✅ Profilo aggiornato con successo";
+  } else {
+    document.getElementById("profiloMsg").innerText = "❌ Errore durante l'aggiornamento";
+  }
+});
 
 document.getElementById('form').addEventListener('submit', async e => {
   e.preventDefault();
