@@ -54,6 +54,22 @@ app.post('/api/login', (req, res) => {
   }
   res.status(401).json({ errore: 'Credenziali errate' });
 });
+// 🛠️ PATCH profilo cliente
+app.patch('/api/utenti/:id', (req, res) => {
+  const utenti = leggiDati('utenti.json');
+  const utente = utenti.find(u => u.id == req.params.id);
+  if (!utente) return res.status(404).json({ errore: 'Utente non trovato' });
+
+  if (req.body.email) utente.email = req.body.email;
+  if (req.body.telefono) utente.telefono = req.body.telefono;
+  if (req.body.nuovaPassword) {
+    utente.passwordHash = bcrypt.hashSync(req.body.nuovaPassword, 10);
+    utente.passwordChiara = req.body.nuovaPassword;
+  }
+
+  scriviDati('utenti.json', utenti);
+  res.json({ success: true, utente });
+});
 
 // Registrazione clienti
 app.post('/api/registrazione', (req, res) => {
