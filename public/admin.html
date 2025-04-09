@@ -12,6 +12,12 @@
       margin: 0;
       background: #f4f6f8;
       color: #333;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    body.dark {
+      background: #1e1e1e;
+      color: #f0f0f0;
     }
 
     header {
@@ -20,11 +26,23 @@
       padding: 20px;
       display: flex;
       align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
       gap: 15px;
     }
 
     header img {
       height: 50px;
+    }
+
+    .theme-toggle {
+      background: #fff;
+      color: #004c45;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
     }
 
     main {
@@ -34,6 +52,10 @@
       background: white;
       border-radius: 10px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+
+    body.dark main {
+      background: #2c2c2c;
     }
 
     h2 {
@@ -77,6 +99,11 @@
       border-radius: 6px;
     }
 
+    body.dark .prenotazione {
+      background: #3a3a3a;
+      border-color: #555;
+    }
+
     select, input {
       padding: 6px;
       margin-top: 5px;
@@ -84,6 +111,13 @@
       max-width: 300px;
       border-radius: 4px;
       border: 1px solid #ccc;
+      background: white;
+    }
+
+    body.dark select, body.dark input {
+      background: #444;
+      color: #fff;
+      border-color: #666;
     }
 
     .chat-messaggi {
@@ -97,6 +131,11 @@
       margin: 10px 0;
     }
 
+    body.dark .chat-messaggi {
+      background: #2f2f2f;
+      border-color: #555;
+    }
+
     .msg {
       background: #c8f7e3;
       border: 1px solid #a2e7cd;
@@ -104,7 +143,11 @@
       border-radius: 8px;
       margin-bottom: 8px;
       font-size: 14px;
-      box-shadow: 0 2px 4px rgba(0, 120, 92, 0.08);
+    }
+
+    body.dark .msg {
+      background: #444;
+      border-color: #666;
     }
 
     .msg small {
@@ -134,10 +177,6 @@
       vertical-align: middle;
     }
 
-    .hidden {
-      display: none !important;
-    }
-
     footer {
       text-align: center;
       font-size: 14px;
@@ -148,11 +187,17 @@
 </head>
 <body>
 <header>
-  <img src="eco.drin-_srl.png" alt="Logo" />
-  <h1>Area Amministratore</h1>
+  <div style="display:flex; align-items:center; gap:15px;">
+    <img src="eco.drin-_srl.png" alt="Logo" />
+    <h1 style="margin:0;">Area Amministratore</h1>
+  </div>
+  <div>
+    <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+  </div>
 </header>
 
 <main>
+  <!-- LOGIN -->
   <div id="loginBox">
     <h2>🔐 Login Admin</h2>
     <input id="loginEmail" placeholder="Email"
@@ -163,18 +208,28 @@
     <div id="loginErrore" style="color:red; margin-top:10px;"></div>
   </div>
 
+  <!-- MENU + CONTENUTO -->
   <div id="contenutoAdmin" class="hidden">
     <div id="menuAdmin" style="margin-bottom:20px;">
-      <button class="btn-green" onclick="switchPage('registro')">📦 Prenotazioni</button>
-      <button class="btn-green" onclick="switchPage('statistiche')">📊 Statistiche</button>
+      <button class="btn-green" onclick="switchPage('Registro')">📦 Prenotazioni</button>
+      <button class="btn-green" onclick="switchPage('Trasporti')">🚛 Trasporti</button>
+      <button class="btn-green" onclick="switchPage('Statistiche')">📊 Statistiche</button>
       <button class="btn-green" onclick="logout()">🚪 Logout</button>
     </div>
 
+    <!-- PAGINA PRENOTAZIONI -->
     <section id="paginaRegistro">
       <h2>📁 Registro Prenotazioni</h2>
       <div id="contenitoreGiorni"></div>
     </section>
 
+    <!-- PAGINA TRASPORTI -->
+    <section id="paginaTrasporti" class="hidden">
+      <h2>🚛 Registro Trasporti</h2>
+      <div id="contenitoreTrasporti"></div>
+    </section>
+
+    <!-- PAGINA STATISTICHE -->
     <section id="paginaStatistiche" class="hidden">
       <h2>📊 Statistiche</h2>
       <div id="statCards"></div>
@@ -189,19 +244,23 @@
   📞 081.8857480 / 081.5207650 |
   ✉️ info@ecodrinsrl.it / impianto@ecodrinsrl.it
   <br>©2025 Eco.Drin s.r.l. – P.I: 03378791218
-</footer>
-
-
-
-  <!-- parte 2-->
-
-
-<script>
+</footer><script>
 let adminAutenticato = false;
 const chatTimers = {};
 const chatLastMessage = {};
 
 if ("Notification" in window) Notification.requestPermission();
+
+window.onload = () => {
+  if (localStorage.getItem("darkMode") === "true") {
+    document.body.classList.add("dark");
+  }
+};
+
+function toggleTheme() {
+  document.body.classList.toggle("dark");
+  localStorage.setItem("darkMode", document.body.classList.contains("dark"));
+}
 
 function login() {
   const email = document.getElementById('loginEmail').value.trim();
@@ -220,6 +279,7 @@ function login() {
       document.getElementById('contenutoAdmin').classList.remove('hidden');
       document.getElementById('menuAdmin').classList.remove('hidden');
       caricaPrenotazioni();
+      caricaTrasporti();
       caricaStatistiche();
     } else throw new Error();
   })
@@ -232,8 +292,9 @@ function logout() {
 
 function switchPage(pagina) {
   document.getElementById('paginaRegistro').classList.add('hidden');
+  document.getElementById('paginaTrasporti').classList.add('hidden');
   document.getElementById('paginaStatistiche').classList.add('hidden');
-  document.getElementById(`pagina${pagina.charAt(0).toUpperCase() + pagina.slice(1)}`).classList.remove('hidden');
+  document.getElementById(`pagina${pagina}`).classList.remove('hidden');
 }
 
 function formattaData(dataStr) {
@@ -291,7 +352,6 @@ async function caricaPrenotazioni() {
           <option value="confermata" ${p.stato === 'confermata' ? 'selected' : ''}>✅ Confermata</option>
           <option value="rifiutata" ${p.stato === 'rifiutata' ? 'selected' : ''}>❌ Rifiutata</option>
         </select>
-
         <div class="chat">
           <b>Chat:</b> <span id="notificaChat-${p.id}" class="chat-notifica hidden">🔴 Nuovo</span>
           <div class="chat-messaggi" id="chatMsg-${p.id}">Caricamento...</div>
@@ -333,10 +393,10 @@ async function caricaChat(id) {
     lastMsg.autore !== 'impianto'
   ) {
     if (notificaEl) notificaEl.classList.remove('hidden');
-    if (Notification.permission === "granted") {
+    if (Notification.permission === "granted" && !document.hasFocus()) {
       new Notification("📬 Nuovo messaggio", { body: lastMsg.testo });
     }
-    try { new Audio("/sounds/notify.mp3").play(); } catch (e) {}
+    try { new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_9ce296083a.mp3").play(); } catch (e) {}
   }
 
   chatLastMessage[id] = lastMsg;
@@ -367,6 +427,120 @@ async function inviaMessaggio(id) {
 
   input.value = "";
   caricaChat(id);
+}
+</script>
+<script>
+async function caricaTrasporti() {
+  const res = await fetch('/api/trasporti');
+  const dati = await res.json();
+  const contenitore = document.getElementById('contenitoreTrasporti');
+  contenitore.innerHTML = '';
+
+  const gruppi = {};
+  dati.forEach(t => {
+    if (t.dataTrasporto) {
+      if (!gruppi[t.dataTrasporto]) gruppi[t.dataTrasporto] = [];
+      gruppi[t.dataTrasporto].push(t);
+    }
+  });
+
+  const giorni = Object.keys(gruppi).sort((a,b)=>new Date(b)-new Date(a));
+  if (!giorni.length) return contenitore.innerHTML = '<p>Nessun trasporto.</p>';
+
+  giorni.forEach(data => {
+    const wrapper = document.createElement('div');
+
+    const toggle = document.createElement('div');
+    toggle.className = 'giorno-blocco';
+    toggle.textContent = `📅 ${formattaData(data)} (${gruppi[data].length})`;
+    toggle.onclick = () => {
+      const box = wrapper.querySelector('.trasporti-giorno');
+      box.classList.toggle('hidden');
+      gruppi[data].forEach(t => {
+        const badge = document.getElementById(`notificaTras-${t.id}`);
+        if (badge) badge.classList.add('hidden');
+      });
+    };
+
+    const contenuto = document.createElement('div');
+    contenuto.className = 'trasporti-giorno hidden';
+
+    gruppi[data].forEach(t => {
+      const div = document.createElement('div');
+      div.className = 'prenotazione';
+      div.innerHTML = `
+        <b>Cliente:</b> ${t.ragioneSociale} (${t.codiceCliente})<br>
+        <b>Tipo:</b> ${t.tipoTrasporto} – ${t.tipoMezzo}<br>
+        <b>Data:</b> ${t.dataTrasporto} | <b>Fascia:</b> ${t.fasciaOraria}<br>
+        <b>Referente:</b> ${t.referente} (${t.cellulare})<br>
+        <b>Prezzo:</b> € ${t.prezzo}<br>
+        <div class="chat">
+          <b>Chat:</b> <span id="notificaTras-${t.id}" class="chat-notifica hidden">🔴 Nuovo</span>
+          <div class="chat-messaggi" id="chatTras-${t.id}">Caricamento...</div>
+          <input id="inputTras-${t.id}" placeholder="Scrivi un messaggio..." onkeydown="if(event.key==='Enter'){inviaMessaggioTras(${t.id})}" />
+          <button class="btn-green" onclick="inviaMessaggioTras(${t.id})">📨 Invia</button>
+        </div>
+      `;
+      contenuto.appendChild(div);
+      caricaChatTras(t.id);
+    });
+
+    wrapper.appendChild(toggle);
+    wrapper.appendChild(contenuto);
+    contenitore.appendChild(wrapper);
+  });
+}
+
+async function caricaChatTras(id) {
+  const res = await fetch(`/api/trasporti/${id}/chat`);
+  const chat = await res.json();
+  const box = document.getElementById(`chatTras-${id}`);
+  const badge = document.getElementById(`notificaTras-${id}`);
+  if (!box) return;
+
+  const lastMsg = chat[chat.length - 1];
+  const lastKnown = chatLastMessage[`tras-${id}`]?.timestamp;
+
+  if (
+    lastMsg &&
+    (!lastKnown || lastMsg.timestamp > lastKnown) &&
+    lastMsg.autore !== 'impianto'
+  ) {
+    if (badge) badge.classList.remove('hidden');
+    if (Notification.permission === "granted" && !document.hasFocus()) {
+      new Notification("📬 Nuovo messaggio trasporto", { body: lastMsg.testo });
+    }
+    try { new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_9ce296083a.mp3").play(); } catch (e) {}
+  }
+
+  chatLastMessage[`tras-${id}`] = lastMsg;
+
+  box.innerHTML = chat.map(m => `
+    <div class="msg">
+      <b>${m.autore}</b>: ${m.testo}
+      <small>${new Date(m.timestamp).toLocaleString()}</small>
+    </div>
+  `).join('');
+  box.scrollTop = box.scrollHeight;
+
+  if (!chatTimers[`tras-${id}`]) {
+    chatTimers[`tras-${id}`] = setInterval(() => caricaChatTras(id), 2000);
+  }
+}
+
+async function inviaMessaggioTras(id) {
+  const input = document.getElementById(`inputTras-${id}`);
+  const testo = input.value.trim();
+  if (!testo) return;
+
+  await fetch(`/api/trasporti/${id}/chat`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ autore: "impianto", testo })
+  });
+
+  input.value = "";
+  caricaChatTras(id);
 }
 
 async function caricaStatistiche() {
@@ -414,3 +588,4 @@ async function caricaStatistiche() {
 </script>
 </body>
 </html>
+
