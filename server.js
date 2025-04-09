@@ -19,11 +19,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static('uploads'));
 app.use(express.static('public'));
 
-// Funzioni file locali
+// Utility file system
 const leggiDati = f => fs.existsSync(f) ? JSON.parse(fs.readFileSync(f)) : [];
 const scriviDati = (f, dati) => fs.writeFileSync(f, JSON.stringify(dati, null, 2));
 
-// Upload file PDF
+// Multer per PDF
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, 'uploads/'),
   filename: (req, file, cb) => cb(null, `${Date.now()}_${file.originalname}`)
@@ -41,7 +41,7 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-// LOGIN
+// Login
 app.post('/api/login', (req, res) => {
   const { ragioneSociale, password } = req.body;
   if (ragioneSociale === 'admin@ecodrin.it' && password === 'admin123') {
@@ -55,7 +55,7 @@ app.post('/api/login', (req, res) => {
   res.status(401).json({ errore: 'Credenziali errate' });
 });
 
-// REGISTRAZIONE CLIENTE
+// Registrazione clienti
 app.post('/api/registrazione', (req, res) => {
   const { ragioneSociale, codiceFiscale, password } = req.body;
   const wb = xlsx.readFile('clienti.xlsx');
@@ -78,9 +78,7 @@ app.post('/api/registrazione', (req, res) => {
   });
   scriviDati('utenti.json', utenti);
   res.json({ success: true });
-});
-
-// GENERA PDF
+});// 📄 Generazione PDF ricevuta
 function generaRicevutaPDF(prenotazione, path) {
   return new Promise(resolve => {
     const doc = new PDFDocument();
@@ -95,7 +93,7 @@ function generaRicevutaPDF(prenotazione, path) {
   });
 }
 
-// CREA PRENOTAZIONE
+// ✅ CREA PRENOTAZIONE
 app.post('/api/prenotazioni', upload.single('analisi'), async (req, res) => {
   const dati = leggiDati('prenotazioni.json');
   const nuova = {
@@ -114,6 +112,7 @@ app.post('/api/prenotazioni', upload.single('analisi'), async (req, res) => {
     stato: 'in attesa',
     chat: []
   };
+
   dati.push(nuova);
   scriviDati('prenotazioni.json', dati);
 
@@ -135,29 +134,7 @@ app.post('/api/prenotazioni', upload.single('analisi'), async (req, res) => {
   res.json({ success: true });
 });
 
-// LISTA PRENOTAZIONI (admin)
-app.get('/api/prenotazioni', (req, res) => {
-  const dati = leggiDati('prenotazioni.json');
-  res.json(dati);
-});
-
-// PRENOTAZIONI CLIENTE
-app.get('/api/prenotazioni/utente/:codice', (req, res) => {
-  const dati = leggiDati('prenotazioni.json');
-  res.json(dati.filter(p => p.codiceCliente === req.params.codice));
-});
-
-// STATO prenotazione
-app.patch('/api/prenotazioni/:id', (req, res) => {
-  const dati = leggiDati('prenotazioni.json');
-  const p = dati.find(p => p.id == req.params.id);
-  if (!p) return res.status(404).json({ errore: 'Non trovata' });
-  p.stato = req.body.stato;
-  scriviDati('prenotazioni.json', dati);
-  res.json({ success: true });
-});
-
-// CHAT prenotazioni
+// 📬 Chat prenotazione
 app.get('/api/prenotazioni/:id/chat', (req, res) => {
   const dati = leggiDati('prenotazioni.json');
   const p = dati.find(p => p.id == req.params.id);
@@ -172,7 +149,57 @@ app.post('/api/prenotazioni/:id/chat', (req, res) => {
   res.json({ success: true });
 });
 
-// CREA TRASPORTO
+// 👤 Prenotazioni utente
+app.get('/api/prenotazioni/utente/:codice', (req, res) => {
+  const dati = leggiDati('prenotazioni.json');
+  res.json(dati.filter(p => p.codiceCliente === req.params.codice));
+});
+
+// 📤 Lista completa (admin)
+app.get('/api/prenotazioni', (req, res) => {
+  const dati = leggiDati('prenotazioni.json');
+  res.json(dati);
+});
+
+// 🔁 Stato prenotazione con invio email
+app.patch('/api/prenotazioni/:id', async (req, res) => {
+  const dati = leggiDati('prenotazioni.json');
+  const p = dati.find(p => p.id == req.params.id);
+  if (!p) return res.status(404).json({ errore: 'Prenotazione non trovata' });
+
+  p.stato = req.body.stato;
+  scriviDati('prenotazioni.json', dati);
+
+  try {
+    const testo = p.stato === 'confermata'
+      ? `✅ La tua prenotazione per il giorno ${p.data} è stata confermata.`
+      : `❌ La tua prenotazione per il giorno ${p.data} è stata rifiutata.`;
+
+    await transporter.sendMail({
+      from: `"Ecodrin" <${process.env.SMTP_USER}>`,
+      to: p.email,
+      subject: `📦 Prenotazione ${p.stato}`,
+      text: testo
+    });
+  } catch (err) {
+    console.error('Errore invio email:', err.message);
+  }
+
+  res.json({ success: true });
+});
+
+// 📤 Esporta CSV
+app.get('/api/prenotazioni/export', (req, res) => {
+  const dati = leggiDati('prenotazioni.json');
+  const csv = [
+    'Cliente,CER,Quantità,Data,Stato',
+    ...dati.map(p => `${p.ragioneSociale},${p.codiceCER},${p.quantita},${p.data},${p.stato}`)
+  ].join('\n');
+  res.setHeader('Content-Disposition', 'attachment; filename=prenotazioni.csv');
+  res.setHeader('Content-Type', 'text/csv');
+  res.send(csv);
+});
+// 🚛 Crea richiesta trasporto
 app.post('/api/trasporti', (req, res) => {
   const dati = leggiDati('trasporti.json');
   const nuova = {
@@ -189,6 +216,7 @@ app.post('/api/trasporti', (req, res) => {
     referente: req.body.referente,
     prezzo: req.body.prezzo,
     email: req.body.email,
+    stato: 'in attesa',
     chat: []
   };
   dati.push(nuova);
@@ -199,42 +227,72 @@ app.post('/api/trasporti', (req, res) => {
       from: `"Ecodrin" <${process.env.SMTP_USER}>`,
       to: nuova.email,
       subject: '🚛 Richiesta Trasporto Ricevuta',
-      text: `Richiesta trasporto per il ${nuova.dataTrasporto} confermata.`
+      text: `Richiesta trasporto per il ${nuova.dataTrasporto} registrata correttamente.`
     });
   } catch (err) {
-    console.error('Errore email:', err.message);
+    console.error('Errore email (trasporto):', err.message);
   }
 
   res.json({ success: true });
 });
 
-// TRASPORTI client e admin
-app.get('/api/trasporti/utente/:codice', (req, res) => {
-  const dati = leggiDati('trasporti.json');
-  res.json(dati.filter(t => t.codiceCliente === req.params.codice));
-});
-app.get('/api/trasporti', (req, res) => {
-  const dati = leggiDati('trasporti.json');
-  res.json(dati);
-});
-
-// CHAT trasporti
+// 📬 Chat trasporti
 app.get('/api/trasporti/:id/chat', (req, res) => {
   const dati = leggiDati('trasporti.json');
   const trasporto = dati.find(t => t.id == req.params.id);
   if (!trasporto) return res.status(404).json({ errore: 'Trasporto non trovato' });
   res.json(trasporto.chat || []);
 });
+
 app.post('/api/trasporti/:id/chat', (req, res) => {
   const dati = leggiDati('trasporti.json');
   const trasporto = dati.find(t => t.id == req.params.id);
   if (!trasporto) return res.status(404).json({ errore: 'Trasporto non trovato' });
+  trasporto.chat = trasporto.chat || [];
   trasporto.chat.push({ ...req.body, timestamp: Date.now() });
   scriviDati('trasporti.json', dati);
   res.json({ success: true });
 });
 
-// STATISTICHE CER
+// 👤 Trasporti per utente
+app.get('/api/trasporti/utente/:codice', (req, res) => {
+  const dati = leggiDati('trasporti.json');
+  res.json(dati.filter(t => t.codiceCliente === req.params.codice));
+});
+
+// 📦 Lista trasporti (admin)
+app.get('/api/trasporti', (req, res) => {
+  const dati = leggiDati('trasporti.json');
+  res.json(dati);
+});
+
+// 🔁 Stato trasporto con invio email
+app.patch('/api/trasporti/:id', async (req, res) => {
+  const dati = leggiDati('trasporti.json');
+  const t = dati.find(t => t.id == req.params.id);
+  if (!t) return res.status(404).json({ errore: 'Trasporto non trovato' });
+
+  t.stato = req.body.stato;
+  scriviDati('trasporti.json', dati);
+
+  try {
+    const testo = t.stato === 'confermata'
+      ? `✅ La tua richiesta di trasporto per il ${t.dataTrasporto} è stata confermata.`
+      : `❌ La tua richiesta di trasporto per il ${t.dataTrasporto} è stata rifiutata.`;
+
+    await transporter.sendMail({
+      from: `"Ecodrin" <${process.env.SMTP_USER}>`,
+      to: t.email,
+      subject: `🚛 Trasporto ${t.stato}`,
+      text: testo
+    });
+  } catch (err) {
+    console.error('Errore invio email (trasporto):', err.message);
+  }
+
+  res.json({ success: true });
+});
+// 📊 Statistiche CER
 app.get('/api/grafico/cer', (req, res) => {
   const dati = leggiDati('prenotazioni.json');
   const stats = {};
@@ -245,19 +303,9 @@ app.get('/api/grafico/cer', (req, res) => {
   res.json(stats);
 });
 
-// EXPORT CSV
-app.get('/api/prenotazioni/export', (req, res) => {
-  const dati = leggiDati('prenotazioni.json');
-  const csv = [
-    'Cliente,CER,Quantità,Data,Stato',
-    ...dati.map(p => `${p.ragioneSociale},${p.codiceCER},${p.quantita},${p.data},${p.stato}`)
-  ].join('\n');
-  res.setHeader('Content-Disposition', 'attachment; filename=prenotazioni.csv');
-  res.setHeader('Content-Type', 'text/csv');
-  res.send(csv);
-});
-
-// AVVIO SERVER
+// ▶️ Avvio del server
 app.listen(port, () => {
   console.log(`✅ Server attivo su http://localhost:${port}`);
 });
+
+
