@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Registrazione – Eco.Drin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f5f5f5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .box {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      width: 90%;
+      max-width: 400px;
+    }
+    h2 {
+      margin-top: 0;
+      color: #00785c;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #00785c;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background: #009072;
+    }
+    #msg {
+      margin-top: 15px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<div class="box">
+  <h2>📝 Registrazione</h2>
+  <input id="ragione" placeholder="Ragione Sociale" />
+  <input id="codiceFiscale" placeholder="Codice Fiscale / P.IVA" />
+  <input id="password" type="password" placeholder="Password" />
+  <button onclick="registrati()">Registrati</button>
+  <div id="msg"></div>
+</div>
+
+<script>
+async function registrati() {
+  const ragioneSociale = document.getElementById("ragione").value.trim();
+  const codiceFiscale = document.getElementById("codiceFiscale").value.trim();
+  const password = document.getElementById("password").value;
+
+  const msg = document.getElementById("msg");
+
+  if (!ragioneSociale || !codiceFiscale || !password) {
+    msg.innerText = "⚠️ Compila tutti i campi.";
+    msg.style.color = "red";
+    return;
+  }
+
+  const res = await fetch("/api/registrazione", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ragioneSociale, codiceFiscale, password })
+  });
+
+  if (res.ok) {
+    msg.innerText = "✅ Registrazione completata! Ora puoi accedere.";
+    msg.style.color = "green";
+  } else {
+    const json = await res.json();
+    msg.innerText = `❌ ${json.errore || "Errore durante la registrazione."}`;
+    msg.style.color = "red";
+  }
+}
+</script>
+
+</body>
+</html>
