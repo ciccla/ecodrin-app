@@ -287,7 +287,7 @@
   ✉️ info@ecodrinsrl.it / impianto@ecodrinsrl.it<br />
   ©2025 Eco.Drin s.r.l. – P.I: 03378791218
 </footer>
-  <script>
+<script>
 let utente = null;
 let ultimaChatCliente = {};
 
@@ -450,7 +450,7 @@ window.onload = () => {
   }
 };
 </script>
-<section id="archivioTrasporti" class="section hidden">
+  <section id="archivioTrasporti" class="section hidden">
   <h2>📦 Le Tue Richieste di Trasporto</h2>
   <div id="contenitoreTrasporti"></div>
 </section>
@@ -483,5 +483,88 @@ async function caricaTrasporti() {
     caricaChatTrasporti(t.id);
   });
 }
-</script>
+</script>@media (max-width: 600px) {
+  header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .navCliente select {
+    font-size: 16px;
+    padding: 10px;
+  }
+
+  main {
+    padding: 20px;
+    margin: 10px;
+    border-radius: 8px;
+  }
+
+  .prenotazione {
+    padding: 12px;
+    font-size: 15px;
+  }
+
+  .chat-messaggi {
+    max-height: 250px;
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .bolla-chat {
+    max-width: 90%;
+    font-size: 14px;
+  }
+
+  .bolla-chat small {
+    font-size: 10px;
+  }
+
+  input, select, textarea {
+    width: 100% !important;
+    font-size: 15px;
+  }
+
+  button, .btn-green, .theme-toggle {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    font-size: 16px;
+    border-radius: 6px;
+  }
+
+  .card {
+    width: 100% !important;
+    box-sizing: border-box;
+    margin: 10px 0;
+  }
+
+  footer {
+    font-size: 12px;
+    text-align: center;
+    padding: 15px;
+  }
+
+  h1, h2 {
+    font-size: 20px;
+  }
+
+  .navCliente {
+    margin-bottom: 20px;
+  }
+
+  .chat-wrapper input {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .chat-wrapper button {
+    font-size: 14px;
+    padding: 10px;
+    margin-top: 5px;
+  }
+}
+
+
 
