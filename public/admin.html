@@ -421,39 +421,32 @@ async function caricaChat(id) {
   const res = await fetch(`/api/prenotazioni/${id}/chat`);
   const chat = await res.json();
   const div = document.getElementById(`chatMsg-${id}`);
-  const last = chat[chat.length - 1];
-  if (last && last.autore !== 'impianto') {
-    document.getElementById(`badge-${id}`)?.classList.add('show');
-    document.getElementById('suonoNotifica')?.play();
-    if (Notification.permission === "granted") {
-      new Notification("📬 Messaggio prenotazione", { body: last.testo });
+  const badge = document.getElementById(`badge-${id}`);
+  const last = chat.at(-1);
+
+  // Notifica solo se nuovo messaggio da cliente
+  if (!chatLastMessage[id] || chatLastMessage[id] !== last?.timestamp) {
+    chatLastMessage[id] = last?.timestamp;
+
+    if (last && last.autore !== 'impianto') {
+      badge?.classList.add('show');
+
+      if (Notification.permission === "granted") {
+        new Notification("📬 Nuovo messaggio prenotazione", { body: last.testo });
+      }
+
+      try { document.getElementById("suonoNotifica")?.play(); } catch (e) {}
     }
   }
+
   div.innerHTML = chat.map(m => `
     <div class="chat-bolla">
       <b>${m.autore}</b>: ${m.testo}
       <small>${new Date(m.timestamp).toLocaleString()}</small>
-    </div>`).join('');
+    </div>
+  `).join('');
 }
 
-async function caricaChatTrasporto(id) {
-  const res = await fetch(`/api/trasporti/${id}/chat`);
-  const chat = await res.json();
-  const div = document.getElementById(`chatMsgTras-${id}`);
-  const last = chat[chat.length - 1];
-  if (last && last.autore !== 'impianto') {
-    document.getElementById(`badge-t-${id}`)?.classList.add('show');
-    document.getElementById('suonoNotifica')?.play();
-    if (Notification.permission === "granted") {
-      new Notification("📬 Messaggio trasporto", { body: last.testo });
-    }
-  }
-  div.innerHTML = chat.map(m => `
-    <div class="chat-bolla">
-      <b>${m.autore}</b>: ${m.testo}
-      <small>${new Date(m.timestamp).toLocaleString()}</small>
-    </div>`).join('');
-}
 
 async function inviaMessaggio(id) {
   const input = document.getElementById(`inputMsg-${id}`);
@@ -479,6 +472,35 @@ async function inviaMsgTras(id) {
   });
   input.value = '';
   caricaChatTrasporto(id);
+}
+async function caricaChatTrasporto(id) {
+  const res = await fetch(`/api/trasporti/${id}/chat`);
+  const chat = await res.json();
+  const div = document.getElementById(`chatMsgTras-${id}`);
+  const badge = document.getElementById(`badge-t-${id}`);
+  const key = `t-${id}`;
+  const last = chat.at(-1);
+
+  if (!chatLastMessage[key] || chatLastMessage[key] !== last?.timestamp) {
+    chatLastMessage[key] = last?.timestamp;
+
+    if (last && last.autore !== 'impianto') {
+      badge?.classList.add('show');
+
+      if (Notification.permission === "granted") {
+        new Notification("📬 Nuovo messaggio trasporto", { body: last.testo });
+      }
+
+      try { document.getElementById("suonoNotifica")?.play(); } catch (e) {}
+    }
+  }
+
+  div.innerHTML = chat.map(m => `
+    <div class="chat-bolla">
+      <b>${m.autore}</b>: ${m.testo}
+      <small>${new Date(m.timestamp).toLocaleString()}</small>
+    </div>
+  `).join('');
 }
 
 async function caricaStatistiche() {
