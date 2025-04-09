@@ -604,17 +604,7 @@ async function inviaMsgTras(id) {
   caricaChatTrasporto(id);
 }
 
-window.onload = () => {
-  const saved = localStorage.getItem('utente');
-  if (saved) {
-    utente = JSON.parse(saved);
-    document.getElementById('loginBox').classList.add('hidden');
-    mostraMenu();
-    mostraSezione("formPrenotazione");
-    caricaPrenotazioni();
-    caricaTrasporti();
-  }
-};
+
 
 setInterval(() => {
   if (!utente) return;
