@@ -6,17 +6,34 @@
   <title>Area Clienti – Eco.Drin</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    * { box-sizing: border-box; }
+    :root {
+      --verde: #004c45;
+      --verde-chiaro: #d1fbe3;
+      --grigio: #f1f1f1;
+      --chat-admin: var(--grigio);
+      --chat-mia: var(--verde-chiaro);
+      --bg: #f5f7f9;
+      --text: #333;
+    }
 
     body {
       font-family: 'Poppins', sans-serif;
       margin: 0;
-      background: #f5f7f9;
-      color: #333;
+      background: var(--bg);
+      color: var(--text);
+      transition: background 0.3s, color 0.3s;
+    }
+
+    body.dark {
+      --bg: #1e1e1e;
+      --text: #f0f0f0;
+      --grigio: #2e2e2e;
+      --chat-admin: #2e2e2e;
+      --chat-mia: #004c45;
     }
 
     header {
-      background-color: #004c45;
+      background-color: var(--verde);
       color: white;
       padding: 20px;
       display: flex;
@@ -29,7 +46,7 @@
       height: 50px;
     }
 
-    #logoutBtn {
+    #logoutBtn, .btn {
       background: #ff4d4d;
       color: white;
       padding: 8px 16px;
@@ -48,19 +65,21 @@
       box-shadow: 0 4px 15px rgba(0,0,0,0.05);
     }
 
+    body.dark main {
+      background: #2c2c2c;
+    }
+
     h2 {
-      color: #004c45;
+      color: var(--verde);
       border-bottom: 2px solid #ccc;
       padding-bottom: 10px;
     }
 
-    .hidden {
-      display: none !important;
-    }
+    .hidden { display: none !important; }
 
     .navCliente select {
       font-weight: bold;
-      background: #004c45;
+      background: var(--verde);
       color: white;
       padding: 12px;
       font-size: 16px;
@@ -78,6 +97,11 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.06);
     }
 
+    body.dark section.section {
+      background: #2c2c2c;
+      border-color: #555;
+    }
+
     input, select, textarea {
       width: 100%;
       padding: 12px;
@@ -86,6 +110,12 @@
       border-radius: 6px;
       border: 1px solid #ccc;
       font-family: inherit;
+    }
+
+    body.dark input, body.dark select, body.dark textarea {
+      background: #444;
+      color: #fff;
+      border-color: #666;
     }
 
     button {
@@ -140,16 +170,82 @@
       margin: 10px 0;
       border-radius: 6px;
     }
+
+    /* CHAT A BOLLE */
+    .chat-messaggi {
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 10px;
+      max-height: 200px;
+      overflow-y: auto;
+      margin-bottom: 10px;
+    }
+
+    body.dark .chat-messaggi {
+      background: #2b2b2b;
+    }
+
+    .bolla-chat {
+      max-width: 80%;
+      padding: 10px 14px;
+      border-radius: 16px;
+      margin-bottom: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      word-wrap: break-word;
+      font-size: 14px;
+      position: relative;
+      display: inline-block;
+      clear: both;
+    }
+
+    .bolla-admin {
+      background: var(--chat-admin);
+      color: var(--text);
+      float: left;
+      border-top-left-radius: 0;
+    }
+
+    .bolla-mia {
+      background: var(--chat-mia);
+      color: #004c45;
+      float: right;
+      border-top-right-radius: 0;
+    }
+
+    .bolla-chat small {
+      display: block;
+      font-size: 11px;
+      opacity: 0.6;
+      margin-bottom: 4px;
+    }
+
+    .theme-toggle {
+      background: white;
+      color: var(--verde);
+      font-weight: bold;
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+    }
+
+    body.dark .theme-toggle {
+      background: #2e2e2e;
+      color: #d1fbe3;
+    }
   </style>
 </head>
 <body>
-
 <header>
   <div style="display:flex; align-items:center; gap:15px;">
     <img src="eco.drin-_srl.png" alt="Logo Ecodrin" />
     <h1 style="margin:0;">Area Clienti</h1>
   </div>
-  <button id="logoutBtn" class="hidden" onclick="logout()">Logout</button>
+  <div>
+    <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+    <button id="logoutBtn" class="hidden" onclick="logout()">Logout</button>
+  </div>
 </header>
 
 <main>
@@ -176,137 +272,13 @@
       </select>
     </div>
 
-  
- <!-- parte 2 -->
-  <!-- FORM PRENOTAZIONE -->
-<section id="formPrenotazione" class="section">
-  <h2>➕ Nuova Prenotazione</h2>
-  <form id="form">
-    <label>Produttore</label>
-    <input name="produttore" required />
+    <!-- SEZIONI CLIENTE (prenotazioni, trasporti, profilo...) -->
+    <!-- Qui inserirai le sezioni HTML già esistenti come: -->
+    <!-- #formPrenotazione, #formTrasporto, #archivioPrenotazioni, #archivioTrasporti, #profiloCliente -->
 
-    <label>Codice CER</label>
-    <input name="codiceCER" required />
+    <!-- NOTA: non serve duplicare quelle, puoi tenere le tue già scritte! -->
 
-    <label>Pericolosità (HP)</label>
-    <select name="pericolosita" multiple>
-      ${[...Array(15)].map((_, i) => `<option>HP${i+1}</option>`).join("")}
-    </select>
-
-    <label>Tipo Imballo</label>
-    <select name="tipoImballo" required>
-      <option>sfuso</option><option>big bags</option><option>pallet</option>
-      <option>cisterna 5mc</option><option>cisterna 15mc</option><option>cisterna 30mc</option><option>altro</option>
-    </select>
-
-    <label>Stato Fisico</label>
-    <select name="statoFisico" required>
-      <option>SP (polverulento)</option><option>S (solido)</option>
-      <option>VS (vischioso/sciropposo)</option><option>Fp (fangoso)</option><option>L (liquido)</option>
-    </select>
-
-    <label>Quantità (kg)</label>
-    <input name="quantita" type="number" required />
-
-    <label>Data Ritiro</label>
-    <input name="data" type="date" required />
-
-    <label>Allega Analisi (PDF)</label>
-    <input name="analisi" type="file" accept=".pdf" />
-
-    <button type="submit">📨 Invia Prenotazione</button>
-    <div id="msgRisultato" style="margin-top: 10px;"></div>
-  </form>
-</section>
-
-<!-- FORM TRASPORTO -->
-<section id="formTrasporto" class="section hidden">
-  <h2>🚛 Richiesta Trasporto</h2>
-  <form id="formTrasportoForm">
-    <label>Richiedente</label>
-    <input name="richiedente" id="richiedente" />
-
-    <label>Produttore</label>
-    <input name="produttore" required />
-
-    <label>Codice CER</label>
-    <input name="codiceCER" required />
-
-    <label>Tipo di Trasporto</label>
-    <select name="tipoTrasporto" required>
-      <option>Cambio cassa</option>
-      <option>Ritiro definitivo</option>
-    </select>
-
-    <label>Tipo Automezzo</label>
-    <select name="automezzo" required>
-      <option>Motrice</option>
-      <option>Autotreno</option>
-      <option>Cassonato</option>
-      <option>Ribaltabile</option>
-      <option>Altro</option>
-    </select>
-
-    <label>Data Trasporto</label>
-    <input name="dataTrasporto" type="date" required />
-
-    <label>Fascia Oraria Preferita</label>
-    <select name="fasciaOraria" required>
-      <option>8:30–10:30</option>
-      <option>10:30–12:30</option>
-      <option>14:30–16:30</option>
-    </select>
-
-    <label>Referente</label>
-    <input name="referente" placeholder="Nome referente" required />
-
-    <label>Numero di cellulare</label>
-    <input name="cellulare" type="tel" required />
-
-    <label>Prezzo pattuito (€)</label>
-    <input name="prezzo" type="number" step="0.01" required />
-
-    <button type="submit">📨 Invia Richiesta Trasporto</button>
-    <div id="msgTrasporto" style="margin-top:10px;"></div>
-  </form>
-</section>
-
-<!-- ARCHIVIO PRENOTAZIONI -->
-<section id="archivioPrenotazioni" class="section hidden">
-  <h2>📁 Le Tue Prenotazioni</h2>
-  <div id="contenitorePrenotazioni"></div>
-</section>
-
-<!-- ARCHIVIO TRASPORTI -->
-<section id="archivioTrasporti" class="section hidden">
-  <h2>📦 Le Tue Richieste di Trasporto</h2>
-  <div id="contenitoreTrasporti"></div>
-</section>
-
-<!-- PROFILO -->
-<section id="profiloCliente" class="section hidden">
-  <h2>👤 Profilo Cliente</h2>
-  <form id="formProfilo">
-    <label>Ragione Sociale (non modificabile)</label>
-    <input name="ragioneSociale" id="profiloRagione" disabled />
-
-    <label>Email</label>
-    <input name="email" type="email" required />
-
-    <label>Telefono</label>
-    <input name="telefono" type="text" />
-
-    <label>Nuova Password</label>
-    <input name="nuovaPassword" type="password" />
-
-    <label>Autorizzazioni (PDF)</label>
-    <input name="autorizzazioni" type="file" accept=".pdf" />
-
-    <button type="submit">💾 Salva Profilo</button>
-    <div id="profiloMsg" style="margin-top: 10px;"></div>
-  </form>
-</section>
-</div>
+  </div>
 </main>
 
 <footer>
@@ -315,24 +287,21 @@
   ✉️ info@ecodrinsrl.it / impianto@ecodrinsrl.it<br />
   ©2025 Eco.Drin s.r.l. – P.I: 03378791218
 </footer>
-
-<script>
-// Il blocco <script> JS è già stato fornito nella PARTE 3 finale precedentemente
-// oppure posso ristamparlo completo aggiornato con notify, invio enter, e aggiornamento
-</script>
-</body>
-</html>
-
-
-<!-- parte 3 -->
- <script>
+  <script>
 let utente = null;
 let ultimaChatCliente = {};
 
+if ('Notification' in window) Notification.requestPermission();
+
+function toggleTheme() {
+  document.body.classList.toggle('dark');
+  localStorage.setItem('darkMode', document.body.classList.contains('dark'));
+}
+
 function mostraSezione(id) {
   ["formPrenotazione", "archivioPrenotazioni", "formTrasporto", "archivioTrasporti", "profiloCliente"]
-    .forEach(sez => document.getElementById(sez).classList.add("hidden"));
-  document.getElementById(id).classList.remove("hidden");
+    .forEach(sez => document.getElementById(sez)?.classList.add("hidden"));
+  document.getElementById(id)?.classList.remove("hidden");
 }
 
 function mostraMenu() {
@@ -368,106 +337,32 @@ function logout() {
   location.reload();
 }
 
-document.getElementById('form').addEventListener('submit', async e => {
-  e.preventDefault();
-  const dati = new FormData(e.target);
-  dati.append('codiceCliente', utente.codiceCliente);
-  dati.append('ragioneSociale', utente.ragioneSociale);
-  dati.append('email', utente.email);
-  const res = await fetch('/api/prenotazioni', { method: 'POST', body: dati });
-  if (res.ok) {
-    e.target.reset();
-    caricaPrenotazioni();
-    mostraSezione("archivioPrenotazioni");
-    document.getElementById("msgRisultato").innerText = "✅ Prenotazione inviata!";
-  }
-});
-
-document.getElementById('formTrasportoForm').addEventListener('submit', async e => {
-  e.preventDefault();
-  const dati = new FormData(e.target);
-  dati.append('codiceCliente', utente.codiceCliente);
-  dati.append('email', utente.email);
-  const plain = Object.fromEntries(dati.entries());
-  const res = await fetch('/api/trasporti', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(plain)
-  });
-  if (res.ok) {
-    e.target.reset();
-    caricaTrasporti();
-    mostraSezione("archivioTrasporti");
-    document.getElementById("msgTrasporto").innerText = "✅ Richiesta inviata!";
-  }
-});
-
-async function caricaPrenotazioni() {
-  const res = await fetch(`/api/prenotazioni/utente/${utente.codiceCliente}`);
-  const dati = await res.json();
-  const container = document.getElementById('contenitorePrenotazioni');
-  container.innerHTML = '';
-  dati.forEach(p => {
-    const div = document.createElement('div');
-    div.className = 'prenotazione';
-    div.id = `pren-${p.id}`;
-    div.innerHTML = `
-      <div><b>Data:</b> ${p.data}</div>
-      <div><b>CER:</b> ${p.codiceCER}</div>
-      <div><b>Quantità:</b> ${p.quantita} kg</div>
-      <div><b>Stato:</b> ${p.stato}</div>
-      <div><b>PDF:</b> ${p.analisi ? `<a href="/uploads/${p.analisi}" target="_blank">📄</a>` : 'Nessuno'}</div>
-      <div>
-        <b>Chat:</b> <span class="badge" id="badge-${p.id}">🛎️</span>
-        <div id="chatMsg-${p.id}"></div>
-        <input id="inputMsg-${p.id}" placeholder="Scrivi un messaggio" onkeydown="if(event.key==='Enter') inviaMessaggio(${p.id})">
-        <button onclick="inviaMessaggio(${p.id})">📨</button>
-      </div>`;
-    container.appendChild(div);
-    caricaChat(p.id);
-  });
-}
-
-async function caricaTrasporti() {
-  const res = await fetch(`/api/trasporti/utente/${utente.codiceCliente}`);
-  const dati = await res.json();
-  const container = document.getElementById('contenitoreTrasporti');
-  container.innerHTML = '';
-  dati.forEach(p => {
-    const div = document.createElement('div');
-    div.className = 'prenotazione';
-    div.innerHTML = `
-      <div><b>Data:</b> ${p.dataTrasporto}</div>
-      <div><b>Produttore:</b> ${p.produttore}</div>
-      <div><b>Tipo:</b> ${p.tipoTrasporto} – ${p.automezzo}</div>
-      <div><b>Fascia oraria:</b> ${p.fasciaOraria}</div>
-      <div><b>Referente:</b> ${p.referente} (${p.cellulare})</div>
-      <div><b>Prezzo:</b> € ${p.prezzo}</div>
-    `;
-    container.appendChild(div);
-  });
-}
-
+// BOLLE CHAT (prenotazioni)
 async function caricaChat(id) {
   const res = await fetch(`/api/prenotazioni/${id}/chat`);
   const chat = await res.json();
   const key = JSON.stringify(chat);
   const box = document.getElementById(`chatMsg-${id}`);
   const badge = document.getElementById(`badge-${id}`);
-
   if (key === ultimaChatCliente[id]) return;
   ultimaChatCliente[id] = key;
 
   if (chat.length && chat[chat.length - 1].autore === 'admin') {
     badge?.classList.add('show');
+    try { new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_9ce296083a.mp3").play(); } catch (e) {}
+    if (Notification.permission === "granted" && !document.hasFocus()) {
+      new Notification("📬 Messaggio da Eco.Drin", { body: chat.at(-1).testo });
+    }
   }
 
-  box.innerHTML = chat.map(m => `
-    <div class="messaggio">
+  box.innerHTML = chat.map(m => {
+    const classe = m.autore === utente.ragioneSociale ? 'bolla-mia' : 'bolla-admin';
+    return `<div class="bolla-chat ${classe}">
       <small><b>${m.autore}</b> – ${new Date(m.timestamp).toLocaleString()}</small>
-      ${m.testo}
-    </div>
-  `).join('');
+      <div>${m.testo}</div>
+    </div>`;
+  }).join('');
+  box.scrollTop = box.scrollHeight;
 }
 
 async function inviaMessaggio(id) {
@@ -484,6 +379,62 @@ async function inviaMessaggio(id) {
   caricaChat(id);
 }
 
+// BOLLE CHAT (trasporti)
+async function caricaChatTrasporti(id) {
+  const res = await fetch(`/api/trasporti/${id}/chat`);
+  const chat = await res.json();
+  const key = JSON.stringify(chat);
+  const box = document.getElementById(`chatMsgTras-${id}`);
+  const badge = document.getElementById(`badgeTras-${id}`);
+  if (key === ultimaChatCliente[`t-${id}`]) return;
+  ultimaChatCliente[`t-${id}`] = key;
+
+  if (chat.length && chat[chat.length - 1].autore === 'admin') {
+    badge?.classList.add('show');
+    try { new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_9ce296083a.mp3").play(); } catch (e) {}
+    if (Notification.permission === "granted" && !document.hasFocus()) {
+      new Notification("📦 Messaggio su Trasporto", { body: chat.at(-1).testo });
+    }
+  }
+
+  box.innerHTML = chat.map(m => {
+    const classe = m.autore === utente.ragioneSociale ? 'bolla-mia' : 'bolla-admin';
+    return `<div class="bolla-chat ${classe}">
+      <small><b>${m.autore}</b> – ${new Date(m.timestamp).toLocaleString()}</small>
+      <div>${m.testo}</div>
+    </div>`;
+  }).join('');
+  box.scrollTop = box.scrollHeight;
+}
+
+async function inviaMsgTras(id) {
+  const input = document.getElementById(`inputMsgTras-${id}`);
+  const testo = input.value.trim();
+  if (!testo) return;
+  await fetch(`/api/trasporti/${id}/chat`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ autore: utente.ragioneSociale, testo })
+  });
+  input.value = '';
+  document.getElementById(`badgeTras-${id}`)?.classList.remove('show');
+  caricaChatTrasporti(id);
+}
+
+// Polling chat automatico
+setInterval(() => {
+  if (!utente) return;
+  document.querySelectorAll('[id^="chatMsg-"]').forEach(div => {
+    const id = div.id?.split('-')[1];
+    if (id) caricaChat(id);
+  });
+  document.querySelectorAll('[id^="chatMsgTras-"]').forEach(div => {
+    const id = div.id?.split('-')[1];
+    if (id) caricaChatTrasporti(id);
+  });
+}, 3000);
+
+// Auto-login
 window.onload = () => {
   const saved = localStorage.getItem('utente');
   if (saved) {
@@ -494,13 +445,43 @@ window.onload = () => {
     caricaPrenotazioni();
     caricaTrasporti();
   }
+  if (localStorage.getItem("darkMode") === "true") {
+    document.body.classList.add("dark");
+  }
 };
-
-setInterval(() => {
-  if (!utente) return;
-  document.querySelectorAll('.prenotazione').forEach(div => {
-    const id = div.id?.split('-')[1];
-    if (id) caricaChat(id);
-  });
-}, 3000);
 </script>
+<section id="archivioTrasporti" class="section hidden">
+  <h2>📦 Le Tue Richieste di Trasporto</h2>
+  <div id="contenitoreTrasporti"></div>
+</section>
+
+<script>
+async function caricaTrasporti() {
+  const res = await fetch(`/api/trasporti/utente/${utente.codiceCliente}`);
+  const dati = await res.json();
+  const container = document.getElementById('contenitoreTrasporti');
+  container.innerHTML = '';
+
+  dati.forEach(t => {
+    const div = document.createElement('div');
+    div.className = 'prenotazione';
+    div.innerHTML = `
+      <div><b>Data:</b> ${t.dataTrasporto}</div>
+      <div><b>Produttore:</b> ${t.produttore}</div>
+      <div><b>Tipo:</b> ${t.tipoTrasporto} – ${t.tipoMezzo}</div>
+      <div><b>Fascia oraria:</b> ${t.fasciaOraria}</div>
+      <div><b>Referente:</b> ${t.referente} (${t.cellulare})</div>
+      <div><b>Prezzo:</b> € ${t.prezzo}</div>
+      <div class="chat-wrapper">
+        <b>Chat:</b> <span class="badge" id="badgeTras-${t.id}">🛎️</span>
+        <div class="chat-messaggi" id="chatMsgTras-${t.id}">Caricamento...</div>
+        <input id="inputMsgTras-${t.id}" placeholder="Scrivi un messaggio" onkeydown="if(event.key==='Enter') inviaMsgTras(${t.id})">
+        <button onclick="inviaMsgTras(${t.id})">📨</button>
+      </div>
+    `;
+    container.appendChild(div);
+    caricaChatTrasporti(t.id);
+  });
+}
+</script>
+
