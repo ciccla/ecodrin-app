@@ -5,31 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Area Clienti – Eco.Drin</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="icon" href="eco.drin-_srl.png" />
   <style>
     :root {
       --verde: #004c45;
-      --verde-chiaro: #d1fbe3;
-      --grigio: #f1f1f1;
-      --chat-admin: var(--grigio);
-      --chat-mia: var(--verde-chiaro);
-      --bg: #f5f7f9;
-      --text: #333;
+      --verde-chiaro: #e6f7f5;
+      --grigio: #f5f7f9;
+      --rosso: #dc3545;
     }
+
+    * { box-sizing: border-box; }
 
     body {
       font-family: 'Poppins', sans-serif;
       margin: 0;
-      background: var(--bg);
-      color: var(--text);
+      background: var(--grigio);
+      color: #333;
       transition: background 0.3s, color 0.3s;
     }
 
     body.dark {
-      --bg: #1e1e1e;
-      --text: #f0f0f0;
-      --grigio: #2e2e2e;
-      --chat-admin: #2e2e2e;
-      --chat-mia: #004c45;
+      background: #121212;
+      color: #eee;
     }
 
     header {
@@ -46,7 +43,7 @@
       height: 50px;
     }
 
-    #logoutBtn, .btn {
+    #logoutBtn {
       background: #ff4d4d;
       color: white;
       padding: 8px 16px;
@@ -66,13 +63,14 @@
     }
 
     body.dark main {
-      background: #2c2c2c;
+      background: #1e1e1e;
     }
 
     h2 {
       color: var(--verde);
       border-bottom: 2px solid #ccc;
       padding-bottom: 10px;
+      margin-top: 0;
     }
 
     .hidden { display: none !important; }
@@ -97,11 +95,6 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.06);
     }
 
-    body.dark section.section {
-      background: #2c2c2c;
-      border-color: #555;
-    }
-
     input, select, textarea {
       width: 100%;
       padding: 12px;
@@ -110,12 +103,6 @@
       border-radius: 6px;
       border: 1px solid #ccc;
       font-family: inherit;
-    }
-
-    body.dark input, body.dark select, body.dark textarea {
-      background: #444;
-      color: #fff;
-      border-color: #666;
     }
 
     button {
@@ -133,8 +120,24 @@
       background-color: #009072;
     }
 
+    .msg {
+      background: #e0fff5;
+      padding: 10px;
+      margin: 5px 0;
+      border-left: 4px solid #00785c;
+      border-radius: 4px;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 14px;
+      padding: 20px;
+      color: #777;
+      margin-top: 40px;
+    }
+
     .badge {
-      background: #dc3545;
+      background: var(--rosso);
       color: white;
       padding: 3px 8px;
       border-radius: 12px;
@@ -155,123 +158,56 @@
       border-radius: 6px;
     }
 
-    .chat-messaggi {
-      background: #fff;
-      border: 1px solid #ccc;
-      border-radius: 8px;
+    body.dark .prenotazione {
+      background: #2a2a2a;
+    }
+
+    .chat-bolla {
+      background: #d0f8e8;
+      border-radius: 10px;
       padding: 10px;
-      max-height: 200px;
+      margin: 8px 0;
+      max-width: 100%;
+      position: relative;
+    }
+
+    .chat-bolla small {
+      font-size: 11px;
+      color: #555;
+      display: block;
+      margin-top: 4px;
+    }
+
+    body.dark .chat-bolla {
+      background: #226d5a;
+      color: white;
+    }
+
+    .dark-toggle {
+      background: white;
+      color: var(--verde);
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .chat-messaggi {
+      max-height: 150px;
       overflow-y: auto;
+      background: #e9fdf4;
+      padding: 10px;
+      border: 1px solid #b0eacd;
+      border-radius: 8px;
       margin-bottom: 10px;
     }
 
     body.dark .chat-messaggi {
-      background: #2b2b2b;
-    }
-
-    .bolla-chat {
-      max-width: 90%;
-      padding: 10px 14px;
-      border-radius: 16px;
-      margin-bottom: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      word-wrap: break-word;
-      font-size: 14px;
-      position: relative;
-      display: inline-block;
-      clear: both;
-    }
-
-    .bolla-admin {
-      background: var(--chat-admin);
-      color: var(--text);
-      float: left;
-      border-top-left-radius: 0;
-    }
-
-    .bolla-mia {
-      background: var(--chat-mia);
-      color: #004c45;
-      float: right;
-      border-top-right-radius: 0;
-    }
-
-    .bolla-chat small {
-      display: block;
-      font-size: 11px;
-      opacity: 0.6;
-      margin-bottom: 4px;
-    }
-
-    .theme-toggle {
-      background: white;
-      color: var(--verde);
-      font-weight: bold;
-      padding: 8px 12px;
-      border-radius: 6px;
-      border: none;
-      cursor: pointer;
-    }
-
-    body.dark .theme-toggle {
-      background: #2e2e2e;
-      color: #d1fbe3;
-    }
-
-    @media (max-width: 600px) {
-      header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-      }
-
-      main {
-        padding: 20px;
-        margin: 10px;
-        border-radius: 8px;
-      }
-
-      .prenotazione {
-        padding: 12px;
-        font-size: 15px;
-      }
-
-      .chat-messaggi {
-        max-height: 250px;
-        padding: 10px;
-        font-size: 14px;
-      }
-
-      .bolla-chat {
-        max-width: 90%;
-        font-size: 14px;
-      }
-
-      input, select, textarea {
-        width: 100% !important;
-        font-size: 15px;
-      }
-
-      button, .btn, .theme-toggle {
-        width: 100%;
-        padding: 12px;
-        margin-top: 10px;
-        font-size: 16px;
-        border-radius: 6px;
-      }
-
-      footer {
-        font-size: 12px;
-        text-align: center;
-        padding: 15px;
-      }
-
-      h1, h2 {
-        font-size: 20px;
-      }
+      background: #333;
+      border-color: #555;
     }
   </style>
-</style>
 </head>
 <body>
 
@@ -280,20 +216,16 @@
     <img src="eco.drin-_srl.png" alt="Logo Ecodrin" />
     <h1 style="margin:0;">Area Clienti</h1>
   </div>
-  <div>
-    <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+  <div style="display:flex; gap:10px;">
+    <button class="dark-toggle" onclick="document.body.classList.toggle('dark')">🌓</button>
     <button id="logoutBtn" class="hidden" onclick="logout()">Logout</button>
   </div>
-</header>
-
-<main>
+</header><main>
   <!-- LOGIN -->
   <div id="loginBox">
     <h2>🔐 Accesso Clienti</h2>
-    <input id="loginEmail" placeholder="Ragione Sociale"
-      onkeydown="if(event.key==='Enter') login()" />
-    <input id="loginPassword" type="password" placeholder="Password"
-      onkeydown="if(event.key==='Enter') login()" />
+    <input id="loginEmail" placeholder="Ragione Sociale" onkeydown="if(event.key==='Enter') login()" />
+    <input id="loginPassword" type="password" placeholder="Password" onkeydown="if(event.key==='Enter') login()" />
     <button onclick="login()">Accedi</button>
     <div id="loginErrore" style="color:red; margin-top: 10px;"></div>
   </div>
@@ -308,7 +240,9 @@
         <option value="archivioTrasporti">📦 Le tue Richieste di Trasporto</option>
         <option value="profiloCliente">👤 Profilo</option>
       </select>
-    </div>    <!-- FORM PRENOTAZIONE -->
+    </div>
+
+    <!-- FORM PRENOTAZIONE -->
     <section id="formPrenotazione" class="section">
       <h2>➕ Nuova Prenotazione</h2>
       <form id="form">
@@ -325,15 +259,22 @@
 
         <label>Tipo Imballo</label>
         <select name="tipoImballo" required>
-          <option>sfuso</option><option>big bags</option><option>pallet</option>
-          <option>cisterna 5mc</option><option>cisterna 15mc</option>
-          <option>cisterna 30mc</option><option>altro</option>
+          <option>sfuso</option>
+          <option>big bags</option>
+          <option>pallet</option>
+          <option>cisterna 5mc</option>
+          <option>cisterna 15mc</option>
+          <option>cisterna 30mc</option>
+          <option>altro</option>
         </select>
 
         <label>Stato Fisico</label>
         <select name="statoFisico" required>
-          <option>SP (polverulento)</option><option>S (solido)</option>
-          <option>VS (vischioso/sciropposo)</option><option>Fp (fangoso)</option><option>L (liquido)</option>
+          <option>SP (polverulento)</option>
+          <option>S (solido)</option>
+          <option>VS (vischioso/sciropposo)</option>
+          <option>Fp (fangoso)</option>
+          <option>L (liquido)</option>
         </select>
 
         <label>Quantità (kg)</label>
@@ -355,7 +296,7 @@
       <h2>🚛 Richiesta Trasporto</h2>
       <form id="formTrasportoForm">
         <label>Richiedente</label>
-        <input name="richiedente" id="richiedente" />
+        <input name="richiedente" id="richiedente" required />
 
         <label>Produttore</label>
         <input name="produttore" required />
@@ -371,11 +312,15 @@
 
         <label>Tipo Automezzo</label>
         <select name="tipoMezzo" required>
-          <option>Motrice</option>
-          <option>Autotreno</option>
-          <option>Cassonato</option>
-          <option>Ribaltabile</option>
-          <option>Altro</option>
+          <option>furgone</option>
+          <option>eurocargo 100 (scarrabile)</option>
+          <option>euro cargo 100 (ragno)</option>
+          <option>motrice scarrabile</option>
+          <option>motrice con ragno</option>
+          <option>bilico</option>
+          <option>cisterna 5mc</option>
+          <option>cisterna 15mc</option>
+          <option>cisterna 30mc</option>
         </select>
 
         <label>Data Trasporto</label>
@@ -401,6 +346,7 @@
         <div id="msgTrasporto" style="margin-top:10px;"></div>
       </form>
     </section>
+
     <!-- ARCHIVIO PRENOTAZIONI -->
     <section id="archivioPrenotazioni" class="section hidden">
       <h2>📁 Le Tue Prenotazioni</h2>
@@ -436,31 +382,24 @@
         <div id="profiloMsg" style="margin-top: 10px;"></div>
       </form>
     </section>
-
-  </div> <!-- Fine #contenutoCliente -->
-</main>
-
-<footer>
+  </div>
+</main><footer>
   📍 Via delle Industrie – Zona Asi - 80011 Acerra (NA)<br />
   📞 081.8857480 / 081.5207650<br />
   ✉️ info@ecodrinsrl.it / impianto@ecodrinsrl.it<br />
   ©2025 Eco.Drin s.r.l. – P.I: 03378791218
 </footer>
+
+<audio id="suonoNotifica" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_9ce296083a.mp3" preload="auto"></audio>
+
 <script>
 let utente = null;
 let ultimaChatCliente = {};
 
-if ('Notification' in window) Notification.requestPermission();
-
-function toggleTheme() {
-  document.body.classList.toggle('dark');
-  localStorage.setItem('darkMode', document.body.classList.contains('dark'));
-}
-
 function mostraSezione(id) {
   ["formPrenotazione", "archivioPrenotazioni", "formTrasporto", "archivioTrasporti", "profiloCliente"]
-    .forEach(sez => document.getElementById(sez)?.classList.add("hidden"));
-  document.getElementById(id)?.classList.remove("hidden");
+    .forEach(sez => document.getElementById(sez).classList.add("hidden"));
+  document.getElementById(id).classList.remove("hidden");
 }
 
 function mostraMenu() {
@@ -496,7 +435,6 @@ function logout() {
   location.reload();
 }
 
-// Invia nuova prenotazione
 document.getElementById('form').addEventListener('submit', async e => {
   e.preventDefault();
   const dati = new FormData(e.target);
@@ -512,7 +450,6 @@ document.getElementById('form').addEventListener('submit', async e => {
   }
 });
 
-// Invia richiesta trasporto
 document.getElementById('formTrasportoForm').addEventListener('submit', async e => {
   e.preventDefault();
   const dati = new FormData(e.target);
@@ -532,7 +469,6 @@ document.getElementById('formTrasportoForm').addEventListener('submit', async e 
   }
 });
 
-// CHAT prenotazioni
 async function caricaPrenotazioni() {
   const res = await fetch(`/api/prenotazioni/utente/${utente.codiceCliente}`);
   const dati = await res.json();
@@ -550,7 +486,7 @@ async function caricaPrenotazioni() {
       <div><b>PDF:</b> ${p.analisi ? `<a href="/uploads/${p.analisi}" target="_blank">📄</a>` : 'Nessuno'}</div>
       <div>
         <b>Chat:</b> <span class="badge" id="badge-${p.id}">🛎️</span>
-        <div class="chat-messaggi" id="chatMsg-${p.id}">Caricamento...</div>
+        <div class="chat-messaggi" id="chatMsg-${p.id}"></div>
         <input id="inputMsg-${p.id}" placeholder="Scrivi un messaggio" onkeydown="if(event.key==='Enter') inviaMessaggio(${p.id})">
         <button onclick="inviaMessaggio(${p.id})">📨</button>
       </div>`;
@@ -559,7 +495,6 @@ async function caricaPrenotazioni() {
   });
 }
 
-// CHAT trasporti
 async function caricaTrasporti() {
   const res = await fetch(`/api/trasporti/utente/${utente.codiceCliente}`);
   const dati = await res.json();
@@ -568,7 +503,6 @@ async function caricaTrasporti() {
   dati.forEach(p => {
     const div = document.createElement('div');
     div.className = 'prenotazione';
-    div.id = `tras-${p.id}`;
     div.innerHTML = `
       <div><b>Data:</b> ${p.dataTrasporto}</div>
       <div><b>Produttore:</b> ${p.produttore}</div>
@@ -577,42 +511,69 @@ async function caricaTrasporti() {
       <div><b>Referente:</b> ${p.referente} (${p.cellulare})</div>
       <div><b>Prezzo:</b> € ${p.prezzo}</div>
       <div>
-        <b>Chat:</b> <span class="badge" id="badgeTras-${p.id}">🛎️</span>
-        <div class="chat-messaggi" id="chatMsgTras-${p.id}">Caricamento...</div>
+        <b>Chat:</b> <span class="badge" id="badge-t-${p.id}">🛎️</span>
+        <div class="chat-messaggi" id="chatMsgTras-${p.id}"></div>
         <input id="inputMsgTras-${p.id}" placeholder="Scrivi un messaggio" onkeydown="if(event.key==='Enter') inviaMsgTras(${p.id})">
         <button onclick="inviaMsgTras(${p.id})">📨</button>
-      </div>`;
+      </div>
+    `;
     container.appendChild(div);
-    caricaChatTrasporti(p.id);
+    caricaChatTrasporto(p.id);
   });
 }
 
-// Gestione chat prenotazione
 async function caricaChat(id) {
   const res = await fetch(`/api/prenotazioni/${id}/chat`);
   const chat = await res.json();
   const key = JSON.stringify(chat);
   const box = document.getElementById(`chatMsg-${id}`);
   const badge = document.getElementById(`badge-${id}`);
+
   if (key === ultimaChatCliente[id]) return;
   ultimaChatCliente[id] = key;
 
-  if (chat.length && chat[chat.length - 1].autore === 'admin') {
+  const last = chat[chat.length - 1];
+  if (last && last.autore === 'impianto') {
     badge?.classList.add('show');
-    try { new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_9ce296083a.mp3").play(); } catch (e) {}
-    if (Notification.permission === "granted" && !document.hasFocus()) {
-      new Notification("📬 Messaggio da Eco.Drin", { body: chat.at(-1).testo });
+    document.getElementById('suonoNotifica')?.play();
+    if (Notification.permission === "granted") {
+      new Notification("📬 Messaggio da Ecodrin", { body: last.testo });
     }
   }
 
-  box.innerHTML = chat.map(m => {
-    const classe = m.autore === utente.ragioneSociale ? 'bolla-mia' : 'bolla-admin';
-    return `<div class="bolla-chat ${classe}">
-      <small><b>${m.autore}</b> – ${new Date(m.timestamp).toLocaleString()}</small>
-      <div>${m.testo}</div>
-    </div>`;
-  }).join('');
-  box.scrollTop = box.scrollHeight;
+  box.innerHTML = chat.map(m => `
+    <div class="chat-bolla">
+      <b>${m.autore}</b>: ${m.testo}
+      <small>${new Date(m.timestamp).toLocaleString()}</small>
+    </div>
+  `).join('');
+}
+
+async function caricaChatTrasporto(id) {
+  const res = await fetch(`/api/trasporti/${id}/chat`);
+  const chat = await res.json();
+  const box = document.getElementById(`chatMsgTras-${id}`);
+  const badge = document.getElementById(`badge-t-${id}`);
+
+  const key = JSON.stringify(chat);
+  if (key === ultimaChatCliente[`t-${id}`]) return;
+  ultimaChatCliente[`t-${id}`] = key;
+
+  const last = chat[chat.length - 1];
+  if (last && last.autore === 'impianto') {
+    badge?.classList.add('show');
+    document.getElementById('suonoNotifica')?.play();
+    if (Notification.permission === "granted") {
+      new Notification("📬 Nuovo messaggio trasporto", { body: last.testo });
+    }
+  }
+
+  box.innerHTML = chat.map(m => `
+    <div class="chat-bolla">
+      <b>${m.autore}</b>: ${m.testo}
+      <small>${new Date(m.timestamp).toLocaleString()}</small>
+    </div>
+  `).join('');
 }
 
 async function inviaMessaggio(id) {
@@ -629,34 +590,6 @@ async function inviaMessaggio(id) {
   caricaChat(id);
 }
 
-// Gestione chat trasporto
-async function caricaChatTrasporti(id) {
-  const res = await fetch(`/api/trasporti/${id}/chat`);
-  const chat = await res.json();
-  const key = JSON.stringify(chat);
-  const box = document.getElementById(`chatMsgTras-${id}`);
-  const badge = document.getElementById(`badgeTras-${id}`);
-  if (key === ultimaChatCliente[`t-${id}`]) return;
-  ultimaChatCliente[`t-${id}`] = key;
-
-  if (chat.length && chat[chat.length - 1].autore === 'admin') {
-    badge?.classList.add('show');
-    try { new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_9ce296083a.mp3").play(); } catch (e) {}
-    if (Notification.permission === "granted" && !document.hasFocus()) {
-      new Notification("📦 Messaggio su Trasporto", { body: chat.at(-1).testo });
-    }
-  }
-
-  box.innerHTML = chat.map(m => {
-    const classe = m.autore === utente.ragioneSociale ? 'bolla-mia' : 'bolla-admin';
-    return `<div class="bolla-chat ${classe}">
-      <small><b>${m.autore}</b> – ${new Date(m.timestamp).toLocaleString()}</small>
-      <div>${m.testo}</div>
-    </div>`;
-  }).join('');
-  box.scrollTop = box.scrollHeight;
-}
-
 async function inviaMsgTras(id) {
   const input = document.getElementById(`inputMsgTras-${id}`);
   const testo = input.value.trim();
@@ -667,24 +600,10 @@ async function inviaMsgTras(id) {
     body: JSON.stringify({ autore: utente.ragioneSociale, testo })
   });
   input.value = '';
-  document.getElementById(`badgeTras-${id}`)?.classList.remove('show');
-  caricaChatTrasporti(id);
+  document.getElementById(`badge-t-${id}`)?.classList.remove('show');
+  caricaChatTrasporto(id);
 }
 
-// Auto refresh ogni 3 sec
-setInterval(() => {
-  if (!utente) return;
-  document.querySelectorAll('[id^="chatMsg-"]').forEach(div => {
-    const id = div.id?.split('-')[1];
-    if (id) caricaChat(id);
-  });
-  document.querySelectorAll('[id^="chatMsgTras-"]').forEach(div => {
-    const id = div.id?.split('-')[1];
-    if (id) caricaChatTrasporti(id);
-  });
-}, 3000);
-
-// Auto-login + tema
 window.onload = () => {
   const saved = localStorage.getItem('utente');
   if (saved) {
@@ -695,11 +614,21 @@ window.onload = () => {
     caricaPrenotazioni();
     caricaTrasporti();
   }
-  if (localStorage.getItem("darkMode") === "true") {
-    document.body.classList.add("dark");
-  }
 };
+
+setInterval(() => {
+  if (!utente) return;
+  document.querySelectorAll('.prenotazione').forEach(div => {
+    const id = div.id?.split('-')[1];
+    if (id) {
+      if (div.id.startsWith("pren-")) caricaChat(id);
+      else if (div.id.startsWith("t-")) caricaChatTrasporto(id);
+    }
+  });
+}, 3000);
 </script>
+
 </body>
 </html>
+
 
